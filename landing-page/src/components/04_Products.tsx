@@ -1,3 +1,4 @@
+"use client"
 import { comicRelief, poppins } from "@/app/fonts";
 import { formatRupiah } from "@/utils/formatRupiah";
 import Image from "next/image";
@@ -40,7 +41,7 @@ export default function Products() {
               <p className={`${poppins.className} bg-white/50 text-green-700 px-2 rounded-md font-extrabold`}>
                 {formatRupiah(product.price)}
               </p>
-              <button className="flex gap-1 items-center bg-red-500 px-2 py-1 text-white rounded-md cursor-pointer duration-200 hover:scale-95 active:scale-90">
+              <button onClick={() => alert("Fitur tambah keranjang sedang dalam pengembangan")} className="flex gap-1 items-center bg-red-500 px-2 py-1 text-white rounded-md cursor-pointer duration-200 hover:scale-95 active:scale-90">
                 <BiPlus />
                 <p className={`${poppins.className}`}>Keranjang</p>
               </button>
