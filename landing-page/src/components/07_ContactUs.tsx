@@ -6,7 +6,7 @@ import { MdAccessTimeFilled } from "react-icons/md";
 
 export default function ContactUs() {
   return (
-    <section className="pt-4 pb-12 min-h-screen px-4 md:px-8 bg-cover bg-center bg-no-repeat bg-darken bg-[url('/contact-us-background.jpg')]">
+    <section id="contactus" className="pt-4 pb-12 min-h-screen px-4 md:px-8 bg-cover bg-center bg-no-repeat bg-darken bg-[url('/contact-us-background.jpg')]">
       <h2
         className={`text-center ${comicRelief.className} text-5xl text-white`}
       >

@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { Links } from "./02_Navbar";
 import { poppins } from "@/app/fonts";
+import { generateWaUrl } from "@/utils/whatsappUrl";
+import { Links } from "@/utils/navlinks";
 
 export default function Footer() {
   return (
@@ -15,9 +16,15 @@ export default function Footer() {
 
 const LeftSide = () => {
   return (
-    <span className={`flex flex-wrap gap-4 ${poppins.className} justify-center sm:justify-start`}>
+    <span
+      className={`flex flex-wrap gap-4 ${poppins.className} justify-center sm:justify-start`}
+    >
       {Links.map((link, i) => (
-        <Link key={i} href={link.url} className="hover:text-yellow-300 transition-all duration-300">
+        <Link
+          key={i}
+          href={link.url}
+          className="hover:text-yellow-300 transition-all duration-300"
+        >
           {link.label}
         </Link>
       ))}
@@ -30,7 +37,9 @@ const RightSide = () => {
     <div className="text-center sm:text-left">
       {/* Nomor Telepon, Email */}
       <div className="flex flex-col sm:flex-row gap-2 justify-center sm:justify-start">
-        <p className={`${poppins.className}`}>+62 857-7488-5367</p>
+        <a href={generateWaUrl()} className="text-white">
+          <p className={`${poppins.className}`}>+62 857-7488-5367</p>
+        </a>
         <p className={`${poppins.className}`}>muhamadaqil383@gmail.com</p>
       </div>
 

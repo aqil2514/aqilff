@@ -12,7 +12,7 @@ interface Product {
 
 export default function Products() {
   return (
-    <section className="pb-12 bg-gradient-to-b from-red-900 to-orange-400 py-8">
+    <section id="product" className="pb-12 bg-gradient-to-b from-red-900 to-orange-400 py-8">
       <h2 className={`text-center ${comicRelief.className} text-3xl md:text-5xl text-white mb-8`}>
         Produk Kami
       </h2>
