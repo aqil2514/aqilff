@@ -18,7 +18,9 @@ export const comicRelief = localFont({
 });
 
 export const poppins = Poppins({
-  weight: "400",
+  subsets: ['latin', 'latin-ext'], 
+  weight: ['400', '500', '600'],  
+  display: 'swap',                 
 });
 
 export const tuffy = localFont({
