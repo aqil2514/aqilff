@@ -1,4 +1,4 @@
-import { comicRelief, poppins } from "@/app/layout";
+import { comicRelief, poppins } from "@/app/fonts";
 
 // export default function AboutUs() {
 //   return (

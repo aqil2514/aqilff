@@ -1,30 +1,11 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Poppins } from "next/font/google";
-import localFont from "next/font/local";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/01_Header";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
-});
-
-export const tagesschrift = localFont({
-  src: "./fonts/Tagesschrift-Regular.ttf",
-});
-
-export const comicRelief = localFont({
-  src: "./fonts/ComicRelief-Regular.ttf",
-});
-
-export const poppins = Poppins({
-  subsets: ['latin', 'latin-ext'], 
-  weight: ['400', '500', '600'],  
-  display: 'swap',                 
-});
-
-export const tuffy = localFont({
-  src: "./fonts/Tuffy-Regular.ttf",
 });
 
 const geistMono = Geist_Mono({

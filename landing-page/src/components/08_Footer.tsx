@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Links } from "./02_Navbar";
-import { poppins } from "@/app/layout";
+import { poppins } from "@/app/fonts";
 
 export default function Footer() {
   return (

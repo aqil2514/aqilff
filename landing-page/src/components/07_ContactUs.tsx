@@ -1,4 +1,4 @@
-import { comicRelief, poppins, tuffy } from "@/app/layout";
+import { comicRelief, poppins, tuffy } from "@/app/fonts";
 import { JSX } from "react";
 import { CiMapPin } from "react-icons/ci";
 import { FaPaperPlane, FaPhoneAlt } from "react-icons/fa";

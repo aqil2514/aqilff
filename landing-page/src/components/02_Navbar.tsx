@@ -1,4 +1,4 @@
-import { comicRelief, tagesschrift } from "@/app/layout";
+import { comicRelief, tagesschrift } from "@/app/fonts";
 import Image from "next/image";
 import Link from "next/link";
 import { IoMenu } from "react-icons/io5";

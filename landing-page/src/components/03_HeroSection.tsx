@@ -1,4 +1,4 @@
-import { comicRelief, poppins, tuffy } from "@/app/layout";
+import { comicRelief, poppins, tuffy } from "@/app/fonts";
 import Image from "next/image";
 import { CgShoppingCart } from "react-icons/cg";
 

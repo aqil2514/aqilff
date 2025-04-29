@@ -1,4 +1,4 @@
-import { comicRelief, poppins } from "@/app/layout";
+import { comicRelief, poppins } from "@/app/fonts";
 import { formatRupiah } from "@/utils/formatRupiah";
 import Image from "next/image";
 import { BiPlus } from "react-icons/bi";
