@@ -2,11 +2,7 @@
 import { comicRelief, poppins, tuffy } from "@/app/fonts";
 import Image from "next/image";
 import { CgShoppingCart } from "react-icons/cg";
-
-interface Category {
-  imageSrc: string;
-  caption: string;
-}
+import { categories } from "@/lib/data";
 
 export default function HeroSection() {
   const clickHandler = () => {
@@ -81,21 +77,3 @@ export default function HeroSection() {
   );
 }
 
-const categories: Category[] = [
-  {
-    imageSrc: "/nugget.jpg",
-    caption: "Nugget",
-  },
-  {
-    imageSrc: "/Otak-otak.jpg",
-    caption: "Otak-otak",
-  },
-  {
-    imageSrc: "/Kornet.webp",
-    caption: "Kornet",
-  },
-  {
-    imageSrc: "/Sosis.jpg",
-    caption: "Sosis",
-  },
-];

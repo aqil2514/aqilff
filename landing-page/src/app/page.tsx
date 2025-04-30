@@ -1,5 +1,5 @@
 import Navbar from "@/components/Navbar";
-import HeroSection from "@/components/HeroSection";
+import HeroSection from "@/components/Hero";
 import Products from "@/components/Products";
 import AboutUs from "@/components/AboutUs";
 // import Gallery from "@/components/06_Gallery";

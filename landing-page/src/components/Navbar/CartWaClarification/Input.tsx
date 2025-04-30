@@ -15,13 +15,15 @@ export default function InputOptions({
   options: InputWaOptions;
   setOptions: React.Dispatch<React.SetStateAction<InputWaOptions>>;
 }) {
-  const {products} = useProductStore()
+  const { products, clearCart } = useProductStore();
   const sendHandler = () => {
     const message = encodeURIComponent(generateMessage(products, options));
     const waUrl = generateWaUrl(message);
+    clearCart();
+    setOptions({ name: "", note: "", shippingCost: 0 });
 
-    window.open(waUrl, "_blank")
-  }
+    window.open(waUrl, "_blank");
+  };
 
   return (
     <div>
@@ -73,7 +75,10 @@ export default function InputOptions({
           />
         </div>
 
-        <button className="bg-green-500 text-white px-2 py-1 rounded-2xl flex gap-2 items-center duration-200 hover:bg-green-600 hover:scale-95 active:scale-90 cursor-pointer" onClick={sendHandler}>
+        <button
+          className="bg-green-500 text-white px-2 py-1 rounded-2xl flex gap-2 items-center duration-200 hover:bg-green-600 hover:scale-95 active:scale-90 cursor-pointer"
+          onClick={sendHandler}
+        >
           <IoSend />
           Kirim Pesan
         </button>
