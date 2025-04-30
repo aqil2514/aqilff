@@ -9,6 +9,9 @@ import GoToUp from "@/components/GoToUp";
 export const metadata: Metadata = {
   title: "Aqil Frozen Food",
   description: "Retail Frozen Food skala Rumahan",
+  verification:{
+    google:"XmLhZkNpjaJkFbSp1EdZv4kI1mvK2ebnyzuRT4HrOLk"
+  }
 };
 
 const geistSans = Geist({
