@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { GoogleAnalytics } from '@next/third-parties/google'
+
 import Header from "@/components/Header";
 import GoToUp from "@/components/GoToUp";
 
@@ -32,6 +34,7 @@ export default function RootLayout({
         <Header />
         {children}
         <GoToUp />
+        <GoogleAnalytics gaId="G-SCHVWBMSZ0" />
       </body>
     </html>
   );
