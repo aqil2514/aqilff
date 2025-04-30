@@ -1,6 +1,6 @@
+import { Product } from "@/@types/interfaces";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { Product } from "@/components/Products";
 
 export type ProductsCart = Omit<Product, "category"> & { quantity: number };
 
