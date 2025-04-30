@@ -1,10 +1,10 @@
-import Navbar from "@/components/02_Navbar";
-import HeroSection from "@/components/03_HeroSection";
-import Products from "@/components/04_Products";
-import AboutUs from "@/components/05_AboutUs";
+import Navbar from "@/components/Navbar";
+import HeroSection from "@/components/HeroSection";
+import Products from "@/components/Products";
+import AboutUs from "@/components/AboutUs";
 // import Gallery from "@/components/06_Gallery";
-import ContactUs from "@/components/07_ContactUs";
-import Footer from "@/components/08_Footer";
+import ContactUs from "@/components/ContactUs";
+import Footer from "@/components/Footer";
 
 export default function LandingPage() {
   return (
