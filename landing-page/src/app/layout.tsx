@@ -6,6 +6,11 @@ import { GoogleAnalytics } from '@next/third-parties/google'
 import Header from "@/components/Header";
 import GoToUp from "@/components/GoToUp";
 
+export const metadata: Metadata = {
+  title: "Aqil Frozen Food",
+  description: "Retail Frozen Food skala Rumahan",
+};
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -16,10 +21,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Aqil Frozen Food",
-  description: "Hadirkan Kelezatan Beku ke Rumah Anda",
-};
 
 export default function RootLayout({
   children,

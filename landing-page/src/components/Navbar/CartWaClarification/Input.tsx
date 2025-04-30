@@ -7,6 +7,7 @@ import { IoSend } from "react-icons/io5";
 import { generateMessage } from "./Review";
 import { useProductStore } from "@/lib/products-store";
 import { generateWaUrl } from "@/utils/whatsappUrl";
+import { sendGAEvent } from "@next/third-parties/google";
 
 export default function InputOptions({
   options,
@@ -17,6 +18,11 @@ export default function InputOptions({
 }) {
   const { products, clearCart } = useProductStore();
   const sendHandler = () => {
+    sendGAEvent("event", "whatsapp_checkout", {
+      event_category: "checkout",
+      event_label: "landing_page_cta",
+    });
+
     const message = encodeURIComponent(generateMessage(products, options));
     const waUrl = generateWaUrl(message);
     clearCart();

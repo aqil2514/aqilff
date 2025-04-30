@@ -6,6 +6,7 @@ import { useState } from "react";
 import { IoIosSend } from "react-icons/io";
 import { MdDeleteForever } from "react-icons/md";
 import WAClarification from "./CartWaClarification";
+import { sendGAEvent } from "@next/third-parties/google";
 
 export default function CartProducts() {
   const { products, increase, decrease, removeFromCart, clearCart } =
@@ -96,7 +97,14 @@ export default function CartProducts() {
         </button>
         <button
           className="bg-green-500 text-white px-2 py-1 rounded-2xl flex gap-2 items-center duration-200 hover:bg-green-600 hover:scale-95 active:scale-90 cursor-pointer"
-          onClick={() => setWaDialogue(true)}
+          onClick={() => {
+            sendGAEvent("event", "whatsapp_click", {
+              event_category: "engagement",
+              event_label: "landing_page_cta"
+            });
+            
+            setWaDialogue(true);
+          }}
         >
           <IoIosSend />
           <p className={`${poppins.className}`}>Order via WA</p>
