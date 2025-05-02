@@ -6,14 +6,6 @@ export interface Contacts {
   body: string;
 }
 
-// export interface Product {
-//   id: string;
-//   price: number;
-//   name: string;
-//   category: "Nugget" | "Sosis" | "Otak-otak";
-//   imageSrc: string;
-// }
-
 export interface Product {
   id: string;
   name: string;

@@ -29,7 +29,7 @@ export default function CartProducts() {
           >
             <figure className="relative w-20 h-20 shrink-0 rounded overflow-hidden">
               <Image
-                src={product.imageSrc}
+                src={product.image_src}
                 fill
                 sizes="auto"
                 alt={`Gambar ${product.name}`}
