@@ -6,10 +6,23 @@ export interface Contacts {
   body: string;
 }
 
+// export interface Product {
+//   id: string;
+//   price: number;
+//   name: string;
+//   category: "Nugget" | "Sosis" | "Otak-otak";
+//   imageSrc: string;
+// }
+
 export interface Product {
   id: string;
-  price: number;
   name: string;
-  category: "Nugget" | "Sosis" | "Otak-otak";
-  imageSrc: string;
+  price: number;
+  category: string;
+  image_src: string;
+  description?: string;
+  stock: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
 }

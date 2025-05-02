@@ -1,6 +1,7 @@
 "use client";
+import { Product } from "@/@types/interfaces";
 import { comicRelief, poppins } from "@/app/fonts";
-import { products } from "@/lib/data";
+// import { products } from "@/lib/data";
 import { useProductStore } from "@/lib/products-store";
 import { formatRupiah } from "@/utils/formatRupiah";
 import Image from "next/image";
@@ -8,8 +9,14 @@ import { BiPlus } from "react-icons/bi";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
 
-export default function Products() {
-  const { addToCart, products: cartProducts, increase, decrease, removeFromCart } = useProductStore();
+export default function Products({ products }: { products: Product[] }) {
+  const {
+    addToCart,
+    products: cartProducts,
+    increase,
+    decrease,
+    removeFromCart,
+  } = useProductStore();
   return (
     <section
       id="product"
@@ -31,7 +38,7 @@ export default function Products() {
               {/* Gambar */}
               <div className="relative w-full h-48 md:h-52">
                 <Image
-                  src={product.imageSrc}
+                  src={product.image_src}
                   alt={product.name}
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
@@ -55,16 +62,29 @@ export default function Products() {
                 {isExist ? (
                   <div className="flex gap-0 md:gap-8 justify-between">
                     <div className="flex gap-2">
-                    <button className="px-2 py-1 bg-red-500 duration-200 hover:bg-red-600 hover:scale-95 active:scale-90 cursor-pointer  text-white rounded-md" onClick={() => increase(product.id)}>
-                      <FaChevronUp />
-                    </button>
-                    <p className={`text-white ${comicRelief.className} font-semibold`}>{cartProduct?.quantity}</p>
-                    <button className="px-2 py-1 bg-red-500 duration-200 hover:bg-red-600 hover:scale-95 active:scale-90 cursor-pointer  text-white rounded-md" onClick={() => decrease(product.id)}>
-                      <FaChevronDown />
-                    </button>
+                      <button
+                        className="px-2 py-1 bg-red-500 duration-200 hover:bg-red-600 hover:scale-95 active:scale-90 cursor-pointer  text-white rounded-md"
+                        onClick={() => increase(product.id)}
+                      >
+                        <FaChevronUp />
+                      </button>
+                      <p
+                        className={`text-white ${comicRelief.className} font-semibold`}
+                      >
+                        {cartProduct?.quantity}
+                      </p>
+                      <button
+                        className="px-2 py-1 bg-red-500 duration-200 hover:bg-red-600 hover:scale-95 active:scale-90 cursor-pointer  text-white rounded-md"
+                        onClick={() => decrease(product.id)}
+                      >
+                        <FaChevronDown />
+                      </button>
                     </div>
-                    <button className="px-2 py-1 bg-red-500 duration-200 hover:bg-red-600 hover:scale-95 active:scale-90 cursor-pointer  text-white rounded-md" onClick={() => removeFromCart(product.id)}>
-                    <MdDeleteForever />
+                    <button
+                      className="px-2 py-1 bg-red-500 duration-200 hover:bg-red-600 hover:scale-95 active:scale-90 cursor-pointer  text-white rounded-md"
+                      onClick={() => removeFromCart(product.id)}
+                    >
+                      <MdDeleteForever />
                     </button>
                   </div>
                 ) : (
