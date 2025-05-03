@@ -2,12 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { FaArrowUp } from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
-import { onCartEvent } from "@/lib/products-store"; // pastikan path-nya sesuai
+import { AnimatePresence, motion } from "framer-motion";
+import { onCartEvent } from "@/lib/products-store";
+
+type CartNotif = {
+  id: string;
+  type: "ADD_PRODUCT" | "REMOVE_PRODUCT";
+  name: string;
+};
 
 export default function GoToUp() {
   const [showButton, setShowButton] = useState(false);
-  const [notif, setNotif] = useState<{ type: "ADD_PRODUCT" | "REMOVE_PRODUCT"; name: string } | null>(null);
+  const [notifications, setNotifications] = useState<CartNotif[]>([]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,8 +25,13 @@ export default function GoToUp() {
 
   useEffect(() => {
     const unsubscribe = onCartEvent((type, name) => {
-      setNotif({ type, name });
-      setTimeout(() => setNotif(null), 2000);
+      const id = Date.now().toString() + Math.random().toString(); // unik
+      const notif = { id, type, name };
+      setNotifications((prev) => [notif, ...prev]);
+
+      setTimeout(() => {
+        setNotifications((prev) => prev.filter((n) => n.id !== id));
+      }, 2000);
     });
 
     return () => unsubscribe();
@@ -32,6 +43,7 @@ export default function GoToUp() {
 
   return (
     <>
+      {/* Tombol Scroll Up */}
       <AnimatePresence>
         {showButton && (
           <motion.button
@@ -48,24 +60,27 @@ export default function GoToUp() {
         )}
       </AnimatePresence>
 
-      {/* Notifikasi produk */}
-      <AnimatePresence>
-        {notif && (
-          <motion.div
-            key="notif"
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 50 }}
-            className="fixed bottom-20 right-4 z-50 bg-white text-black shadow-md rounded-xl px-4 py-2"
-          >
-            {notif.type === "ADD_PRODUCT" ? (
-              <p>✅ Ditambahkan: <strong>{notif.name}</strong></p>
-            ) : (
-              <p>❌ Dihapus: <strong>{notif.name}</strong></p>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Stacked Notifications */}
+      <div className="fixed bottom-20 right-4 z-50 flex flex-col gap-2 items-end">
+        <AnimatePresence initial={false}>
+          {notifications.map((notif) => (
+            <motion.div
+              key={notif.id}
+              layout
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 30 }}
+              className="bg-white text-black shadow-lg rounded-xl px-4 py-2 min-w-[200px]"
+            >
+              {notif.type === "ADD_PRODUCT" ? (
+                <p>✅ Ditambahkan: <strong>{notif.name}</strong></p>
+              ) : (
+                <p>❌ Dihapus: <strong>{notif.name}</strong></p>
+              )}
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
     </>
   );
 }
