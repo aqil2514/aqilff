@@ -1,27 +1,7 @@
 import { Contacts } from "@/@types/interfaces";
-import { Category } from "@/components/Hero/interface";
 import { CiMapPin } from "react-icons/ci";
 import { FaPaperPlane, FaPhoneAlt } from "react-icons/fa";
 import { MdAccessTimeFilled } from "react-icons/md";
-
-export const categories: Category[] = [
-  {
-    imageSrc: "/nugget.jpg",
-    caption: "Nugget",
-  },
-  {
-    imageSrc: "/Otak-otak.jpg",
-    caption: "Otak-otak",
-  },
-  {
-    imageSrc: "/Kornet.webp",
-    caption: "Kornet",
-  },
-  {
-    imageSrc: "/Sosis.jpg",
-    caption: "Sosis",
-  },
-];
 
 export const contactData: Contacts[] = [
   {
