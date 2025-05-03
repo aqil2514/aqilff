@@ -1,5 +1,4 @@
 "use client";
-import { Product } from "@/@types/interfaces";
 import { comicRelief, poppins } from "@/app/fonts";
 import { useProductStore } from "@/lib/products-store";
 import { formatRupiah } from "@/utils/formatRupiah";
@@ -10,8 +9,9 @@ import { MdDeleteForever } from "react-icons/md";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { useEffect, useState } from "react";
+import { useHomeData } from "@/components/Providers/HomeProvider";
 
-export default function Products({ products }: { products: Product[] }) {
+export default function Products() {
   const {
     addToCart,
     products: cartProducts,
@@ -20,6 +20,7 @@ export default function Products({ products }: { products: Product[] }) {
     removeFromCart,
   } = useProductStore();
 
+  const { products } = useHomeData();
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.2 });
   const [hasAnimated, setHasAnimated] = useState(false);
 
@@ -84,7 +85,9 @@ export default function Products({ products }: { products: Product[] }) {
                       >
                         <FaChevronUp />
                       </button>
-                      <p className={`text-white ${comicRelief.className} font-semibold`}>
+                      <p
+                        className={`text-white ${comicRelief.className} font-semibold`}
+                      >
                         {cartProduct?.quantity}
                       </p>
                       <button
@@ -107,7 +110,9 @@ export default function Products({ products }: { products: Product[] }) {
                     className="flex gap-1 items-center bg-red-500 px-2 py-1 text-white rounded-md hover:scale-95 active:scale-90"
                   >
                     <BiPlus />
-                    <p className={`${poppins.className} text-sm md:text-lg`}>Keranjang</p>
+                    <p className={`${poppins.className} text-sm md:text-lg`}>
+                      Keranjang
+                    </p>
                   </button>
                 )}
               </div>

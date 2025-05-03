@@ -2,9 +2,10 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { poppins, comicRelief } from "@/app/fonts";
-import { Category } from "@/@types/interfaces";
+import { useHomeData } from "@/components/Providers/HomeProvider";
 
-export default function Categories({ categories }: { categories: Category[] }) {
+export default function Categories() {
+  const { categories } = useHomeData();
   return (
     <div className="w-full h-full relative bg-center bg-no-repeat bg-cover bg-black/50 bg-blend-darken bg-[url('/hero-bottom-section-1.jpg')]">
       <motion.div

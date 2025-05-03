@@ -1,24 +1,20 @@
-import Navbar from "@/components/Navbar";
-import HeroSection from "@/components/Hero";
-import Products from "@/components/Products";
-import AboutUs from "@/components/AboutUs";
-// import Gallery from "@/components/06_Gallery";
-import ContactUs from "@/components/ContactUs";
-import Footer from "@/components/Footer";
-import { getProducts } from "@/lib/supabase-fetch";
+import HomeRoute from "@/components/Routes/Home";
+import { getCategories, getProducts } from "@/lib/supabase-fetch";
+
+const getAllData = async () => {
+  try {
+    const [products, categories] = await Promise.all([
+      getProducts(),
+      getCategories(),
+    ]);
+    return { products, categories };
+  } catch (err) {
+    console.error("Failed to fetch data:", err);
+    return { products: [], categories: [] };
+  }
+};
 
 export default async function LandingPage() {
-  const products = await getProducts();
-
-  return (
-    <div>
-      <Navbar />
-      <HeroSection />
-      <Products products={products} />
-      <AboutUs />
-      {/* <Gallery /> */}
-      <ContactUs />
-      <Footer />
-    </div>
-  );
+  const { categories, products } = await getAllData();
+  return <HomeRoute categories={categories} products={products} />;
 }
