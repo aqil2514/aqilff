@@ -13,6 +13,22 @@ interface ProductStore {
   clearCart: () => void;
 }
 
+type CartEventType = "ADD_PRODUCT" | "REMOVE_PRODUCT";
+
+let cartListeners: ((type: CartEventType, name: string) => void)[] = [];
+
+export function onCartEvent(callback: (type: CartEventType, name: string) => void) {
+  cartListeners.push(callback);
+  return () => {
+    cartListeners = cartListeners.filter((cb) => cb !== callback);
+  };
+}
+
+function triggerCartEvent(type: CartEventType, name: string) {
+  cartListeners.forEach((cb) => cb(type, name));
+}
+
+
 export const useProductStore = create(
   persist<ProductStore>(
     (set) => ({
@@ -24,12 +40,12 @@ export const useProductStore = create(
           if (existing) {
             return {
               products: state.products.map((p) =>
-                p.id === product.id
-                  ? { ...p, quantity: p.quantity + 1 }
-                  : p
+                p.id === product.id ? { ...p, quantity: p.quantity + 1 } : p
               ),
             };
           } else {
+            // Trigger event saat produk baru ditambahkan
+            triggerCartEvent("ADD_PRODUCT", product.name);
             return {
               products: [...state.products, { ...product, quantity: 1 }],
             };
@@ -46,21 +62,24 @@ export const useProductStore = create(
       decrease: (id) =>
         set((state) => ({
           products: state.products
-            .map((p) =>
-              p.id === id ? { ...p, quantity: p.quantity - 1 } : p
-            )
+            .map((p) => (p.id === id ? { ...p, quantity: p.quantity - 1 } : p))
             .filter((p) => p.quantity > 0),
         })),
 
       removeFromCart: (id) =>
-        set((state) => ({
-          products: state.products.filter((p) => p.id !== id),
-        })),
-
+        set((state) => {
+          const product = state.products.find((p) => p.id === id);
+          if (product) {
+            triggerCartEvent("REMOVE_PRODUCT", product.name);
+          }
+          return {
+            products: state.products.filter((p) => p.id !== id),
+          };
+        }),
       clearCart: () => set(() => ({ products: [] })),
     }),
     {
-      name: "aqilff-cart-storage", // nama key di localStorage
+      name: "aqilff-cart-storage",
     }
   )
 );
