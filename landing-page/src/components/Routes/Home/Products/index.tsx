@@ -10,6 +10,8 @@ import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { useEffect, useState } from "react";
 import { useHomeData } from "@/components/Providers/HomeProvider";
+import Button from "@/components/Reuseable/button";
+import { useRouter } from "next/navigation";
 
 export default function Products() {
   const {
@@ -23,6 +25,7 @@ export default function Products() {
   const { products } = useHomeData();
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.2 });
   const [hasAnimated, setHasAnimated] = useState(false);
+  const router = useRouter()
 
   useEffect(() => {
     if (inView) setHasAnimated(true);
@@ -41,7 +44,7 @@ export default function Products() {
       </h2>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-4 md:px-8">
-        {products.map((product, i) => {
+        {products.slice(0, 8).map((product, i) => {
           const isExist = cartProducts.some((pro) => pro.id === product.id);
           const cartProduct = cartProducts.find((pro) => pro.id === product.id);
 
@@ -120,6 +123,13 @@ export default function Products() {
           );
         })}
       </div>
+      <Button
+        variant="danger"
+        className={`block ${poppins.className} mt-8 md:mt-4 mx-auto cursor-pointer`}
+        onClick={() => router.push("/products")}
+      >
+        Produk Lainnya ▶️
+      </Button>
     </section>
   );
 }

@@ -27,7 +27,7 @@ export default function Categories() {
         </motion.h2>
 
         <div className="flex flex-wrap justify-center gap-6">
-          {categories.map((cat, i) => (
+          {categories.slice(0, 4).map((cat, i) => (
             <motion.figure
               key={i}
               variants={{
