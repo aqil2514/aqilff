@@ -6,6 +6,7 @@ import { GoogleAnalytics } from '@next/third-parties/google'
 import Header from "@/components/Layout/Header";
 import GoToUp from "@/components/Layout/GoToUp";
 import Navbar from "@/components/Layout/Navbar";
+import Footer from "@/components/Layout/Footer";
 
 export const metadata: Metadata = {
   title: "Aqil Frozen Food",
@@ -39,6 +40,7 @@ export default function RootLayout({
         <Header />
         <Navbar />
         {children}
+        <Footer />
         <GoToUp />
         <GoogleAnalytics gaId="G-SCHVWBMSZ0" />
       </body>
