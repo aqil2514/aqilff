@@ -1,7 +1,7 @@
 "use client";
 import { comicRelief, tagesschrift, tuffy } from "@/app/fonts";
 import { useProductStore } from "@/lib/products-store";
-import { Links } from "@/utils/navlinks";
+import { homeLinks } from "@/utils/navlinks";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
@@ -9,12 +9,14 @@ import { FaCartShopping } from "react-icons/fa6";
 import { IoMenu } from "react-icons/io5";
 import AndroidMenu from "./MenuAndroid";
 import CartMenu from "./MenuCart";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const [onMenuActive, setOnMenuActive] = useState<boolean>(false);
   const [onCartActive, setOnCartActive] = useState<boolean>(false);
   const { products } = useProductStore();
   const totalItem = products.length;
+  const router = useRouter()
 
   const menuSheetHandler = () => {
     return setOnMenuActive(true);
@@ -36,7 +38,8 @@ export default function Navbar() {
           />
         </figure>
         <h1
-          className={`font-extrabold text-md sm:text-xl ${tagesschrift.className}`}
+          className={`font-extrabold text-md sm:text-xl cursor-pointer ${tagesschrift.className}`}
+          onClick={() => router.push("/")}
         >
           <span className="text-[#df1111]">Aqil</span>{" "}
           <span className="text-[#ffb801]">Frozen </span>{" "}
@@ -49,7 +52,7 @@ export default function Navbar() {
 
       {/* Navbar Links */}
       <div className="hidden sm:flex gap-4 items-center">
-        {Links.map((link, i) => (
+        {homeLinks.map((link, i) => (
           <Link
             href={link.url}
             key={i}

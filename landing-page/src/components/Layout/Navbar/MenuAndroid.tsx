@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { SheetProps } from "./interface";
 import { comicRelief, tagesschrift } from "@/app/fonts";
-import { Links } from "@/utils/navlinks";
+import { homeLinks } from "@/utils/navlinks";
 import Link from "next/link";
 
 export default function AndroidMenu({setState, state}:SheetProps){
@@ -23,7 +23,7 @@ export default function AndroidMenu({setState, state}:SheetProps){
             Menu
           </p>
           <div className="flex flex-col gap-2">
-            {Links.map((link, i) => (
+            {homeLinks.map((link, i) => (
               <Link
                 href={link.url}
                 key={i}

@@ -4,22 +4,22 @@ interface NavbarLink {
     label: string;
   }
   
-export const Links: NavbarLink[] = [
+export const homeLinks: NavbarLink[] = [
     {
       label: "Home",
-      url: "#home",
+      url: "/",
     },
     {
       label: "Produk",
-      url: "#product",
+      url: "/#product",
     },
     {
       label: "Tentang Kami",
-      url: "#aboutus",
+      url: "/#aboutus",
     },
     {
       label: "Kontak Kami",
-      url: "#contactus",
+      url: "/#contactus",
     },
   ];
   

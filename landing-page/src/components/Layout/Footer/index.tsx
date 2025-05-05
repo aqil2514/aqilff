@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { poppins } from "@/app/fonts";
 import { generateWaUrl } from "@/utils/whatsappUrl";
-import { Links } from "@/utils/navlinks";
+import { homeLinks } from "@/utils/navlinks";
 
 export default function Footer() {
   return (
@@ -19,7 +19,7 @@ const LeftSide = () => {
     <span
       className={`flex flex-wrap gap-4 ${poppins.className} justify-center sm:justify-start`}
     >
-      {Links.map((link, i) => (
+      {homeLinks.map((link, i) => (
         <Link
           key={i}
           href={link.url}

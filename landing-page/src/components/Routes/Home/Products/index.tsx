@@ -31,6 +31,8 @@ export default function Products() {
     if (inView) setHasAnimated(true);
   }, [inView]);
 
+  const filteredProducts = products.filter((prod) => prod.is_active).slice(0,8);
+
   return (
     <section
       id="product"
@@ -44,7 +46,7 @@ export default function Products() {
       </h2>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-4 md:px-8">
-        {products.slice(0, 8).map((product, i) => {
+        {filteredProducts.map((product, i) => {
           const isExist = cartProducts.some((pro) => pro.id === product.id);
           const cartProduct = cartProducts.find((pro) => pro.id === product.id);
 
