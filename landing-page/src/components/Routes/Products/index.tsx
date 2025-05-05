@@ -1,14 +1,14 @@
 "use client";
 
-import { Product } from "@/@types/interfaces";
+import { Category, Product } from "@/@types/interfaces";
 import ProductsProvider from "@/components/Providers/ProductsProvider";
 import ProductList from "./ProductList";
 import MainWrapper from "@/components/Reuseable/main-wrapper";
 import ProductFilter from "./ProductFilter";
 
-export default function ProductsRoute({ products }: { products: Product[] }) {
+export default function ProductsRoute({ products, category }: { products: Product[], category:Category[] }) {
   return (
-    <ProductsProvider products={products}>
+    <ProductsProvider products={products} category={category}>
       <MainWrapper background="gradientRedToOrange">
         <ProductFilter />
         <ProductList />

@@ -1,8 +1,9 @@
 import React from "react";
-import SearchName from "./SearchName";
+import SearchName from "./C_SearchName";
 import { FaFilter, FaSearch } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
-import { useProductFilterLogic } from "./logic";
+import { useProductFilterLogic } from "./logic/useProductFilterLogic";
+import FilterProducts from "./C_Filter";
 
 export default function ProductFilter() {
   const {
@@ -11,6 +12,7 @@ export default function ProductFilter() {
     isSearchActive,
     toggleFilter,
     toggleSearch,
+    filterCount,
   } = useProductFilterLogic();
 
   return (
@@ -26,7 +28,20 @@ export default function ProductFilter() {
           <FaSearch onClick={toggleSearch} className="cursor-pointer" />
         )}
         {!isSearchActive && (
-          <FaFilter onClick={toggleFilter} className="cursor-pointer" />
+          <div className="relative">
+            {filterCount > 0 && (
+              <span
+                onClick={toggleFilter}
+                className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-semibold rounded-full px-2 py-0.5 shadow cursor-pointer"
+              >
+                {filterCount}
+              </span>
+            )}
+            <FaFilter
+              onClick={toggleFilter}
+              className="cursor-pointer text-white"
+            />
+          </div>
         )}
       </div>
 
@@ -51,7 +66,7 @@ export default function ProductFilter() {
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
           >
-            <p className="text-white">Filter Coming Soon</p>
+            <FilterProducts />
           </motion.div>
         )}
       </AnimatePresence>

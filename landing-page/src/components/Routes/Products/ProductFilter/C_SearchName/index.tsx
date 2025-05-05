@@ -1,4 +1,4 @@
-import { useSearchNameLogic } from "./logic";
+import { useSearchNameLogic } from "../logic/useSearchNameLogic";
 
 export default function SearchName() {
   const { searchHandler, filter } = useSearchNameLogic();

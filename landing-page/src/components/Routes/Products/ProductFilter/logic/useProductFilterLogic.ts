@@ -3,7 +3,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export function useProductFilterLogic() {
-  const { products, setFilteredProducts } = useProductsData();
+  const { products, setFilteredProducts, filter } = useProductsData();
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -43,6 +43,13 @@ export function useProductFilterLogic() {
     }
   };
 
+ const filterCount = Object.entries(filter).reduce((count, [key, value]) => {
+  if (key === "category" && value !== "") count++;
+  if (key === "inStockOnly" && value === true) count++;
+  return count;
+}, 0);
+
+
   return {
     isSearchActive,
     setIsSearchActive,
@@ -51,35 +58,6 @@ export function useProductFilterLogic() {
     isActive,
     toggleFilter,
     toggleSearch,
+    filterCount
   };
-}
-
-export function useSearchNameLogic() {
-  const { setFilter, filter, products, setFilteredProducts } =
-    useProductsData();
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
-  // Sinkronisasi dari URL ke state
-  useEffect(() => {
-    const query = searchParams.get("q") || "";
-    setFilter((prev) => ({ ...prev, productName: query }));
-  }, [searchParams, setFilter]);
-
-  // Sinkronisasi dari state ke filteredProducts
-  useEffect(() => {
-    const name = filter.productName?.toLowerCase() || "";
-    const newProducts = products.filter((prod) =>
-      prod.name.toLowerCase().includes(name)
-    );
-    setFilteredProducts(newProducts);
-  }, [filter.productName, products, setFilteredProducts]);
-
-  const searchHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const name = e.target.value;
-    setFilter((prev) => ({ ...prev, productName: name }));
-    router.replace(`?search=true&q=${name}`);
-  };
-
-  return { searchHandler, filter };
 }
