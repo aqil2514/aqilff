@@ -20,6 +20,7 @@ export interface Product {
   id: string;
   name: string;
   price: number;
+  parent_category: "Frozen Food" | "Non Frozen Food";
   category: string;
   image_src: string;
   description?: string;
