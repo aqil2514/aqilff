@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Credentials, useRegisterData } from "../providers/RegisterProvider";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 export function useKeyInputLogics() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -30,6 +31,13 @@ export function useKeyInputLogics() {
       const role = data.role as string;
 
       setIsValidKey(isSuccess);
+
+      if (isSuccess) {
+        toast("Token valid! Silahkan lanjutkan pendaftaran", { type: "success" });
+      } else {
+        toast("Token tidak valid! Silahkan coba lagi", { type: "error" });
+      }
+
       setRole(role);
     } catch (error) {
       console.error(error);
@@ -76,5 +84,11 @@ export function useRegisterFormLogics() {
     }
   };
 
-  return { isValidkey, credentials, credentialsChangeHandler, submitRegister, isLoading };
+  return {
+    isValidkey,
+    credentials,
+    credentialsChangeHandler,
+    submitRegister,
+    isLoading,
+  };
 }

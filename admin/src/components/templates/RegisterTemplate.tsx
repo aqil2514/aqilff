@@ -87,8 +87,13 @@ const KeyInput = () => {
 };
 
 const RegisterForm = () => {
-  const { isValidkey, credentials, credentialsChangeHandler, submitRegister } =
-    useRegisterFormLogics();
+  const {
+    isValidkey,
+    credentials,
+    credentialsChangeHandler,
+    submitRegister,
+    isLoading,
+  } = useRegisterFormLogics();
 
   if (!isValidkey) return null;
 
@@ -109,6 +114,7 @@ const RegisterForm = () => {
             Email
           </Label>
           <Input
+            disabled={isLoading}
             id="email"
             value={credentials.email}
             onChange={(e) => credentialsChangeHandler(e, "email")}
@@ -119,6 +125,7 @@ const RegisterForm = () => {
             Nomor Telepon
           </Label>
           <Input
+            disabled={isLoading}
             id="phone-number"
             value={credentials.phoneNumber}
             onChange={(e) => credentialsChangeHandler(e, "phoneNumber")}
@@ -129,6 +136,7 @@ const RegisterForm = () => {
             Kata Sandi
           </Label>
           <Input
+            disabled={isLoading}
             id="password"
             type="password"
             value={credentials.password}
@@ -140,6 +148,7 @@ const RegisterForm = () => {
             Konfirmasi Kata Sandi
           </Label>
           <Input
+            disabled={isLoading}
             id="confirm-password"
             type="password"
             value={credentials.confirmPassword}
@@ -147,7 +156,14 @@ const RegisterForm = () => {
           />
         </div>
         <DialogFooter>
-          <Button type="submit" className="cursor-pointer" onClick={submitRegister}>Daftar</Button>
+          <Button
+            type="submit"
+            disabled={isLoading}
+            className="cursor-pointer"
+            onClick={submitRegister}
+          >
+            {isLoading ? "Mendaftar..." : "Daftar"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
