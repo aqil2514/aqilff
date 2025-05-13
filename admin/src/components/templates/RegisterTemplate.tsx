@@ -4,15 +4,28 @@ import { Button } from "../atoms/button";
 import { Input } from "../atoms/input";
 import { Label } from "../atoms/label";
 import MainWrapper from "../atoms/main-wrapper";
-import AutoOpenDialog from "../organisms/AutoOpenDialog";
+import AutoOpenDialog from "../organisms/DialogAutoOpen";
 import RegisterProvider from "../providers/RegisterProvider";
-import { useKeyInputLogics } from "../logics/registerLogics";
-import { DialogClose, DialogFooter } from "../molecules/dialog";
+import {
+  useKeyInputLogics,
+  useRegisterFormLogics,
+} from "../logics/registerLogics";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../molecules/dialog";
 
 export default function RegisterTemplate() {
   return (
     <RegisterProvider>
-      <MainWrapper>
+      <MainWrapper className="flex-row">
+        <RegisterForm />
         <KeyInput />
       </MainWrapper>
     </RegisterProvider>
@@ -26,12 +39,17 @@ const KeyInput = () => {
     keySubmitHandler,
     isLoading,
     isValidkey,
+    isTouchedKey,
     role,
   } = useKeyInputLogics();
+
+  const isRejected = isTouchedKey && !isValidkey && !isLoading;
+  const isAccepted = isValidkey && !isLoading;
 
   return (
     <AutoOpenDialog
       title="Kode Undangan"
+      triggerText="Kode Undangan"
       description="Masukkan kode undangan yang didapat dari pihak terkait"
     >
       <div>
@@ -43,10 +61,8 @@ const KeyInput = () => {
           disabled={isLoading}
           onChange={keyChangeHandler}
         />
-        {!isValidkey && !isLoading && (
-          <p className="text-red-500">Kunci tidak diterima...</p>
-        )}
-        {isValidkey && !isLoading && (
+        {isRejected && <p className="text-red-500">Kunci tidak diterima...</p>}
+        {isAccepted && (
           <p className="text-green-500">
             Kunci Valid. Anda akan mendaftar sebagai {role}
           </p>
@@ -67,5 +83,73 @@ const KeyInput = () => {
         )}
       </DialogFooter>
     </AutoOpenDialog>
+  );
+};
+
+const RegisterForm = () => {
+  const { isValidkey, credentials, credentialsChangeHandler, submitRegister } =
+    useRegisterFormLogics();
+
+  if (!isValidkey) return null;
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline">Daftar Akun</Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Daftar Keanggotaan</DialogTitle>
+          <DialogDescription>
+            Silahkan lengkapi profil di bawah ini.
+          </DialogDescription>
+        </DialogHeader>
+        <div>
+          <Label htmlFor="email" className="mb-2">
+            Email
+          </Label>
+          <Input
+            id="email"
+            value={credentials.email}
+            onChange={(e) => credentialsChangeHandler(e, "email")}
+          />
+        </div>
+        <div>
+          <Label htmlFor="phone-number" className="mb-2">
+            Nomor Telepon
+          </Label>
+          <Input
+            id="phone-number"
+            value={credentials.phoneNumber}
+            onChange={(e) => credentialsChangeHandler(e, "phoneNumber")}
+          />
+        </div>
+        <div>
+          <Label htmlFor="password" className="mb-2">
+            Kata Sandi
+          </Label>
+          <Input
+            id="password"
+            type="password"
+            value={credentials.password}
+            onChange={(e) => credentialsChangeHandler(e, "password")}
+          />
+        </div>
+        <div>
+          <Label htmlFor="confirm-password" className="mb-2">
+            Konfirmasi Kata Sandi
+          </Label>
+          <Input
+            id="confirm-password"
+            type="password"
+            value={credentials.confirmPassword}
+            onChange={(e) => credentialsChangeHandler(e, "confirmPassword")}
+          />
+        </div>
+        <DialogFooter>
+          <Button type="submit" className="cursor-pointer" onClick={submitRegister}>Daftar</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
