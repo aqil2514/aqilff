@@ -1,7 +1,10 @@
-import { supabase } from "@/lib/supabaseClient";
+import DashboardTemplate from "@/components/templates/DashboardTemplate";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Dashboard",
+};
 
 export default async function DashboardPage() {
-  const user = await supabase.auth.getUser();
-  console.log(user);
-  return <div>Dashboard</div>;
+  return <DashboardTemplate />;
 }

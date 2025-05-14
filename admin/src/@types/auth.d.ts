@@ -44,21 +44,43 @@ export interface SupabaseAuthUser {
   is_anonymous: boolean;
 }
 
-export interface SupabaseUser {
+export interface User {
   id: string;
   aud: string;
-  email: string | null;
-  phone: string | null;
-  created_at: string;
+  role: string;
+  email: string;
+  email_confirmed_at: string;
+  phone: string;
+  confirmation_sent_at: string;
+  confirmed_at: string;
+  last_sign_in_at: string;
   app_metadata: {
     provider: string;
-    [key: string]: unknown;
+    providers: string[];
   };
   user_metadata: {
-    [key: string]: unknown;
+    email: string;
+    email_verified: boolean;
+    phone_verified: boolean;
+    sub: string;
   };
-  identities: Array<unknown>;
-  last_sign_in_at: string | null;
-  role: string;
+  identities: Array<{
+    identity_id: string;
+    id: string;
+    user_id: string;
+    identity_data: {
+      email: string;
+      email_verified: boolean;
+      phone_verified: boolean;
+      sub: string;
+    };
+    provider: string;
+    last_sign_in_at: string;
+    created_at: string;
+    updated_at: string;
+    email: string;
+  }>;
+  created_at: string;
   updated_at: string;
+  is_anonymous: boolean;
 }

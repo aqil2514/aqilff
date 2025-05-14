@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "Login",
 };
 
-export default function AuthPage() {
+export default async function AuthPage() {
+  
   return <AuthTemplate />;
 }

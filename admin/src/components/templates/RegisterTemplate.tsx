@@ -20,6 +20,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../molecules/dialog";
+import { useRouter } from "next/navigation";
 
 export default function RegisterTemplate() {
   return (
@@ -27,6 +28,7 @@ export default function RegisterTemplate() {
       <MainWrapper className="flex-row">
         <RegisterForm />
         <KeyInput />
+        <BackToLogin />
       </MainWrapper>
     </RegisterProvider>
   );
@@ -93,7 +95,10 @@ const RegisterForm = () => {
     credentialsChangeHandler,
     submitRegister,
     isLoading,
+    errors
   } = useRegisterFormLogics();
+
+  const {confirmPassword, email, password, phoneNumber} = errors;
 
   if (!isValidkey) return null;
 
@@ -119,6 +124,7 @@ const RegisterForm = () => {
             value={credentials.email}
             onChange={(e) => credentialsChangeHandler(e, "email")}
           />
+          {email && <p className="text-red-500">{email}</p>}
         </div>
         <div>
           <Label htmlFor="phone-number" className="mb-2">
@@ -130,6 +136,7 @@ const RegisterForm = () => {
             value={credentials.phoneNumber}
             onChange={(e) => credentialsChangeHandler(e, "phoneNumber")}
           />
+          {phoneNumber && <p className="text-red-500">{phoneNumber}</p>}
         </div>
         <div>
           <Label htmlFor="password" className="mb-2">
@@ -141,7 +148,8 @@ const RegisterForm = () => {
             type="password"
             value={credentials.password}
             onChange={(e) => credentialsChangeHandler(e, "password")}
-          />
+            />
+            {password && <p className="text-red-500">{password}</p>}
         </div>
         <div>
           <Label htmlFor="confirm-password" className="mb-2">
@@ -154,6 +162,7 @@ const RegisterForm = () => {
             value={credentials.confirmPassword}
             onChange={(e) => credentialsChangeHandler(e, "confirmPassword")}
           />
+            {confirmPassword && <p className="text-red-500">{confirmPassword}</p>}
         </div>
         <DialogFooter>
           <Button
@@ -169,3 +178,10 @@ const RegisterForm = () => {
     </Dialog>
   );
 };
+
+const BackToLogin = () => {
+  const router = useRouter();
+  return(
+    <Button variant={"outline"} onClick={() => router.push("/auth")}>Login</Button>
+  )
+}

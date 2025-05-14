@@ -7,9 +7,11 @@ import React, {
 
 export interface Credentials {
   email: string;
+  key: string;
   password: string;
   confirmPassword: string;
   phoneNumber: string;
+  role: string;
 }
 
 interface RegisterContextState {
@@ -41,7 +43,9 @@ export default function RegisterProvider({ children }: RegisterProviderProps) {
     confirmPassword: "",
     email: "",
     password: "",
+    key: "",
     phoneNumber: "",
+    role: "",
   });
   const [isTouchedKey, setIsTouchedKey] = useState<boolean>(false);
 
