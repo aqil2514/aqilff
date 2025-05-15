@@ -6,7 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../molecules/dialog";
+} from "../ui/dialog";
 import { Button } from "../ui/button";
 
 interface AutoOpenDialogProps {

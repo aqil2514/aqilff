@@ -19,7 +19,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../molecules/dialog";
+} from "../ui/dialog";
 import { useRouter } from "next/navigation";
 
 export default function RegisterTemplate() {
