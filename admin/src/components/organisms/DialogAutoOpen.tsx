@@ -1,5 +1,4 @@
 import React from "react";
-import { Button } from "../atoms/button";
 import {
   Dialog,
   DialogContent,
@@ -8,6 +7,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../molecules/dialog";
+import { Button } from "../ui/button";
 
 interface AutoOpenDialogProps {
   children: React.ReactNode;

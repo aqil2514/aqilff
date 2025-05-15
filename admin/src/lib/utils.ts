@@ -15,7 +15,7 @@ export async function getUserWithRole() {
 
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
-    .select("role")
+    .select("*")
     .eq("id", user.id)
     .single();
 
@@ -27,6 +27,8 @@ export async function getUserWithRole() {
   return {
     ...user,
     role: profile.role,
+    full_name: profile.full_name,
+    nick_name: profile.nick_name,
   } as User;
 }
 
@@ -36,5 +38,5 @@ export async function logoutUser() {
     console.error("Gagal logout:", error.message);
     throw error;
   }
-  window.location.replace("/")
+  window.location.replace("/");
 }

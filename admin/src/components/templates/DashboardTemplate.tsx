@@ -1,8 +1,8 @@
 "use client";
 
 import { logoutUser } from "@/lib/utils";
-import { Button } from "../atoms/button";
 import MainWrapper from "../atoms/main-wrapper";
+import { Button } from "../ui/button";
 
 export default function DashboardTemplate() {
   

@@ -1,8 +1,8 @@
 "use client";
 import React from "react";
-import { Button } from "../atoms/button";
-import { Input } from "../atoms/input";
-import { Label } from "../atoms/label";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 import MainWrapper from "../atoms/main-wrapper";
 import AutoOpenDialog from "../organisms/DialogAutoOpen";
 import RegisterProvider from "../providers/RegisterProvider";

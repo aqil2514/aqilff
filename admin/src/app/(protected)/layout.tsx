@@ -1,6 +1,9 @@
 "use client";
 import MainWrapper from "@/components/atoms/main-wrapper";
+import Header from "@/components/organisms/Header";
+import { AppSidebar } from "@/components/organisms/Sidebar";
 import { useSession } from "@/components/providers/SessionProvider";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
@@ -19,10 +22,20 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
   }, [loading, user, router]);
 
   if (loading || !user) {
-    return <MainWrapper>
-      <p>Memuat...</p>
-    </MainWrapper>;
+    return (
+      <MainWrapper>
+        <p>Memuat...</p>
+      </MainWrapper>
+    );
   }
 
-  return <>{children}</>;
+  return (
+    <SidebarProvider>
+      <AppSidebar />
+      <main className="w-full">
+        <Header />
+        {children}
+      </main>
+    </SidebarProvider>
+  );
 }

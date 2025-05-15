@@ -1,12 +1,12 @@
 "use client";
-import { Input } from "../atoms/input";
-import { Label } from "../atoms/label";
-import { Button } from "../atoms/button";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
 import MainWrapper from "../atoms/main-wrapper";
 import { useLoginFormLogics } from "../logics/authLogics";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useSession } from "../providers/SessionProvider";
+import { Label } from "../ui/label";
 
 export default function AuthTemplate() {
   const { user, loading } = useSession();
@@ -19,11 +19,12 @@ export default function AuthTemplate() {
   }, [loading, user, router]);
 
   // Jangan render apapun selama loading atau jika user sudah ada (biar gak flicker)
-  if (loading || user) return(
-    <MainWrapper>
-      <p>Memuat...</p>
-    </MainWrapper>
-  );
+  if (loading || user)
+    return (
+      <MainWrapper>
+        <p>Memuat...</p>
+      </MainWrapper>
+    );
 
   return (
     <MainWrapper>
