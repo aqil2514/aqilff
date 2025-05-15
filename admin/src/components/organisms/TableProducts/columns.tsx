@@ -1,0 +1,70 @@
+"use client";
+
+import { ColumnDef } from "@tanstack/react-table";
+import Image from "next/image";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Product } from "@/@types/products";
+
+export const columns: ColumnDef<Product>[] = [
+  {
+    accessorKey: "id",
+    header: "ID",
+  },
+  {
+    accessorKey: "image_src",
+    header: () => <span className="hidden md:inline">Gambar</span>,
+    cell: ({ row }) => (
+      <div className="hidden sm:block w-10 h-10 relative">
+        <Image
+          src={row.getValue("image_src")}
+          alt={row.original.name}
+          fill
+          className="rounded object-cover block mx-auto"
+        />
+      </div>
+    ),
+  },
+  {
+    accessorKey: "name",
+    header: "Nama",
+  },
+  {
+    accessorKey: "category",
+    header: "Kategori",
+  },
+  {
+    accessorKey: "price",
+    header: "Harga",
+    //@ts-expect-error Dari sananya
+    cell: ({ row }) => `Rp ${row.getValue("price").toLocaleString("id-ID")}`,
+  },
+  {
+    accessorKey: "stock",
+    header: "Stok",
+    cell: ({ row }) => `${row.getValue("stock")} pcs`,
+  },
+  {
+    accessorKey: "is_active",
+    header: "Status",
+    cell: ({ row }) => (
+      <Badge variant={row.getValue("is_active") ? "default" : "destructive"}>
+        {row.getValue("is_active") ? "Aktif" : "Nonaktif"}
+      </Badge>
+    ),
+  },
+  {
+    id: "actions",
+    header: "Aksi",
+    cell: () => (
+      <div className="flex gap-2">
+        <Button size="sm" variant="outline" onClick={() => alert("Edit")}>
+          Edit
+        </Button>
+        <Button size="sm" variant="destructive" onClick={() => alert("Hapus")}>
+          Hapus
+        </Button>
+      </div>
+    ),
+  },
+];

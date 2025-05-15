@@ -40,3 +40,33 @@ export async function logoutUser() {
   }
   window.location.replace("/");
 }
+
+// PRODUCT UTILS
+export function formatToRupiah(amount: number | string): string {
+  let formattedAmount: number;
+
+  if (typeof amount === "number") {
+    formattedAmount = amount;
+  } else {
+    formattedAmount = Number(amount);
+    if (isNaN(formattedAmount)) {
+      throw new Error("Kesalahan input: Tidak bisa di-convert ke tipe nomor");
+    }
+  }
+
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(formattedAmount);
+}
+
+export function formatToIndonesianDate(dateString: string): string {
+  const date = new Date(dateString);
+  return new Intl.DateTimeFormat('id-ID', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(date);
+}
