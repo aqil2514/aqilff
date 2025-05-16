@@ -1,0 +1,1 @@
+export const noImageSrc = "/image/No_Image_Available.jpg"
