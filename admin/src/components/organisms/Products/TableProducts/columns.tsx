@@ -18,7 +18,7 @@ export const columns: ColumnDef<Product>[] = [
     cell: ({ row }) => (
       <div className="hidden sm:block w-10 h-10 relative">
         <Image
-          src={row.getValue("image_src")}
+          src={row.getValue("image_src") ?? "/image/No_Image_Available.jpg"}
           alt={row.original.name}
           fill
           className="rounded object-cover block mx-auto"

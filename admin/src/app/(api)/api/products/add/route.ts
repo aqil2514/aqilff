@@ -4,7 +4,8 @@ import { NextRequest, NextResponse } from "next/server";
 interface ClientData {
   id: string;
   name: string;
-  price: string;
+  price: number;
+  stock: number;
   parent_category: string;
   category: string;
   description: string;
@@ -16,6 +17,8 @@ export async function POST(req: NextRequest) {
   const formData = await req.formData();
   const data = getFieldData(formData);
   const image = data.file;
+
+  console.log(data);
 
   if (!data.name || !data.price || isNaN(Number(data.price))) {
     return NextResponse.json({ message: "Data tidak valid" }, { status: 400 });
@@ -33,10 +36,11 @@ export async function POST(req: NextRequest) {
   const payload = {
     ...data,
     file: undefined,
-    price: Number(data.price),
   };
 
-  await supabaseAdmin.from("products").insert(payload);
+ const test = await supabaseAdmin.from("products").insert(payload);
+
+console.log(test)
 
   return NextResponse.json(
     { message: "Data berhasil ditambah" },
@@ -47,7 +51,8 @@ export async function POST(req: NextRequest) {
 function getFieldData(formData: FormData): ClientData {
   const id = formData.get("id") as string;
   const name = formData.get("name") as string;
-  const price = formData.get("price") as string;
+  const price = Number(formData.get("price"));
+  const stock = Number(formData.get("stock"));
   const parent_category = formData.get("parent_category") as string;
   const category = formData.get("category") as string;
   const description = formData.get("description") as string;
@@ -61,6 +66,7 @@ function getFieldData(formData: FormData): ClientData {
     category,
     description,
     file,
+    stock,
   };
 
   return data;

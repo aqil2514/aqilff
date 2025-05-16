@@ -29,6 +29,8 @@ export const useAddFormProduct = () => {
 
     form.append("id", data.id);
     form.append("category", data.category);
+    form.append("price", String(data.price));
+    form.append("stock", String(data.stock));
     form.append("description", data.description || "");
     form.append("image", selectedFile ?? "");
     form.append("name", data.name);

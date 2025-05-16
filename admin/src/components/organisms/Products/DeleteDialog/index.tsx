@@ -20,7 +20,7 @@ export default function DeleteDialog({ row }: { row: Row<Product> }) {
     useDeleteDialogLogic(row);
 
   return (
-    <Dialog>
+    <Dialog >
       <DialogTrigger asChild>
         <Button size="sm" variant="destructive">
           Hapus
@@ -33,7 +33,7 @@ export default function DeleteDialog({ row }: { row: Row<Product> }) {
         </DialogDescription>
         <div>
           <Image
-            src={image_src}
+            src={image_src ?? "/image/No_Image_Available.jpg"}
             width={256}
             height={256}
             alt={`Gambar ${name}`}
