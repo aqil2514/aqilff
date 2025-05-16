@@ -3,9 +3,9 @@
 import { ColumnDef } from "@tanstack/react-table";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Product } from "@/@types/products";
 import DeleteDialog from "../DeleteDialog";
+import EditProductFormDialog from "../EditForm";
 
 export const columns: ColumnDef<Product>[] = [
   {
@@ -31,8 +31,16 @@ export const columns: ColumnDef<Product>[] = [
     header: "Nama",
   },
   {
+    accessorKey: "parent_category",
+    header: "Kategori Induk",
+  },
+  {
     accessorKey: "category",
     header: "Kategori",
+  },
+  {
+    accessorKey: "description",
+    header: "Deskripsi",
   },
   {
     accessorKey: "price",
@@ -59,9 +67,7 @@ export const columns: ColumnDef<Product>[] = [
     header: "Aksi",
     cell: ({ row }) => (
       <div className="flex gap-2">
-        <Button size="sm" variant="outline" onClick={() => alert("Edit")}>
-          Edit
-        </Button>
+        <EditProductFormDialog row={row} />
         <DeleteDialog row={row} />
       </div>
     ),

@@ -11,7 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Row } from "@tanstack/react-table";
-import { useDeleteDialogLogic } from "./logic";
+import { useDeleteDialogLogic } from "./logics";
 import { formatToRupiah } from "@/lib/utils";
 import Image from "next/image";
 
@@ -26,8 +26,8 @@ export default function DeleteDialog({ row }: { row: Row<Product> }) {
           Hapus
         </Button>
       </DialogTrigger>
-      <DialogContent>
-        <DialogTitle>Hapus Product</DialogTitle>
+      <DialogContent className="h-4/5 overflow-y-auto">
+        <DialogTitle>Hapus Produk</DialogTitle>
         <DialogDescription>
           Konfirmasi lagi! Data yang dihapus tidak bisa dikembalikan.
         </DialogDescription>

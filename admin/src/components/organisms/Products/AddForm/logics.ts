@@ -25,8 +25,6 @@ export const useAddFormProduct = () => {
   ) => {
     const form = new FormData();
 
-    // TODO : Price & Stok beluman
-
     form.append("id", data.id);
     form.append("category", data.category);
     form.append("price", String(data.price));
