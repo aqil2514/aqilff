@@ -72,7 +72,7 @@ function getFieldData(formData: FormData): ClientData {
   return data;
 }
 
-export async function uploadImageToSupabase(
+async function uploadImageToSupabase(
   file: File,
   namePrefix?: string
 ): Promise<string> {

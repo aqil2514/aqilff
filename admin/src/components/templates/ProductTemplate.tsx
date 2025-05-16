@@ -40,6 +40,7 @@ export default function ProductTemplate({ products }: { products: Product[] }) {
   );
 }
 
+// TODO : Selesain ini
 const InputName = ({
   inputRef,
 }: {
