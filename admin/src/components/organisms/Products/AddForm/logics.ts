@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 
 type ProductInputType = Omit<
   Product,
-  "stock" | "is_active" | "created_at" | "updated_at"
+  "is_active" | "created_at" | "updated_at"
 >;
 
 export const useAddFormProduct = () => {
@@ -25,6 +25,8 @@ export const useAddFormProduct = () => {
   ) => {
     const form = new FormData();
 
+    // TODO : Price & Stok beluman
+
     form.append("id", data.id);
     form.append("category", data.category);
     form.append("description", data.description || "");
@@ -38,8 +40,6 @@ export const useAddFormProduct = () => {
       const { data: res } = await axios.postForm("/api/products/add", form);
 
       toast(res.message, { type: "success" });
-
-      console.log(res);
     } catch (error) {
       if (isAxiosError(error)) {
         const data = error.response?.data;

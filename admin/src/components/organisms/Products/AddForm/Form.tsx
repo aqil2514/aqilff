@@ -88,6 +88,19 @@ export default function AddProductForm() {
         )}
       </div>
       <div className="space-y-2">
+        <Label htmlFor="stock">Stok Produk : </Label>
+        <Input
+          disabled={isLoading}
+          id="stock"
+          placeholder="Contoh : 20"
+          type="number"
+          {...register("stock", { required: "Stok produk wajib diisi" })}
+        />
+        {errors.price && (
+          <p className="text-red-500 text-sm">{errors.price.message}</p>
+        )}
+      </div>
+      <div className="space-y-2">
         <Label htmlFor="parent_category">Kategori Induk : </Label>
         <Input
           disabled={isLoading}

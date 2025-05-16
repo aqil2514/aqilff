@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Product } from "@/@types/products";
+import DeleteDialog from "../DeleteDialog";
 
 export const columns: ColumnDef<Product>[] = [
   {
@@ -56,14 +57,12 @@ export const columns: ColumnDef<Product>[] = [
   {
     id: "actions",
     header: "Aksi",
-    cell: () => (
+    cell: ({ row }) => (
       <div className="flex gap-2">
         <Button size="sm" variant="outline" onClick={() => alert("Edit")}>
           Edit
         </Button>
-        <Button size="sm" variant="destructive" onClick={() => alert("Hapus")}>
-          Hapus
-        </Button>
+        <DeleteDialog row={row} />
       </div>
     ),
   },
