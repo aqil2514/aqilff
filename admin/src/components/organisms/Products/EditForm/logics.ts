@@ -2,6 +2,7 @@ import { Product } from "@/@types/products";
 import { noImageSrc } from "@/lib/variables";
 import { Row } from "@tanstack/react-table";
 import axios, { isAxiosError } from "axios";
+import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -13,6 +14,7 @@ type ProductInputType = Omit<
 
 export function useEditProductFormLogics(row: Row<Product>) {
   const id = row.getValue("id") as string;
+  const brand = row.getValue("brand") as string;
   const parent_category = row.getValue("parent_category") as string;
   const category = row.getValue("category") as string;
   const name = row.getValue("name") as string;
@@ -22,6 +24,7 @@ export function useEditProductFormLogics(row: Row<Product>) {
   const stock = row.getValue("stock") as number;
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const router = useRouter();
 
   const {
     register,
@@ -34,6 +37,7 @@ export function useEditProductFormLogics(row: Row<Product>) {
       category,
       name,
       price,
+      brand,
       stock,
       description,
     },
@@ -86,7 +90,9 @@ export function useEditProductFormLogics(row: Row<Product>) {
     const isChangedImage =
       !!selectedFile && imgPreview !== row.original.image_src;
 
+    formData.append("old_id", id);
     formData.append("id", data.id);
+    formData.append("brand", data.brand);
     formData.append("category", data.category);
     formData.append("price", String(data.price));
     formData.append("stock", String(data.stock));
@@ -104,9 +110,7 @@ export function useEditProductFormLogics(row: Row<Product>) {
       );
 
       toast(resData.message, { type: "success" });
-      setTimeout(() => {
-        window.location.reload();
-      }, 3000);
+      router.refresh();
     } catch (error) {
       if (isAxiosError(error)) {
         const data = error.response?.data;

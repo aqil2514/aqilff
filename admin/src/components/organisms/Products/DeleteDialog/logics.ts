@@ -1,6 +1,7 @@
 import { Product } from "@/@types/products";
 import { Row } from "@tanstack/react-table";
 import axios, { isAxiosError } from "axios";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
@@ -12,7 +13,10 @@ export function useDeleteDialogLogic(row: Row<Product>) {
   const price = row.getValue("price") as string;
   const stock = row.getValue("stock") as string;
 
+  const router = useRouter();
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const deleteHandler = async () => {
     try {
@@ -25,10 +29,9 @@ export function useDeleteDialogLogic(row: Row<Product>) {
       });
 
       toast(data.message, { type: "success" });
+      setIsOpen(false);
 
-      setTimeout(() => {
-        window.location.reload();
-      }, 3000);
+      router.refresh();
     } catch (error) {
       if (isAxiosError(error)) {
         const data = error.response?.data;
@@ -48,6 +51,8 @@ export function useDeleteDialogLogic(row: Row<Product>) {
     category,
     price,
     stock,
+    isOpen,
+    setIsOpen,
     isLoading,
     deleteHandler,
   };

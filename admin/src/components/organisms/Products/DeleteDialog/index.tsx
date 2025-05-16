@@ -16,13 +16,23 @@ import { formatToRupiah } from "@/lib/utils";
 import Image from "next/image";
 
 export default function DeleteDialog({ row }: { row: Row<Product> }) {
-  const { name, category, id, image_src, price, stock, deleteHandler, isLoading } =
-    useDeleteDialogLogic(row);
+  const {
+    name,
+    category,
+    id,
+    image_src,
+    price,
+    stock,
+    deleteHandler,
+    isLoading,
+    isOpen,
+    setIsOpen,
+  } = useDeleteDialogLogic(row);
 
   return (
-    <Dialog >
+    <Dialog open={isOpen}>
       <DialogTrigger asChild>
-        <Button size="sm" variant="destructive">
+        <Button size="sm" variant="destructive" onClick={() => setIsOpen(true)}>
           Hapus
         </Button>
       </DialogTrigger>

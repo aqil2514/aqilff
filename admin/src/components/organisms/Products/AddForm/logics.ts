@@ -1,5 +1,6 @@
 import { Product } from "@/@types/products";
 import axios, { isAxiosError } from "axios";
+import { useRouter } from "next/navigation";
 import React, { useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -19,6 +20,7 @@ export const useAddFormProduct = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const router = useRouter();
 
   const productSubmitHandler: SubmitHandler<ProductInputType> = async (
     data
@@ -40,6 +42,7 @@ export const useAddFormProduct = () => {
       const { data: res } = await axios.postForm("/api/products/add", form);
 
       toast(res.message, { type: "success" });
+      router.refresh();
     } catch (error) {
       if (isAxiosError(error)) {
         const data = error.response?.data;

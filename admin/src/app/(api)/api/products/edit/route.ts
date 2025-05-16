@@ -6,10 +6,12 @@ export async function PUT(req: NextRequest) {
   const formData = await req.formData();
   const data = getFormDataValue(formData);
 
+  console.log(data)
+
   const { data: oldProduct, error: getError } = await supabaseAdmin
     .from("products")
     .select("*")
-    .eq("id", data.id)
+    .eq("id", data.oldId)
     .single();
 
   if (getError || !oldProduct) {
@@ -58,15 +60,18 @@ export async function PUT(req: NextRequest) {
   const { error: updateError } = await supabaseAdmin
     .from("products")
     .update({
+      id: data.id,
+      brand: data.brand,
       name: data.name,
       category: data.category,
       parent_category: data.parent_category,
       price: data.price,
       stock: data.stock,
+      is_active: data.stock === 0 ? false : true,
       description: data.description,
       image_src: image_url,
     })
-    .eq("id", data.id);
+    .eq("id", data.oldId);
 
   if (updateError) {
     console.error(updateError);
@@ -83,7 +88,9 @@ export async function PUT(req: NextRequest) {
 }
 
 const getFormDataValue = (formData: FormData) => {
+  const oldId = String(formData.get("old_id"));
   const id = String(formData.get("id"));
+  const brand = String(formData.get("brand"));
   const category = String(formData.get("category"));
   const price = Number(formData.get("price"));
   const stock = Number(formData.get("stock"));
@@ -94,7 +101,9 @@ const getFormDataValue = (formData: FormData) => {
   const parent_category = String(formData.get("parent_category"));
 
   return {
+    oldId,
     id,
+    brand,
     category,
     price,
     stock,

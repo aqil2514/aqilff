@@ -1,11 +1,18 @@
 import { Product } from "@/@types/products";
-import { createContext, useContext } from "react";
+import React, {
+  createContext,
+  SetStateAction,
+  useContext,
+  useState,
+} from "react";
 
 interface ProductContextState {
   products: Product[];
+  filteredProducts: Product[];
+  setFilteredProducts: React.Dispatch<SetStateAction<Product[]>>;
 }
 
-type ProductProviderProps = ProductContextState & {
+type ProductProviderProps = Pick<ProductContextState, "products"> & {
   children: React.ReactNode;
 };
 
@@ -17,8 +24,11 @@ export default function ProductsProvider({
   children,
   products,
 }: ProductProviderProps) {
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   return (
-    <ProductContext.Provider value={{ products }}>
+    <ProductContext.Provider
+      value={{ products, filteredProducts, setFilteredProducts }}
+    >
       {children}
     </ProductContext.Provider>
   );

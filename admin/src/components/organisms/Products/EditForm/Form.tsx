@@ -65,6 +65,13 @@ export default function EditFormProduct({ row }: { row: Row<Product> }) {
         />
       </div>
       <div className="space-y-2">
+        <Label htmlFor="brand">Brand Produk</Label>
+        <Input
+          id="brand"
+          {...register("brand", { required: "Data harus diisi" })}
+        />
+      </div>
+      <div className="space-y-2">
         <Label htmlFor="parent_category">Kategori Induk Produk</Label>
         <Input
           id="parent_category"
@@ -96,7 +103,7 @@ export default function EditFormProduct({ row }: { row: Row<Product> }) {
         <Label htmlFor="description">Deskripsi Produk</Label>
         <Textarea
           id="description"
-          {...register("description", { required: "Data harus diisi" })}
+          {...register("description")}
         />
       </div>
       <div className="my-2">
