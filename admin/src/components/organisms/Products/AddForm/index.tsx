@@ -12,12 +12,20 @@ import {
 import { MdAdd } from "react-icons/md";
 import AddProductForm from "./Form";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import React from "react";
 
-export default function AddProductFormDialog() {
+export default function AddProductFormDialog({
+  addRef,
+}: {
+  addRef: React.RefObject<HTMLButtonElement | null>;
+}) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="bg-green-600 hover:bg-green-700 active:scale-95 duration-200 my-2 cursor-pointer">
+        <Button
+          className="bg-green-600 hover:bg-green-700 active:scale-95 duration-200 my-2 cursor-pointer"
+          ref={addRef}
+        >
           <MdAdd />
           Tambah Data
         </Button>

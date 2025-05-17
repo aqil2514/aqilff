@@ -17,6 +17,8 @@ import { fetchProducts } from "@/lib/fetchers";
 
 export default function ProductTemplate() {
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const refreshRef = useRef<HTMLButtonElement | null>(null);
+  const addRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -24,6 +26,18 @@ export default function ProductTemplate() {
         e.preventDefault();
         if (inputRef.current) {
           inputRef.current.focus();
+        }
+      }
+      if (e.ctrlKey && e.key.toLocaleLowerCase() === "r") {
+        e.preventDefault();
+        if (refreshRef.current) {
+          refreshRef.current.click();
+        }
+      }
+      if (e.ctrlKey && e.shiftKey && e.key.toLocaleLowerCase() === "a") {
+        e.preventDefault();
+        if (addRef.current) {
+          addRef.current.click();
         }
       }
     };
@@ -50,11 +64,11 @@ export default function ProductTemplate() {
       <MainWrapper className="!block pt-16 px-4">
         <h1 className="text-center">Daftar Produk</h1>
         <div className="flex gap-4 items-center">
-          <AddProductFormDialog />
+          <AddProductFormDialog addRef={addRef} />
           <InputName inputRef={inputRef} />
         </div>
         <TableProducts />
-        <RefreshButton />
+        <RefreshButton buttonRef={refreshRef} />
       </MainWrapper>
     </ProductsProvider>
   );
@@ -77,7 +91,11 @@ const InputName = ({
   );
 };
 
-const RefreshButton = () => {
+const RefreshButton = ({
+  buttonRef,
+}: {
+  buttonRef: RefObject<HTMLButtonElement | null>;
+}) => {
   const { mutate } = useSWR<Product[]>("/api/products", fetchProducts);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -100,6 +118,7 @@ const RefreshButton = () => {
     <button
       onClick={handleRevalidate}
       aria-label="Refresh"
+      ref={buttonRef}
       disabled={isRefreshing}
       className={`transition-transform duration-700 my-4 ${
         isRefreshing ? "animate-spin" : ""

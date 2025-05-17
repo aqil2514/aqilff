@@ -15,6 +15,9 @@ export default function AddProductForm() {
     handleSubmit,
     productSubmitHandler,
     errors,
+    reset,
+    subCategoryList,
+    categoryList,
     isLoading,
   } = useAddFormProduct();
 
@@ -91,6 +94,7 @@ export default function AddProductForm() {
         <Input
           disabled={isLoading}
           id="product_price"
+          step={500}
           placeholder="Contoh : 10000"
           type="number"
           {...register("price", { required: "Harga produk wajib diisi" })}
@@ -117,11 +121,17 @@ export default function AddProductForm() {
         <Input
           disabled={isLoading}
           id="parent_category"
+          list="parent_category_list"
           placeholder="Contoh : Frozen Food"
           {...register("parent_category", {
             required: "Kategori induk wajib diisi",
           })}
         />
+        <datalist id="parent_category_list">
+          {categoryList.map((cat) => (
+            <option key={cat} value={cat} />
+          ))}
+        </datalist>
         {errors.parent_category && (
           <p className="text-red-500 text-sm">
             {errors.parent_category.message}
@@ -133,9 +143,15 @@ export default function AddProductForm() {
         <Input
           disabled={isLoading}
           id="sub_category"
+          list="sub_category_list"
           placeholder="Contoh : Nugget"
           {...register("category", { required: "Kategori sub wajib diisi" })}
         />
+        <datalist id="sub_category_list">
+          {subCategoryList.map((cat) => (
+            <option key={cat} value={cat} />
+          ))}
+        </datalist>
         {errors.category && (
           <p className="text-red-500 text-sm">{errors.category.message}</p>
         )}
@@ -148,9 +164,16 @@ export default function AddProductForm() {
           {...register("description")}
         />
       </div>
-      <div className="my-2">
+      <div className="my-2 space-x-4">
         <Button className="bg-blue-600 disabled:bg-blue-300 hover:bg-blue-500 hover:scale-95 active:scale-90 duration-200 cursor-pointer">
           {isLoading ? "Menambah..." : "Tambah Data"}
+        </Button>
+        <Button
+          type="button"
+          className="bg-amber-600 disabled:bg-amber-300 hover:bg-amber-500 hover:scale-95 active:scale-90 duration-200 cursor-pointer"
+          onClick={() => reset()}
+        >
+          Reset
         </Button>
       </div>
     </form>

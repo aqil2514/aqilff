@@ -65,6 +65,7 @@ export const columns: ColumnDef<Product>[] = [
         {row.getValue("is_active") ? "Aktif" : "Nonaktif"}
       </Badge>
     ),
+    filterFn: "equals"
   },
   {
     id: "actions",

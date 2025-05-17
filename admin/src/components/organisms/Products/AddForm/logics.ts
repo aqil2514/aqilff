@@ -1,8 +1,9 @@
 import { Product } from "@/@types/products";
+import { useProductsData } from "@/components/providers/ProductsProvider";
 import { fetchProducts } from "@/lib/fetchers";
 import axios, { isAxiosError } from "axios";
 import { useRouter } from "next/navigation";
-import React, { useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import useSWR from "swr";
@@ -13,9 +14,11 @@ type ProductInputType = Omit<
 >;
 
 export const useAddFormProduct = () => {
+  const { products } = useProductsData();
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<ProductInputType>();
   const [imgUrl, setImgUrl] = useState<string>();
@@ -23,7 +26,27 @@ export const useAddFormProduct = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const router = useRouter();
-  const {mutate} = useSWR("/api/products", fetchProducts)
+  const { mutate } = useSWR("/api/products", fetchProducts);
+
+  const categoryList = useMemo(() => {
+    const categorySet = new Set<string>();
+
+    products.map((prod) => {
+      categorySet.add(prod.parent_category);
+    });
+
+    return Array.from(categorySet);
+  }, [products]);
+
+  const subCategoryList = useMemo(() => {
+    const subCategoryMap = new Set<string>();
+
+    products.map((prod) => {
+      subCategoryMap.add(prod.category);
+    });
+
+    return Array.from(subCategoryMap);
+  }, [products]);
 
   const productSubmitHandler: SubmitHandler<ProductInputType> = async (
     data
@@ -107,6 +130,9 @@ export const useAddFormProduct = () => {
     handleSubmit,
     productSubmitHandler,
     errors,
+    reset,
+    subCategoryList,
+    categoryList,
     isLoading,
   };
 };
