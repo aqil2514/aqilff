@@ -1,5 +1,6 @@
 "use client";
 
+import useSWR from "swr";
 import ProductsProvider from "../providers/ProductsProvider";
 
 import MainWrapper from "../atoms/main-wrapper";
@@ -8,23 +9,24 @@ import { Product } from "@/@types/products";
 import TableProducts from "../organisms/Products/TableProducts";
 import AddProductFormDialog from "../organisms/Products/AddForm";
 import { Input } from "../ui/input";
-import { RefObject, useEffect, useRef } from "react";
+import { RefObject, useRef, useState } from "react";
 import { useSearchProductLogic } from "../logics/productLogics";
+import { RefreshCcw } from "lucide-react";
+import { toast } from "react-toastify";
+import { fetchProducts } from "@/lib/fetchers";
 
-export default function ProductTemplate({ products }: { products: Product[] }) {
+export default function ProductTemplate() {
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.key.toLowerCase() === "k") {
-        e.preventDefault();
-        inputRef.current?.focus();
-      }
-    };
+  const {
+    data: products,
+    isLoading,
+    error,
+  } = useSWR<Product[]>("/api/products", fetchProducts);
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  if (isLoading) return <MainWrapper>Loading...</MainWrapper>;
+  if (error) return <MainWrapper>Gagal memuat produk!</MainWrapper>;
+  if (!products) return null;
 
   return (
     <ProductsProvider products={products}>
@@ -35,12 +37,12 @@ export default function ProductTemplate({ products }: { products: Product[] }) {
           <InputName inputRef={inputRef} />
         </div>
         <TableProducts />
+        <RefreshButton />
       </MainWrapper>
     </ProductsProvider>
   );
 }
 
-// TODO : Selesain ini
 const InputName = ({
   inputRef,
 }: {
@@ -55,5 +57,43 @@ const InputName = ({
       onChange={searchNameHandler}
       placeholder="Cari Produk... (CTRL + K)"
     />
+  );
+};
+
+const RefreshButton = () => {
+  const { mutate } = useSWR<Product[]>("/api/products", fetchProducts);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRevalidate = async () => {
+    setIsRefreshing(true);
+    try {
+      await mutate();
+      toast("Data di-refresh!", { type: "info" });
+    } catch (error) {
+      toast("Gagal refresh data!", { type: "error" });
+      console.error(error);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleRevalidate}
+      aria-label="Refresh"
+      disabled={isRefreshing}
+      className={`transition-transform duration-700 ${
+        isRefreshing ? "animate-spin" : ""
+      }`}
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        border: "none",
+        background: "none",
+        cursor: "pointer",
+      }}
+    >
+      <RefreshCcw size={24} />
+    </button>
   );
 };

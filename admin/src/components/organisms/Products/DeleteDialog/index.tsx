@@ -25,14 +25,12 @@ export default function DeleteDialog({ row }: { row: Row<Product> }) {
     stock,
     deleteHandler,
     isLoading,
-    isOpen,
-    setIsOpen,
   } = useDeleteDialogLogic(row);
 
   return (
-    <Dialog open={isOpen}>
+    <Dialog>
       <DialogTrigger asChild>
-        <Button size="sm" variant="destructive" onClick={() => setIsOpen(true)}>
+        <Button size="sm" variant="destructive">
           Hapus
         </Button>
       </DialogTrigger>

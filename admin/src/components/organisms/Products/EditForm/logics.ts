@@ -1,11 +1,12 @@
 import { Product } from "@/@types/products";
+import { fetchProducts } from "@/lib/fetchers";
 import { noImageSrc } from "@/lib/variables";
 import { Row } from "@tanstack/react-table";
 import axios, { isAxiosError } from "axios";
-import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import useSWR from "swr";
 
 type ProductInputType = Omit<
   Product,
@@ -23,8 +24,9 @@ export function useEditProductFormLogics(row: Row<Product>) {
   const price = row.getValue("price") as number;
   const stock = row.getValue("stock") as number;
 
+  const {mutate} = useSWR("/api/products", fetchProducts)
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const router = useRouter();
 
   const {
     register,
@@ -111,7 +113,7 @@ export function useEditProductFormLogics(row: Row<Product>) {
       );
 
       toast(resData.message, { type: "success" });
-      router.refresh();
+      await mutate();
     } catch (error) {
       if (isAxiosError(error)) {
         const data = error.response?.data;

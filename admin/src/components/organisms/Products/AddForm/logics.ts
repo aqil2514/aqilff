@@ -1,9 +1,11 @@
 import { Product } from "@/@types/products";
+import { fetchProducts } from "@/lib/fetchers";
 import axios, { isAxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import React, { useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import useSWR from "swr";
 
 type ProductInputType = Omit<
   Product,
@@ -21,6 +23,7 @@ export const useAddFormProduct = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const router = useRouter();
+  const {mutate} = useSWR("/api/products", fetchProducts)
 
   const productSubmitHandler: SubmitHandler<ProductInputType> = async (
     data
@@ -49,6 +52,7 @@ export const useAddFormProduct = () => {
         const data = error.response?.data;
 
         toast(data.message, { type: "error" });
+        await mutate();
       }
       console.error(error);
     } finally {

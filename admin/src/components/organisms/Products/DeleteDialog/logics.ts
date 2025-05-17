@@ -16,7 +16,6 @@ export function useDeleteDialogLogic(row: Row<Product>) {
   const router = useRouter();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const deleteHandler = async () => {
     try {
@@ -29,7 +28,6 @@ export function useDeleteDialogLogic(row: Row<Product>) {
       });
 
       toast(data.message, { type: "success" });
-      setIsOpen(false);
 
       router.refresh();
     } catch (error) {
@@ -51,8 +49,6 @@ export function useDeleteDialogLogic(row: Row<Product>) {
     category,
     price,
     stock,
-    isOpen,
-    setIsOpen,
     isLoading,
     deleteHandler,
   };
