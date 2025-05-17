@@ -1,6 +1,8 @@
 import HomeRoute from "@/components/Routes/Home";
 import { getCategories, getProducts } from "@/lib/supabase-fetch";
 
+export const dynamic = "force-dynamic";
+
 const getAllData = async () => {
   try {
     const [products, categories] = await Promise.all([
