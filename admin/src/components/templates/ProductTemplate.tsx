@@ -9,7 +9,7 @@ import { Product } from "@/@types/products";
 import TableProducts from "../organisms/Products/TableProducts";
 import AddProductFormDialog from "../organisms/Products/AddForm";
 import { Input } from "../ui/input";
-import { RefObject, useRef, useState } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 import { useSearchProductLogic } from "../logics/productLogics";
 import { RefreshCcw } from "lucide-react";
 import { toast } from "react-toastify";
@@ -17,6 +17,23 @@ import { fetchProducts } from "@/lib/fetchers";
 
 export default function ProductTemplate() {
   const inputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.key.toLocaleLowerCase() === "k") {
+        e.preventDefault();
+        if (inputRef.current) {
+          inputRef.current.focus();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handler);
+
+    return () => {
+      window.removeEventListener("keydown", handler);
+    };
+  }, []);
 
   const {
     data: products,
@@ -30,7 +47,7 @@ export default function ProductTemplate() {
 
   return (
     <ProductsProvider products={products}>
-      <MainWrapper className="!block p-4">
+      <MainWrapper className="!block pt-16 px-4">
         <h1 className="text-center">Daftar Produk</h1>
         <div className="flex gap-4 items-center">
           <AddProductFormDialog />
@@ -67,8 +84,10 @@ const RefreshButton = () => {
   const handleRevalidate = async () => {
     setIsRefreshing(true);
     try {
+      await new Promise((res) => setTimeout(res, 300));
       await mutate();
       toast("Data di-refresh!", { type: "info" });
+      await new Promise((res) => setTimeout(res, 300));
     } catch (error) {
       toast("Gagal refresh data!", { type: "error" });
       console.error(error);
@@ -82,7 +101,7 @@ const RefreshButton = () => {
       onClick={handleRevalidate}
       aria-label="Refresh"
       disabled={isRefreshing}
-      className={`transition-transform duration-700 ${
+      className={`transition-transform duration-700 my-4 ${
         isRefreshing ? "animate-spin" : ""
       }`}
       style={{

@@ -32,7 +32,7 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <main className="w-full">
+      <main className="w-full overflow-y-hidden">
         <Header />
         {children}
       </main>
