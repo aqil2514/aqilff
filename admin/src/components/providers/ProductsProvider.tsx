@@ -24,7 +24,7 @@ export default function ProductsProvider({
   children,
   products,
 }: ProductProviderProps) {
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
   return (
     <ProductContext.Provider
       value={{ products, filteredProducts, setFilteredProducts }}

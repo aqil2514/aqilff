@@ -5,6 +5,7 @@ import {
   getCoreRowModel,
   useReactTable,
   ColumnDef,
+  getSortedRowModel,
 } from "@tanstack/react-table";
 
 import {
@@ -28,7 +29,16 @@ export function DataTable<TData, TValue>({
   const table = useReactTable({
     data,
     columns,
+    initialState: {
+      sorting: [
+        {
+          id: "id",
+          desc: false,
+        },
+      ],
+    },
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
   });
 
   return (
@@ -64,20 +74,14 @@ export function DataTable<TData, TValue>({
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
-                    {flexRender(
-                      cell.column.columnDef.cell,
-                      cell.getContext()
-                    )}
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
               </TableRow>
             ))
           ) : (
             <TableRow>
-              <TableCell
-                colSpan={columns.length}
-                className="h-24 text-center"
-              >
+              <TableCell colSpan={columns.length} className="h-24 text-center">
                 Tidak ada data.
               </TableCell>
             </TableRow>

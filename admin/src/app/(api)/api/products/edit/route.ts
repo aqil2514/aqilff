@@ -1,12 +1,10 @@
 import { supabaseAdmin } from "@/lib/supabaseServer";
+import { uploadImageToSupabase } from "@/utils/supabase";
 import { NextRequest, NextResponse } from "next/server";
 
-// TODO Next fix ini
 export async function PUT(req: NextRequest) {
   const formData = await req.formData();
   const data = getFormDataValue(formData);
-
-  console.log(data)
 
   const { data: oldProduct, error: getError } = await supabaseAdmin
     .from("products")
@@ -31,30 +29,7 @@ export async function PUT(req: NextRequest) {
   const file = formData.get("image") as File;
 
   if (data.isChangedImage && file && file.size > 0) {
-    const ext = file.name.split(".").pop();
-    const fileName = `${data.name.replace(/\s+/g, "_")}.${ext}`;
-    const fileBuffer = Buffer.from(await file.arrayBuffer());
-
-    const { error: uploadError } = await supabaseAdmin.storage
-      .from("product_images")
-      .upload(fileName, fileBuffer, {
-        contentType: file.type,
-        upsert: true,
-      });
-
-    if (uploadError) {
-      console.error(uploadError);
-      return NextResponse.json(
-        { message: "Gagal upload gambar" },
-        { status: 500 }
-      );
-    }
-
-    const {
-      data: { publicUrl },
-    } = supabaseAdmin.storage.from("product_images").getPublicUrl(fileName);
-
-    image_url = publicUrl;
+    image_url = await uploadImageToSupabase(file, data.name);
   }
 
   const { error: updateError } = await supabaseAdmin
@@ -96,7 +71,7 @@ const getFormDataValue = (formData: FormData) => {
   const stock = Number(formData.get("stock"));
   const description = String(formData.get("description"));
   const isChangedImage =
-    String(formData.get("is_changed_image")) === "yes" ? true : false;
+    String(formData.get("isChangedImage")) === "yes" ? true : false;
   const name = String(formData.get("name"));
   const parent_category = String(formData.get("parent_category"));
 

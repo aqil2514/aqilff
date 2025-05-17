@@ -75,6 +75,18 @@ export default function AddProductForm() {
         )}
       </div>
       <div className="space-y-2">
+        <Label htmlFor="product_brand">Brand Produk : </Label>
+        <Input
+          disabled={isLoading}
+          id="product_brand"
+          placeholder="Contoh : Hemato"
+          {...register("brand", { required: "Brand produk wajib diisi" })}
+        />
+        {errors.brand && (
+          <p className="text-red-500 text-sm">{errors.brand.message}</p>
+        )}
+      </div>
+      <div className="space-y-2">
         <Label htmlFor="product_price">Harga Produk : </Label>
         <Input
           disabled={isLoading}

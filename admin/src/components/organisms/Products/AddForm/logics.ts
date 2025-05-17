@@ -34,6 +34,7 @@ export const useAddFormProduct = () => {
     form.append("description", data.description || "");
     form.append("image", selectedFile ?? "");
     form.append("name", data.name);
+    form.append("brand", data.brand);
     form.append("parent_category", data.parent_category);
     form.append("category", data.category);
 

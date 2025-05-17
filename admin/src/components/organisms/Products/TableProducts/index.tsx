@@ -2,10 +2,10 @@ import { useProductsData } from "@/components/providers/ProductsProvider";
 import ProductTable from "./products-table";
 
 export default function TableProducts() {
-  const { products } = useProductsData();
+  const { filteredProducts } = useProductsData();
   return (
     <div>
-      <ProductTable data={products} />
+      <ProductTable data={filteredProducts} />
     </div>
   );
 }

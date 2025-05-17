@@ -1,9 +1,11 @@
 import { supabaseAdmin } from "@/lib/supabaseServer";
+import { uploadImageToSupabase } from "@/utils/supabase";
 import { NextRequest, NextResponse } from "next/server";
 
 interface ClientData {
   id: string;
   name: string;
+  brand: string;
   price: number;
   stock: number;
   parent_category: string;
@@ -33,6 +35,7 @@ export async function POST(req: NextRequest) {
 
   const payload = {
     ...data,
+    is_active: data.stock > 0 ? true : false,
     file: undefined,
   };
 
@@ -47,6 +50,7 @@ export async function POST(req: NextRequest) {
 function getFieldData(formData: FormData): ClientData {
   const id = formData.get("id") as string;
   const name = formData.get("name") as string;
+  const brand = formData.get("brand") as string;
   const price = Number(formData.get("price"));
   const stock = Number(formData.get("stock"));
   const parent_category = formData.get("parent_category") as string;
@@ -58,6 +62,7 @@ function getFieldData(formData: FormData): ClientData {
     id,
     name,
     price,
+    brand,
     parent_category,
     category,
     description,
@@ -66,36 +71,4 @@ function getFieldData(formData: FormData): ClientData {
   };
 
   return data;
-}
-
-async function uploadImageToSupabase(
-  file: File,
-  namePrefix?: string
-): Promise<string> {
-  if (!file.type.startsWith("image/")) {
-    throw new Error("File tidak diterima. Harus berupa gambar.");
-  }
-
-  if (file.size > 2 * 1024 * 1024) {
-    throw new Error("Ukuran file lebih dari 2MB.");
-  }
-
-  const fileExt = file.type.split("/")[1];
-  const fileName = `${namePrefix}.${fileExt}`;
-
-  const { error: uploadError } = await supabaseAdmin.storage
-    .from("products-image")
-    .upload(fileName, file, {
-      contentType: file.type,
-    });
-
-  if (uploadError) {
-    throw new Error(uploadError.message || "Gagal mengunggah gambar.");
-  }
-
-  const { data: publicUrlData } = supabaseAdmin.storage
-    .from("products-image")
-    .getPublicUrl(fileName);
-
-  return publicUrlData.publicUrl;
 }
