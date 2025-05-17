@@ -7,6 +7,8 @@ export const metadata: Metadata = {
   title: "Produk",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function ProductsPage() {
   try {
     const { data, error } = await supabase.from("products").select("*");

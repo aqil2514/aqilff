@@ -18,8 +18,6 @@ export async function POST(req: NextRequest) {
   const data = getFieldData(formData);
   const image = data.file;
 
-  console.log(data);
-
   if (!data.name || !data.price || isNaN(Number(data.price))) {
     return NextResponse.json({ message: "Data tidak valid" }, { status: 400 });
   }
@@ -38,9 +36,7 @@ export async function POST(req: NextRequest) {
     file: undefined,
   };
 
- const test = await supabaseAdmin.from("products").insert(payload);
-
-console.log(test)
+  await supabaseAdmin.from("products").insert(payload);
 
   return NextResponse.json(
     { message: "Data berhasil ditambah" },
