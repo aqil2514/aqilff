@@ -1,16 +1,37 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, Row } from "@tanstack/react-table";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Product } from "@/@types/products";
 import DeleteDialog from "../DeleteDialog";
 import EditProductFormDialog from "../EditForm";
+import { GenericSelectFilter } from "../Filters/filters";
+
+const statusFilterFn = (
+  row: Row<unknown>,
+  columnId: string,
+  filterValue: string
+) => {
+  const boolValue = row.getValue(columnId);
+
+  if (filterValue === "Aktif") return boolValue === true;
+  if (filterValue === "Nonaktif") return boolValue === false;
+
+  return true;
+};
 
 export const columns: ColumnDef<Product>[] = [
   {
     accessorKey: "id",
-    header: "ID",
+    header: () => (
+      <GenericSelectFilter
+        field="id"
+        label="ID"
+        extractor={(prod) => prod.id.slice(0, 4)}
+      />
+    ),
+    filterFn: "includesString",
   },
   {
     accessorKey: "image_src",
@@ -32,15 +53,36 @@ export const columns: ColumnDef<Product>[] = [
   },
   {
     accessorKey: "brand",
-    header: "Brand",
+    header: () => (
+      <GenericSelectFilter
+        label="Brand"
+        field="brand"
+        extractor={(prod) => prod.brand}
+      />
+    ),
+    filterFn: "includesString",
   },
   {
     accessorKey: "parent_category",
-    header: "Kategori Induk",
+    header: () => (
+      <GenericSelectFilter
+        label="Kategori Induk"
+        field="parent_category"
+        extractor={(prod) => prod.parent_category}
+      />
+    ),
+    filterFn: "includesString",
   },
   {
     accessorKey: "category",
-    header: "Kategori",
+    header: () => (
+      <GenericSelectFilter
+        label="Kategori"
+        field="category"
+        extractor={(prod) => prod.category}
+      />
+    ),
+    filterFn: "includesString",
   },
   {
     accessorKey: "description",
@@ -59,13 +101,20 @@ export const columns: ColumnDef<Product>[] = [
   },
   {
     accessorKey: "is_active",
-    header: "Status",
+    header: () => (
+      <GenericSelectFilter
+        label="Status"
+        field="is_active"
+        extractor={(prod) => (prod.is_active ? "Aktif" : "Nonaktif")}
+      />
+    ),
+    //@ts-expect-error Error
+    filterFn: statusFilterFn,
     cell: ({ row }) => (
       <Badge variant={row.getValue("is_active") ? "default" : "destructive"}>
         {row.getValue("is_active") ? "Aktif" : "Nonaktif"}
       </Badge>
     ),
-    filterFn: "equals"
   },
   {
     id: "actions",

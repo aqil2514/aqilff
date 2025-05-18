@@ -6,10 +6,18 @@ import React, {
   useState,
 } from "react";
 
+interface ColumnFilter {
+  id: string;
+  value: unknown;
+}
+type ColumnFiltersState = ColumnFilter[];
+
 interface ProductContextState {
   products: Product[];
   filteredProducts: Product[];
   setFilteredProducts: React.Dispatch<SetStateAction<Product[]>>;
+  columnFilters: ColumnFiltersState;
+  setColumnFilters: React.Dispatch<SetStateAction<ColumnFiltersState>>;
 }
 
 type ProductProviderProps = Pick<ProductContextState, "products"> & {
@@ -25,9 +33,17 @@ export default function ProductsProvider({
   products,
 }: ProductProviderProps) {
   const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+
   return (
     <ProductContext.Provider
-      value={{ products, filteredProducts, setFilteredProducts }}
+      value={{
+        products,
+        filteredProducts,
+        setFilteredProducts,
+        columnFilters,
+        setColumnFilters,
+      }}
     >
       {children}
     </ProductContext.Provider>

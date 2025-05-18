@@ -17,23 +17,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useState } from "react";
+import { useProductsData } from "../providers/ProductsProvider";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 }
 
-interface ColumnFilter {
-  id: string;
-  value: unknown;
-}
-
 export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
-  const [columnFilters, setColumnFilters] = useState<ColumnFilter[]>([]);
+  const { columnFilters, setColumnFilters } = useProductsData();
 
   const table = useReactTable({
     data,
