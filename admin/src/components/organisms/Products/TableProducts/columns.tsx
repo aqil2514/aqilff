@@ -108,7 +108,7 @@ export const columns: ColumnDef<Product>[] = [
         extractor={(prod) => (prod.is_active ? "Aktif" : "Nonaktif")}
       />
     ),
-    //@ts-expect-error Error pusing
+    //@ts-expect-error Ini ada yang belum sesuai interface statufFilterFn
     filterFn: statusFilterFn,
     cell: ({ row }) => (
       <Badge variant={row.getValue("is_active") ? "default" : "destructive"}>
