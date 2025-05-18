@@ -1,6 +1,6 @@
 "use client";
 
-import { ColumnDef, Row } from "@tanstack/react-table";
+import { ColumnDef, FilterFn, Row } from "@tanstack/react-table";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Product } from "@/@types/products";
@@ -8,12 +8,12 @@ import DeleteDialog from "../DeleteDialog";
 import EditProductFormDialog from "../EditForm";
 import { GenericSelectFilter } from "../Filters/filters";
 
-const statusFilterFn = (
-  row: Row<unknown>,
+const statusFilterFn: FilterFn<Product> = (
+  row: Row<Product>,
   columnId: string,
   filterValue: string
-) => {
-  const boolValue = row.getValue(columnId);
+): boolean => {
+  const boolValue = row.getValue<boolean>(columnId);
 
   if (filterValue === "Aktif") return boolValue === true;
   if (filterValue === "Nonaktif") return boolValue === false;
@@ -108,7 +108,6 @@ export const columns: ColumnDef<Product>[] = [
         extractor={(prod) => (prod.is_active ? "Aktif" : "Nonaktif")}
       />
     ),
-    //@ts-expect-error Ini ada yang belum sesuai interface statufFilterFn
     filterFn: statusFilterFn,
     cell: ({ row }) => (
       <Badge variant={row.getValue("is_active") ? "default" : "destructive"}>
