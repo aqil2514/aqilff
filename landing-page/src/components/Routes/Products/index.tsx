@@ -15,13 +15,13 @@ export default function ProductsRoute() {
 
   if (isLoading)
     return (
-      <MainWrapper background="gradientRedToOrange">
+      <MainWrapper className="h-screen" background="gradientRedToOrange">
         Loading data...
       </MainWrapper>
     );
   if (error)
     return (
-      <MainWrapper background="gradientRedToOrange">
+      <MainWrapper className="h-screen" background="gradientRedToOrange">
         Failed to load data.
       </MainWrapper>
     );
