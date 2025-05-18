@@ -108,7 +108,7 @@ export const columns: ColumnDef<Product>[] = [
         extractor={(prod) => (prod.is_active ? "Aktif" : "Nonaktif")}
       />
     ),
-    //@ts-expect-error Error
+    //@ts-expect-error Error pusing
     filterFn: statusFilterFn,
     cell: ({ row }) => (
       <Badge variant={row.getValue("is_active") ? "default" : "destructive"}>
