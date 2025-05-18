@@ -1,4 +1,4 @@
-import { Category, Product } from "@/@types/interfaces";
+import { Product } from "@/@types/interfaces";
 import React, { SetStateAction, useContext, useState } from "react";
 
 interface FilterProductsProps {
@@ -10,7 +10,6 @@ interface FilterProductsProps {
 interface ProductsContextProps {
   filteredProducts: Product[];
   products: Product[];
-  category: Category[];
   setFilteredProducts: React.Dispatch<SetStateAction<Product[]>>;
   initFilter: FilterProductsProps;
   filter: FilterProductsProps;
@@ -20,7 +19,6 @@ interface ProductsContextProps {
 interface ProductsProviderProps {
   children: React.ReactNode;
   products: Product[];
-  category: Category[];
 }
 
 const ProductsContext = React.createContext<ProductsContextProps>(
@@ -36,7 +34,6 @@ const initFilter = {
 export default function ProductsProvider({
   products,
   children,
-  category,
 }: ProductsProviderProps) {
   const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
   const [filter, setFilter] = useState<FilterProductsProps>(initFilter);
@@ -45,7 +42,6 @@ export default function ProductsProvider({
     <ProductsContext.Provider
       value={{
         filteredProducts,
-        category,
         setFilteredProducts,
         filter,
         setFilter,

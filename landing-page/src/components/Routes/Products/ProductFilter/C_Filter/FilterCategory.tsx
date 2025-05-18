@@ -2,23 +2,23 @@ import { poppins, tuffy } from "@/app/fonts";
 import { useFilterProductsLogic } from "../logic/useFilterProductsLogic";
 
 export default function CategoryFilter() {
-  const { category, filter, categoryChangeHandler } = useFilterProductsLogic();
+  const { filter, category, categoryChangeHandler } = useFilterProductsLogic();
   return (
     <div>
       <p className={`${tuffy.className} !font-semibold text-base`}>Kategori</p>
       <div className="flex gap-4 justify-center flex-wrap mb-4 md:mb-0">
         {category.map((cat) => (
-          <span key={cat.id} className="flex gap-1">
+          <span key={cat} className="flex gap-1">
             <input
               type="radio"
-              id={cat.id}
+              id={cat}
               name="category-filter"
-              value={cat.name}
+              value={cat}
               onChange={categoryChangeHandler}
-              checked={filter.category === cat.name}
+              checked={filter.category === cat}
             />
-            <label htmlFor={cat.id} className={`${poppins.className} text-sm`}>
-              {cat.name}
+            <label htmlFor={cat} className={`${poppins.className} text-sm`}>
+              {cat}
             </label>
           </span>
         ))}

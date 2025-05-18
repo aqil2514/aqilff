@@ -1,15 +1,19 @@
 import { useProductsData } from "@/components/Providers/ProductsProvider";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 
 export function useFilterProductsLogic() {
-  const {
-    category,
-    filter,
-    setFilter,
-    initFilter,
-    products,
-    setFilteredProducts,
-  } = useProductsData();
+  const { filter, setFilter, initFilter, products, setFilteredProducts } =
+    useProductsData();
+
+  const category = useMemo(() => {
+    const categorySet = new Set<string>();
+
+    for (const prod of products) {
+      categorySet.add(prod.category);
+    }
+
+    return Array.from(categorySet);
+  }, [products]);
 
   // Mengecek apakah ada filter aktif
   const isFilterActive = useCallback(() => {

@@ -1,12 +1,13 @@
 import { useProductsData } from "@/components/Providers/ProductsProvider";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export function useSearchNameLogic() {
     const { setFilter, filter, products, setFilteredProducts } =
       useProductsData();
     const router = useRouter();
     const searchParams = useSearchParams();
+    const searchRef = useRef<HTMLInputElement | null>(null);
   
     // Sinkronisasi dari URL ke state
     useEffect(() => {
@@ -29,5 +30,5 @@ export function useSearchNameLogic() {
       router.replace(`?search=true&q=${name}`);
     };
   
-    return { searchHandler, filter };
+    return { searchHandler, filter, searchRef };
   }

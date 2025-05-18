@@ -1,10 +1,10 @@
 import ProductsRoute from "@/components/Routes/Products";
-import { getCategories, getProducts } from "@/lib/supabase-fetch";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Produk | Aqil Frozen Food",
+};
 
 export default async function Products() {
-  const [products, category] = await Promise.all([
-    getProducts(),
-    getCategories(),
-  ]);
-  return <ProductsRoute products={products} category={category} />;
+  return <ProductsRoute />;
 }
