@@ -14,6 +14,7 @@ import { useSearchProductLogic } from "../logics/productLogics";
 import { RefreshCcw } from "lucide-react";
 import { toast } from "react-toastify";
 import { fetchProducts } from "@/lib/fetchers";
+import { TransactionItem } from "@/@types/transaction";
 
 export default function ProductTemplate() {
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -50,17 +51,21 @@ export default function ProductTemplate() {
   }, []);
 
   const {
-    data: products,
+    data,
     isLoading,
     error,
-  } = useSWR<Product[]>("/api/products", fetchProducts);
+  } = useSWR<{data:Product[], tItems:TransactionItem[]}>("/api/products", fetchProducts);
+
+  const products = data?.data;
+  const tItem = data?.tItems
+
 
   if (isLoading) return <MainWrapper>Loading...</MainWrapper>;
   if (error) return <MainWrapper>Gagal memuat produk!</MainWrapper>;
-  if (!products) return null;
+  if (!products || !tItem) return null;
 
   return (
-    <ProductsProvider products={products}>
+    <ProductsProvider products={products} tItems={tItem}>
       <MainWrapper className="!block pt-16 px-4">
         <h1 className="text-center">Daftar Produk</h1>
         <div className="flex gap-4 items-center">

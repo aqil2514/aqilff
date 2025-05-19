@@ -7,6 +7,7 @@ import { Product } from "@/@types/products";
 import DeleteDialog from "../DeleteDialog";
 import EditProductFormDialog from "../EditForm";
 import { GenericSelectFilter } from "../Filters/filters";
+import { ProductStock } from "../misc";
 
 const statusFilterFn: FilterFn<Product> = (
   row: Row<Product>,
@@ -101,7 +102,7 @@ export const columns: ColumnDef<Product>[] = [
   {
     accessorKey: "stock",
     header: "Stok",
-    cell: ({ row }) => `${row.getValue("stock")} pcs`,
+    cell: ({ row }) => <ProductStock row={row} />,
   },
   {
     accessorKey: "is_active",

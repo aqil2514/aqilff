@@ -1,4 +1,5 @@
 import { Product } from "@/@types/products";
+import { TransactionItem } from "@/@types/transaction";
 import React, {
   createContext,
   SetStateAction,
@@ -14,13 +15,14 @@ type ColumnFiltersState = ColumnFilter[];
 
 interface ProductContextState {
   products: Product[];
+  tItems : TransactionItem[];
   filteredProducts: Product[];
   setFilteredProducts: React.Dispatch<SetStateAction<Product[]>>;
   columnFilters: ColumnFiltersState;
   setColumnFilters: React.Dispatch<SetStateAction<ColumnFiltersState>>;
 }
 
-type ProductProviderProps = Pick<ProductContextState, "products"> & {
+type ProductProviderProps = Pick<ProductContextState, "products" | "tItems"> & {
   children: React.ReactNode;
 };
 
@@ -30,6 +32,7 @@ const ProductContext = createContext<ProductContextState>(
 
 export default function ProductsProvider({
   children,
+  tItems,
   products,
 }: ProductProviderProps) {
   const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
@@ -38,6 +41,7 @@ export default function ProductsProvider({
   return (
     <ProductContext.Provider
       value={{
+        tItems,
         products,
         filteredProducts,
         setFilteredProducts,
