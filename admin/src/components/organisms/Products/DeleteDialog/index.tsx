@@ -19,7 +19,7 @@ export default function DeleteDialog({ row }: { row: Row<Product> }) {
   const {
     name,
     category,
-    id,
+    code,
     image_src,
     price,
     stock,
@@ -48,7 +48,7 @@ export default function DeleteDialog({ row }: { row: Row<Product> }) {
             className="rounded-2xl block mx-auto"
           />
           <p>
-            <strong>ID</strong> : {id}
+            <strong>Kode Produk</strong> : {code}
           </p>
           <p>
             <strong>Nama Produk</strong> : {name}

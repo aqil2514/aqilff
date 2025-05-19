@@ -53,7 +53,7 @@ export const useAddFormProduct = () => {
   ) => {
     const form = new FormData();
 
-    form.append("id", data.id);
+    form.append("code", data.code);
     form.append("category", data.category);
     form.append("price", String(data.price));
     form.append("stock", String(data.stock));

@@ -55,9 +55,10 @@ export default function EditFormProduct({ row }: { row: Row<Product> }) {
           />
         </div>
       )}
+        <Input id="id" {...register("id", { required: "Data harus diisi" })} type="hidden" />
       <div className="space-y-2">
-        <Label htmlFor="id">ID Produk</Label>
-        <Input id="id" {...register("id", { required: "Data harus diisi" })} />
+        <Label htmlFor="code">Kode Produk</Label>
+        <Input id="code" {...register("code", { required: "Data harus diisi" })} />
       </div>
       <div className="space-y-2">
         <Label htmlFor="name">Nama Produk</Label>

@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 
 export function useDeleteDialogLogic(row: Row<Product>) {
   const id = row.getValue("id") as string;
+  const code = row.getValue("code") as string;
   const image_src = row.getValue("image_src") as string;
   const name = row.getValue("name") as string;
   const category = row.getValue("category") as string;
@@ -44,6 +45,7 @@ export function useDeleteDialogLogic(row: Row<Product>) {
 
   return {
     name,
+    code,
     id,
     image_src,
     category,

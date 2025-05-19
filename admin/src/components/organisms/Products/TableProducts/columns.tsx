@@ -24,11 +24,15 @@ const statusFilterFn: FilterFn<Product> = (
 export const columns: ColumnDef<Product>[] = [
   {
     accessorKey: "id",
+    header: "ID",
+  },
+  {
+    accessorKey: "code",
     header: () => (
       <GenericSelectFilter
-        field="id"
-        label="ID"
-        extractor={(prod) => prod.id.slice(0, 4)}
+        field="code"
+        label="Kode Produk"
+        extractor={(prod) => prod.code.slice(0, 4)}
       />
     ),
     filterFn: "includesString",

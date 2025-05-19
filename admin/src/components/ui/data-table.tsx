@@ -39,6 +39,7 @@ export function DataTable<TData, TValue>({
     onColumnFiltersChange: setColumnFilters,
     initialState: {
       sorting: [{ id: "id", desc: false }],
+      columnVisibility: { id: false },
     },
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),

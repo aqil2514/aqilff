@@ -15,6 +15,7 @@ type ProductInputType = Omit<
 
 export function useEditProductFormLogics(row: Row<Product>) {
   const id = row.getValue("id") as string;
+  const code = row.getValue("code") as string;
   const brand = row.getValue("brand") as string;
   const parent_category = row.getValue("parent_category") as string;
   const category = row.getValue("category") as string;
@@ -35,6 +36,7 @@ export function useEditProductFormLogics(row: Row<Product>) {
   } = useForm<ProductInputType>({
     defaultValues: {
       id,
+      code,
       parent_category,
       category,
       name,
@@ -92,9 +94,9 @@ export function useEditProductFormLogics(row: Row<Product>) {
     const isChangedImage =
       !!selectedFile && imgPreview !== row.original.image_src;
     console.log(isChangedImage); 
-
-    formData.append("old_id", id);
+    
     formData.append("id", data.id);
+    formData.append("code", data.code);
     formData.append("brand", data.brand);
     formData.append("category", data.category);
     formData.append("price", String(data.price));

@@ -6,10 +6,12 @@ export async function PUT(req: NextRequest) {
   const formData = await req.formData();
   const data = getFormDataValue(formData);
 
+  console.log(data) 
+
   const { data: oldProduct, error: getError } = await supabaseAdmin
     .from("products")
     .select("*")
-    .eq("id", data.oldId)
+    .eq("id", data.id)
     .single();
 
   if (getError || !oldProduct) {
@@ -46,7 +48,7 @@ export async function PUT(req: NextRequest) {
       description: data.description,
       image_src: image_url,
     })
-    .eq("id", data.oldId);
+    .eq("id", data.id);
 
   if (updateError) {
     console.error(updateError);
@@ -63,7 +65,6 @@ export async function PUT(req: NextRequest) {
 }
 
 const getFormDataValue = (formData: FormData) => {
-  const oldId = String(formData.get("old_id"));
   const id = String(formData.get("id"));
   const brand = String(formData.get("brand"));
   const category = String(formData.get("category"));
@@ -76,7 +77,6 @@ const getFormDataValue = (formData: FormData) => {
   const parent_category = String(formData.get("parent_category"));
 
   return {
-    oldId,
     id,
     brand,
     category,

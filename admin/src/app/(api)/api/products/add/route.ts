@@ -3,7 +3,7 @@ import { uploadImageToSupabase } from "@/utils/supabase";
 import { NextRequest, NextResponse } from "next/server";
 
 interface ClientData {
-  id: string;
+  code: string;
   name: string;
   brand: string;
   price: number;
@@ -19,6 +19,8 @@ export async function POST(req: NextRequest) {
   const formData = await req.formData();
   const data = getFieldData(formData);
   const image = data.file;
+
+  console.log(data);
 
   if (!data.name || !data.price || isNaN(Number(data.price))) {
     return NextResponse.json({ message: "Data tidak valid" }, { status: 400 });
@@ -39,7 +41,9 @@ export async function POST(req: NextRequest) {
     file: undefined,
   };
 
-  await supabaseAdmin.from("products").insert(payload);
+  const test = await supabaseAdmin.from("products").insert(payload);
+
+  console.log(test);
 
   return NextResponse.json(
     { message: "Data berhasil ditambah" },
@@ -48,7 +52,7 @@ export async function POST(req: NextRequest) {
 }
 
 function getFieldData(formData: FormData): ClientData {
-  const id = formData.get("id") as string;
+  const code = formData.get("code") as string;
   const name = formData.get("name") as string;
   const brand = formData.get("brand") as string;
   const price = Number(formData.get("price"));
@@ -59,7 +63,7 @@ function getFieldData(formData: FormData): ClientData {
   const file = formData.get("image") as File;
 
   const data: ClientData = {
-    id,
+    code,
     name,
     price,
     brand,

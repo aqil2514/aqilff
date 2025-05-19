@@ -54,12 +54,12 @@ export default function AddProductForm() {
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="id">ID Produk : </Label>
+        <Label htmlFor="code">Kode Produk : </Label>
         <Input
           disabled={isLoading}
-          id="id"
+          id="code"
           placeholder="Contoh : PROD001..."
-          {...register("id", { required: "Id produk wajib diisi" })}
+          {...register("code", { required: "Id produk wajib diisi" })}
         />
         {errors.id && (
           <p className="text-red-500 text-sm">{errors.id.message}</p>
