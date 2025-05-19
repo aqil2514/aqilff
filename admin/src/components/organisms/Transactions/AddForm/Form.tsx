@@ -11,8 +11,14 @@ import {
 } from "react-hook-form";
 
 export default function TransactionAddForm() {
-  const { register, handleSubmit, transactionSubmit, isLoading , ...transactionItemProps } =
-    useTransactionFormLogics();
+  const {
+    register,
+    handleSubmit,
+    transactionSubmit,
+    isLoading,
+    reset,
+    ...transactionItemProps
+  } = useTransactionFormLogics();
 
   return (
     <form onSubmit={handleSubmit(transactionSubmit)} className="my-4 space-y-4">
@@ -34,9 +40,18 @@ export default function TransactionAddForm() {
         <TransactionItem register={register} {...transactionItemProps} />
       </div>
 
-      <Button disabled={isLoading} type="submit" className="bg-blue-500 text-white px-4 py-2 mt-4">
-        {isLoading ? "Menyimpan" : "Simpan Transaksi"}
-      </Button>
+      <div className="flex gap-2 items-center">
+        <Button
+          disabled={isLoading}
+          type="submit"
+          className="bg-blue-500 text-white px-4 py-2"
+        >
+          {isLoading ? "Menyimpan" : "Simpan Transaksi"}
+        </Button>
+        <Button type="button" onClick={() => reset()}>
+          Reset
+        </Button>
+      </div>
     </form>
   );
 }

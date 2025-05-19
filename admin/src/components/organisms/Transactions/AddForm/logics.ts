@@ -19,7 +19,8 @@ export function useTransactionFormLogics() {
     if (todayTransactions.length > 0) {
       return {
         isFirst: false,
-        lastTransactionId: todayTransactions[todayTransactions.length - 1].transaction_code,
+        lastTransactionId:
+          todayTransactions[todayTransactions.length - 1].transaction_code,
       };
     }
 
@@ -28,23 +29,8 @@ export function useTransactionFormLogics() {
       lastTransactionId: null,
     };
   }, [transactions]);
-
-  const [lastCodeToday, setLastCodeToday] = useState<string>("");
-  
-  useEffect(() => {
-    const { isFirst, lastTransactionId } = todayTransactionInfo;
-
-    if (!isFirst && lastTransactionId) {
-      setLastCodeToday(lastTransactionId);
-    }
-  }, [todayTransactionInfo]);
-
-  const newCode = generateTransactionCode(lastCodeToday);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
   const form = useForm<Transaction>({
     defaultValues: {
-      transaction_code: newCode,
       customer_name: "",
       payment_method: "cash",
       items: [
@@ -63,6 +49,17 @@ export function useTransactionFormLogics() {
     },
   });
 
+  const [lastCodeToday, setLastCodeToday] = useState<string>("");
+
+  useEffect(() => {
+    const { lastTransactionId } = todayTransactionInfo;
+
+      setLastCodeToday(lastTransactionId as string);
+      const newCode = generateTransactionCode(lastCodeToday);
+      form.setValue("transaction_code", newCode);
+  }, [todayTransactionInfo, lastCodeToday, form]);
+
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { control } = form;
 
   const fieldArray = useFieldArray({
