@@ -70,3 +70,32 @@ export function formatToIndonesianDate(dateString: string): string {
     year: 'numeric',
   }).format(date);
 }
+
+/**
+ * Generate human readable transaction code.
+ * Format: TRX-YYYYMMDD-XXXX (e.g. TRX-20250519-0001)
+ *
+ * @param lastCodeToday - kode transaksi terakhir hari ini, jika ada (e.g. "TRX-20250519-0003")
+ * @returns string - kode transaksi baru
+ */
+export function generateTransactionCode(lastCodeToday?: string): string {
+  console.log(lastCodeToday)
+  const now = new Date();
+  const yyyy = now.getFullYear().toString();
+  const mm = (now.getMonth() + 1).toString().padStart(2, '0');
+  const dd = now.getDate().toString().padStart(2, '0');
+  const dateStr = `${yyyy}${mm}${dd}`;
+
+  let nextNumber = 1;
+
+  if (lastCodeToday && lastCodeToday.includes(dateStr)) {
+    const parts = lastCodeToday.split("-");
+    const lastNumber = parseInt(parts[2], 10);
+    if (!isNaN(lastNumber)) {
+      nextNumber = lastNumber + 1;
+    }
+  }
+
+  const paddedNumber = nextNumber.toString().padStart(4, '0');
+  return `TRX-${dateStr}-${paddedNumber}`;
+}

@@ -18,6 +18,8 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 
+import { GrTransaction } from "react-icons/gr";
+
 import { ChevronUp, User2 } from "lucide-react";
 import { logoutUser } from "@/lib/utils";
 
@@ -50,6 +52,11 @@ const items: MenuItem[] = [
     name: "Produk",
     url: "/products",
     icon: IoFastFoodOutline,
+  },
+  {
+    name: "Transaksi",
+    url: "/transactions",
+    icon: GrTransaction,
   },
 ];
 
