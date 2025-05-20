@@ -6,6 +6,7 @@ import AddTransactionFormDialog from "../organisms/Transactions/AddForm";
 import TransactionProvider from "../providers/TransactionProvider";
 import { fetchProducts, fetchTransactions } from "@/lib/fetchers";
 import { Transaction, TransactionItem } from "@/@types/transaction";
+import TransactionTable from "../organisms/Transactions/TableTransactions/transactions-table";
 
 export default function TransactionTemplate() {
   const {
@@ -18,10 +19,10 @@ export default function TransactionTemplate() {
     data,
     isLoading: isLoadingTransactions,
     error: errorTransactions,
-  } = useSWR<{ transactions: Transaction[]; transactionItems: TransactionItem[] }>(
-    "/api/transaction",
-    fetchTransactions
-  );
+  } = useSWR<{
+    transactions: Transaction[];
+    transactionItems: TransactionItem[];
+  }>("/api/transaction", fetchTransactions);
 
   if (isLoading || isLoadingTransactions)
     return <MainWrapper>Loading...</MainWrapper>;
@@ -42,6 +43,7 @@ export default function TransactionTemplate() {
         <div className="flex gap-4 items-center">
           <AddTransactionFormDialog />
         </div>
+        <TransactionTable data={transactions} />
       </MainWrapper>
     </TransactionProvider>
   );
