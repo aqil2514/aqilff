@@ -1,4 +1,4 @@
-import { Transaction } from "@/@types/transaction";
+import { Transaction, TransactionItem } from "@/@types/transaction";
 import { supabaseAdmin } from "@/lib/supabaseServer";
 import { formatTransaction, TransactionSchema } from "@/schema/transaction";
 import { NextRequest, NextResponse } from "next/server";
@@ -41,7 +41,8 @@ export async function POST(req: NextRequest) {
     const itemPayload = { ...item, transaction_id: transactionId };
     return supabaseAdmin
       .from("transaction_items")
-      .insert<typeof itemPayload>(itemPayload);
+      .insert<typeof itemPayload>(itemPayload)
+      .select();
   });
 
   const itemInsertResults = await Promise.all(insertItems);
@@ -57,7 +58,36 @@ export async function POST(req: NextRequest) {
         { status: 500 }
       );
     }
+
+    const insertedItems = result.data?.[0] as TransactionItem;
+
+    if (!insertedItems?.product_id) {
+      console.error("product_id kosong atau tidak ditemukan", insertedItems);
+      return NextResponse.json(
+        { message: "Data produk item transaksi tidak lengkap" },
+        { status: 400 }
+      );
+    }
+
+    const { product_id, quantity } = insertedItems;
+    console.log(product_id); // pastikan di sini valid UUID
+
+    const rpc = await supabaseAdmin.rpc("update_stock", {
+      p_product_id: product_id,
+      p_delta: -quantity,
+    });
+
+    if (rpc.error) {
+      console.error(rpc.error);
+      return NextResponse.json(
+        { message: "Gagal memperbarui stok", rpcError: rpc.error },
+        { status: 500 }
+      );
+    }
   }
 
-  return NextResponse.json({ message:"Berhasil tambah transaksi" }, { status: 201 });
+  return NextResponse.json(
+    { message: "Berhasil tambah transaksi" },
+    { status: 201 }
+  );
 }
