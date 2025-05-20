@@ -4,7 +4,6 @@ import useSWR from "swr";
 import MainWrapper from "../atoms/main-wrapper";
 import AddTransactionFormDialog from "../organisms/Transactions/AddForm";
 import TransactionProvider from "../providers/TransactionProvider";
-import { Product } from "@/@types/products";
 import { fetchProducts, fetchTransactions } from "@/lib/fetchers";
 import { Transaction, TransactionItem } from "@/@types/transaction";
 
@@ -13,7 +12,7 @@ export default function TransactionTemplate() {
     data: products,
     isLoading,
     error,
-  } = useSWR<Product[]>("/api/products", fetchProducts);
+  } = useSWR("/api/products", fetchProducts);
 
   const {
     data,
@@ -34,7 +33,7 @@ export default function TransactionTemplate() {
 
   return (
     <TransactionProvider
-      products={products}
+      products={products.data}
       transactions={transactions}
       transactionItems={transactionItems}
     >
