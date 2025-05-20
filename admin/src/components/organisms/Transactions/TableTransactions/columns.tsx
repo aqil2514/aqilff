@@ -1,7 +1,7 @@
 import { Transaction } from "@/@types/transaction";
-import { Badge } from "@/components/ui/badge";
 import { formatToRupiah } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
+import { DetailDialog } from "../DetailDialog";
 
 export const columns: ColumnDef<Transaction>[] = [
   {
@@ -30,7 +30,7 @@ export const columns: ColumnDef<Transaction>[] = [
     header: "Aksi",
     cell: ({ row }) => (
       <div className="flex gap-2">
-        <Badge className="bg-blue-500 hover:bg-blue-600 active:scale-95 duration-1000 cursor-pointer">Detail</Badge>
+        <DetailDialog row={row} />
       </div>
     ),
   },

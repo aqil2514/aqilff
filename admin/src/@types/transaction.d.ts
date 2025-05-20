@@ -18,6 +18,16 @@
  */
 export interface TransactionItem {
   /**
+   * ID unik dari tabel transaction_item.
+   */
+  id: string;
+  
+  /**
+   * ID unik dari tabel transaction.
+   */
+  transaction_id: string;
+  
+  /**
    * ID unik dari produk.
    */
   product_id: string;
