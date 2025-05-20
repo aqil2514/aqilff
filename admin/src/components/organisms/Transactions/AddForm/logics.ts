@@ -11,16 +11,16 @@ export function useTransactionFormLogics() {
   const todayTransactionInfo = useMemo(() => {
     const today = new Date().toISOString().slice(0, 10).replace(/-/g, ""); // "20250519"
 
-    // Filter transaksi yang ID-nya mengandung tanggal hari ini
-    const todayTransactions = transactions
+    const todayTr = transactions
       .filter((tr) => tr.transaction_code.includes(today))
-      .sort((a, b) => (a.id > b.id ? 1 : -1)); // Urutkan jika perlu
+      .map((tr) => tr.transaction_code)
+      .sort();
+    const newTr = todayTr.at(-1);
 
-    if (todayTransactions.length > 0) {
+    if (todayTr.length > 0) {
       return {
         isFirst: false,
-        lastTransactionId:
-          todayTransactions[todayTransactions.length - 1].transaction_code,
+        lastTransactionId: newTr,
       };
     }
 
@@ -54,9 +54,9 @@ export function useTransactionFormLogics() {
   useEffect(() => {
     const { lastTransactionId } = todayTransactionInfo;
 
-      setLastCodeToday(lastTransactionId as string);
-      const newCode = generateTransactionCode(lastCodeToday);
-      form.setValue("transaction_code", newCode);
+    setLastCodeToday(lastTransactionId as string);
+    const newCode = generateTransactionCode(lastCodeToday);
+    form.setValue("transaction_code", newCode);
   }, [todayTransactionInfo, lastCodeToday, form]);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);

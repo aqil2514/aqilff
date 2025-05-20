@@ -6,8 +6,6 @@ export async function PUT(req: NextRequest) {
   const formData = await req.formData();
   const data = getFormDataValue(formData);
 
-  console.log(data) 
-
   const { data: oldProduct, error: getError } = await supabaseAdmin
     .from("products")
     .select("*")

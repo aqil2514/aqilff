@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     phone: phoneNumber,
   });
 
-  console.log(signUpData, signUpError)
+  console.info(signUpData, signUpError)
 
   if (signUpError) {
     return NextResponse.json(

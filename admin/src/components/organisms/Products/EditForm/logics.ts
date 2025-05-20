@@ -93,7 +93,6 @@ export function useEditProductFormLogics(row: Row<Product>) {
     const formData = new FormData();
     const isChangedImage =
       !!selectedFile && imgPreview !== row.original.image_src;
-    console.log(isChangedImage); 
     
     formData.append("id", data.id);
     formData.append("code", data.code);

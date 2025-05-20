@@ -79,7 +79,6 @@ export function formatToIndonesianDate(dateString: string): string {
  * @returns string - kode transaksi baru
  */
 export function generateTransactionCode(lastCodeToday?: string): string {
-  console.log(lastCodeToday)
   const now = new Date();
   const yyyy = now.getFullYear().toString();
   const mm = (now.getMonth() + 1).toString().padStart(2, '0');

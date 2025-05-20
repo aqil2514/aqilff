@@ -97,7 +97,7 @@ export function useRegisterFormLogics() {
           const oKey = key as keyof Credentials;
           setErrors((prev) => ({ ...prev, [oKey]: vError[oKey][0] }));
         });
-        console.log(errors);
+        console.error(errors);
 
         toast(message, { type: "error" });
         return;
