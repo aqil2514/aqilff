@@ -20,12 +20,12 @@ export interface TransactionItem {
   /**
    * ID unik dari tabel transaction_item.
    */
-  id: string;
+  id?: string;
   
   /**
    * ID unik dari tabel transaction.
    */
-  transaction_id: string;
+  transaction_id?: string;
   
   /**
    * ID unik dari produk.
