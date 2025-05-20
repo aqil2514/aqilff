@@ -70,8 +70,8 @@ export async function POST(req: NextRequest) {
     }
 
     const { product_id, quantity } = insertedItems;
-    console.log(product_id); // pastikan di sini valid UUID
 
+    // Kurangi stok
     const rpc = await supabaseAdmin.rpc("update_stock", {
       p_product_id: product_id,
       p_delta: -quantity,
@@ -81,6 +81,22 @@ export async function POST(req: NextRequest) {
       console.error(rpc.error);
       return NextResponse.json(
         { message: "Gagal memperbarui stok", rpcError: rpc.error },
+        { status: 500 }
+      );
+    }
+
+    // Catat ke stock_log
+    const logResult = await supabaseAdmin.rpc("log_stock_change", {
+      p_product_id: product_id,
+      p_quantity_change: -quantity,
+      p_source: "transaction",
+      p_reference_id: transactionId,
+    });
+
+    if (logResult.error) {
+      console.error("Log stok error:", logResult.error);
+      return NextResponse.json(
+        { message: "Gagal mencatat log stok", logError: logResult.error },
         { status: 500 }
       );
     }
