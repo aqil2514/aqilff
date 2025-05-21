@@ -59,9 +59,10 @@ export function useTransactionFormLogics() {
 
     const filteredTransaction = transactions
       .filter((tr) => tr.transaction_code.includes(dateOnly))
+      .map((tr) => tr.transaction_code)
       .sort();
 
-    const lastTransaction = filteredTransaction.at(-1)?.transaction_code;
+    const lastTransaction = filteredTransaction.at(-1);
 
     const newCode = generateTransactionCode(dateOnly, lastTransaction);
 
