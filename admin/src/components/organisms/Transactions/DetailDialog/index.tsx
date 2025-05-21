@@ -23,8 +23,8 @@ export function DetailDialog({ row }: { row: Row<Transaction> }) {
     customer_name,
     total_amount,
     payment_method,
-    created_at,
     notes,
+    transaction_at
   } = row.original;
 
   const { transactionItems } = useTransactionData();
@@ -98,7 +98,7 @@ export function DetailDialog({ row }: { row: Row<Transaction> }) {
           )}
           <p>
             <span className="font-medium">Tanggal Transaksi:</span>{" "}
-            {format(new Date(created_at), "dd MMMM yyyy, HH:mm")}
+            {format(new Date(transaction_at), "dd MMMM yyyy, HH:mm")}
           </p>
           {notes && (
             <p>

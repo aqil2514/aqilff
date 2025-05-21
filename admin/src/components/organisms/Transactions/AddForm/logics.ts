@@ -1,34 +1,18 @@
 import { Transaction } from "@/@types/transaction";
 import { useTransactionData } from "@/components/providers/TransactionProvider";
-import { formatToRupiah, generateTransactionCode } from "@/lib/utils";
+import {
+  formatToRupiah,
+  generateTransactionCode,
+  getLocalDateTimeValue,
+} from "@/lib/utils";
 import axios, { isAxiosError } from "axios";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 
 export function useTransactionFormLogics() {
   const { products, transactions } = useTransactionData();
-  const todayTransactionInfo = useMemo(() => {
-    const today = new Date().toISOString().slice(0, 10).replace(/-/g, ""); // "20250519"
 
-    const todayTr = transactions
-      .filter((tr) => tr.transaction_code.includes(today))
-      .map((tr) => tr.transaction_code)
-      .sort();
-    const newTr = todayTr.at(-1);
-
-    if (todayTr.length > 0) {
-      return {
-        isFirst: false,
-        lastTransactionId: newTr,
-      };
-    }
-
-    return {
-      isFirst: true,
-      lastTransactionId: null,
-    };
-  }, [transactions]);
   const form = useForm<Transaction>({
     defaultValues: {
       customer_name: "",
@@ -46,18 +30,9 @@ export function useTransactionFormLogics() {
           tip: 0,
         },
       ],
+      transaction_at: getLocalDateTimeValue(),
     },
   });
-
-  const [lastCodeToday, setLastCodeToday] = useState<string>("");
-
-  useEffect(() => {
-    const { lastTransactionId } = todayTransactionInfo;
-
-    setLastCodeToday(lastTransactionId as string);
-    const newCode = generateTransactionCode(lastCodeToday);
-    form.setValue("transaction_code", newCode);
-  }, [todayTransactionInfo, lastCodeToday, form]);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { control } = form;
@@ -76,6 +51,24 @@ export function useTransactionFormLogics() {
 
     return Array.from(productsNameSet).sort();
   }, [products]);
+
+  const getTransactionCode = () => {
+    const { setValue } = form;
+    const transactionDate = form.getValues("transaction_at"); // contoh: "2025-05-20T12:30"
+    const dateOnly = transactionDate.slice(0, 10).split("-").join(""); // "20250520"
+
+    const filteredTransaction = transactions
+      .filter((tr) => tr.transaction_code.includes(dateOnly))
+      .sort();
+
+    const lastTransaction = filteredTransaction.at(-1)?.transaction_code;
+
+    const newCode = generateTransactionCode(dateOnly, lastTransaction);
+
+    setValue("transaction_code", newCode);
+  };
+
+  const nowTime = new Date().toISOString().slice(0, 16);
 
   const productChangeHandler = (index: number, productName: string) => {
     const { setValue, getValues } = form;
@@ -150,9 +143,11 @@ export function useTransactionFormLogics() {
     ...fieldArray,
     products,
     productsName,
+    getTransactionCode,
     productChangeHandler,
     subTotalChangeHandler,
     subTotal,
+    nowTime,
     totalPrice,
     transactionSubmit,
     isLoading,

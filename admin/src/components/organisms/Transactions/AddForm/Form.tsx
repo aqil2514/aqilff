@@ -12,6 +12,7 @@ import {
 } from "react-hook-form";
 
 import { IoMdAddCircle } from "react-icons/io";
+import { IoBarcode } from "react-icons/io5";
 import { FaTrashAlt } from "react-icons/fa";
 
 export default function TransactionAddForm() {
@@ -20,6 +21,7 @@ export default function TransactionAddForm() {
     handleSubmit,
     transactionSubmit,
     isLoading,
+    getTransactionCode,
     reset,
     ...transactionItemProps
   } = useTransactionFormLogics();
@@ -27,7 +29,20 @@ export default function TransactionAddForm() {
   return (
     <form onSubmit={handleSubmit(transactionSubmit)} className="my-4 space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="transaction_code">Kode Transaksi :</Label>
+        <Label htmlFor="transaction_at">Waktu Transaksi</Label>
+        <Input
+          id="transaction_at"
+          type="datetime-local"
+          {...register("transaction_at")}
+        />
+      </div>
+      <div className="space-y-2">
+        <div className="flex gap-2">
+          <Label htmlFor="transaction_code">Kode Transaksi :</Label>
+          <Button type="button" variant={"ghost"} className="cursor-pointer" onClick={getTransactionCode}>
+            <IoBarcode />
+          </Button>
+        </div>
         <Input
           id="transaction_code"
           {...register("transaction_code")}

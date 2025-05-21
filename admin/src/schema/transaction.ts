@@ -11,13 +11,19 @@ export function formatTransaction(raw: Transaction): Transaction {
     customer_name: raw.customer_name || undefined,
     notes: raw.notes || undefined,
     created_at: new Date(raw.created_at),
-
+    transaction_at: raw.transaction_at,
     items: raw.items.map((item: any) => ({
       product_id: item.product_id,
       product_name: item.product_name,
       price_per_unit: Number(item.price_per_unit),
-      discount: item.discount !== undefined && item.discount !== "" ? Number(item.discount) : undefined,
-      tip: item.tip !== undefined && item.tip !== "" ? Number(item.tip) : undefined,
+      discount:
+        item.discount !== undefined && item.discount !== ""
+          ? Number(item.discount)
+          : undefined,
+      tip:
+        item.tip !== undefined && item.tip !== ""
+          ? Number(item.tip)
+          : undefined,
       product_unit: item.product_unit || undefined,
       product_sku: item.product_sku || undefined,
       quantity: Number(item.quantity),
@@ -25,7 +31,6 @@ export function formatTransaction(raw: Transaction): Transaction {
     })),
   };
 }
-
 
 export const TransactionItemSchema = z.object({
   product_id: z.string(),
@@ -49,6 +54,7 @@ export const TransactionSchema = z.object({
     z.literal("ewallet"),
     z.string(),
   ]),
+  transaction_at: z.string(),
   customer_name: z.string().optional(),
   notes: z.string().optional(),
 });

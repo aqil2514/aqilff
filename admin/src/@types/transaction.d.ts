@@ -120,4 +120,9 @@ export interface Transaction {
    * Tanggal dan waktu transaksi dibuat.
    */
   created_at: Date;
+  
+  /**
+   * Tanggal dan waktu transaksi terjadi.
+   */
+  transaction_at: string;
 }

@@ -64,12 +64,43 @@ export function formatToRupiah(amount: number | string): string {
 
 export function formatToIndonesianDate(dateString: string): string {
   const date = new Date(dateString);
-  return new Intl.DateTimeFormat('id-ID', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
+  return new Intl.DateTimeFormat("id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
   }).format(date);
 }
+
+export function formatToIndonesianDateTime(dateString: string): string {
+  const date = new Date(dateString);
+
+  const optionsDate: Intl.DateTimeFormatOptions = {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "Asia/Jakarta",
+  };
+
+  const optionsTime: Intl.DateTimeFormatOptions = {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: "Asia/Jakarta",
+  };
+
+  const formattedDate = new Intl.DateTimeFormat("id-ID", optionsDate).format(date);
+
+  // Cek apakah waktu valid dan bukan jam 00:00 (opsional, bisa dikustom)
+  const hasTime = date.getUTCHours() !== 0 || date.getUTCMinutes() !== 0;
+
+  if (hasTime) {
+    const formattedTime = new Intl.DateTimeFormat("id-ID", optionsTime).format(date);
+    return `${formattedDate} ${formattedTime}`;
+  }
+
+  return formattedDate;
+}
+
 
 /**
  * Generate human readable transaction code.
@@ -78,13 +109,10 @@ export function formatToIndonesianDate(dateString: string): string {
  * @param lastCodeToday - kode transaksi terakhir hari ini, jika ada (e.g. "TRX-20250519-0003")
  * @returns string - kode transaksi baru
  */
-export function generateTransactionCode(lastCodeToday?: string): string {
-  const now = new Date();
-  const yyyy = now.getFullYear().toString();
-  const mm = (now.getMonth() + 1).toString().padStart(2, '0');
-  const dd = now.getDate().toString().padStart(2, '0');
-  const dateStr = `${yyyy}${mm}${dd}`;
-
+export function generateTransactionCode(
+  dateStr: string,
+  lastCodeToday?: string
+): string {
   let nextNumber = 1;
 
   if (lastCodeToday && lastCodeToday.includes(dateStr)) {
@@ -95,6 +123,16 @@ export function generateTransactionCode(lastCodeToday?: string): string {
     }
   }
 
-  const paddedNumber = nextNumber.toString().padStart(4, '0');
+  const paddedNumber = nextNumber.toString().padStart(4, "0");
   return `TRX-${dateStr}-${paddedNumber}`;
+}
+
+export function getLocalDateTimeValue(): string {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const date = String(now.getDate()).padStart(2, "0");
+  const hours = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+  return `${year}-${month}-${date}T${hours}:${minutes}`;
 }
