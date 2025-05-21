@@ -7,8 +7,12 @@ import { Transaction } from "@/@types/transaction";
 import {
   FieldArrayWithId,
   UseFieldArrayAppend,
+  UseFieldArrayRemove,
   UseFormRegister,
 } from "react-hook-form";
+
+import { IoMdAddCircle } from "react-icons/io";
+import { FaTrashAlt } from "react-icons/fa";
 
 export default function TransactionAddForm() {
   const {
@@ -68,6 +72,7 @@ interface TransactionItemProps {
   totalPrice: () => string;
   append: UseFieldArrayAppend<Transaction, "items">;
   productsName: string[];
+  remove: UseFieldArrayRemove;
 }
 
 const TransactionItem: React.FC<TransactionItemProps> = ({
@@ -79,6 +84,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
   append,
   totalPrice,
   productsName,
+  remove,
 }) => {
   return (
     <>
@@ -135,24 +141,36 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
       ))}
       <p>Total : {totalPrice()}</p>
 
-      <Button
-        type="button"
-        className="cursor-pointer"
-        onClick={() =>
-          append({
-            product_id: "",
-            product_name: "",
-            discount: 0,
-            price_per_unit: 0,
-            product_sku: "",
-            product_unit: "",
-            quantity: 1,
-            subtotal: 0,
-          })
-        }
-      >
-        Tambah Produk
-      </Button>
+      <div className="space-x-2">
+        <Button
+          type="button"
+          variant={"ghost"}
+          className="cursor-pointer text-blue-500 hover:text-blue-600"
+          onClick={() =>
+            append({
+              product_id: "",
+              product_name: "",
+              discount: 0,
+              price_per_unit: 0,
+              product_sku: "",
+              product_unit: "",
+              quantity: 1,
+              subtotal: 0,
+              tip: 0,
+            })
+          }
+        >
+          <IoMdAddCircle />
+        </Button>
+        <Button
+          type="button"
+          variant={"ghost"}
+          className="cursor-pointer text-red-500 hover:text-red-600"
+          onClick={() => remove(0)}
+        >
+          <FaTrashAlt />
+        </Button>
+      </div>
 
       <datalist id="product-name-list">
         {productsName.map((prod) => (

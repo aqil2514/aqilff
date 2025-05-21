@@ -1,5 +1,6 @@
 import { Transaction, TransactionItem } from "@/@types/transaction";
 import { supabaseAdmin } from "@/lib/supabaseServer";
+import { update_stock_log } from "@/lib/utils-server";
 import { formatTransaction, TransactionSchema } from "@/schema/transaction";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -85,20 +86,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Catat ke stock_log
-    const logResult = await supabaseAdmin.rpc("log_stock_change", {
-      p_product_id: product_id,
-      p_quantity_change: -quantity,
-      p_source: "transaction",
-      p_reference_id: transactionId,
+    const { logError, message: logMsg } = await update_stock_log({
+      product_id,
+      quantity: -quantity,
+      source: "transaction",
+      reference_id: transactionId,
     });
 
-    if (logResult.error) {
-      console.error("Log stok error:", logResult.error);
-      return NextResponse.json(
-        { message: "Gagal mencatat log stok", logError: logResult.error },
-        { status: 500 }
-      );
+    if (logError) {
+      console.error("Log stok error:", logError);
+      return NextResponse.json({ message: logMsg, logError }, { status: 500 });
     }
   }
 

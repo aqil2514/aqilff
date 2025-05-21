@@ -1,4 +1,5 @@
 import { supabaseAdmin } from "@/lib/supabaseServer";
+import { update_stock_log } from "@/lib/utils-server";
 import { uploadImageToSupabase } from "@/utils/supabase";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -54,6 +55,22 @@ export async function PUT(req: NextRequest) {
       { message: "Gagal update produk" },
       { status: 500 }
     );
+  }
+
+  const stockDifference = oldProduct.stock - data.stock;
+
+  if (stockDifference !== 0) {
+    const logResult = await update_stock_log({
+      product_id: data.id,
+      quantity: stockDifference,
+      reference_id: `manual-${Date.now()}`,
+      source: "penyesuaian",
+    });
+    console.log(logResult);
+
+    if (logResult.status !== 200) {
+      console.error("Gagal mencatat log stok:", logResult.logError);
+    }
   }
 
   return NextResponse.json(
