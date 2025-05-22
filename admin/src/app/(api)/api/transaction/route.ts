@@ -1,6 +1,8 @@
 import { supabase } from "@/lib/supabaseServer";
 import { NextResponse } from "next/server";
 
+// TODO : Ini cari best Practicesnya. Bagusnya tampilin semua data, atau pilih filter dulu baru tampilin. Soalnya banyak banget kalo langsung tampilin semua data
+
 export async function GET() {
   const [transactionDataRes, transactionItemsRes] = await Promise.all([
     supabase.from("transactions").select("*"),

@@ -101,6 +101,23 @@ export function formatToIndonesianDateTime(dateString: string): string {
   return formattedDate;
 }
 
+export function formatToIndonesianDateTimeUTC(dateString: string): string {
+  const date = new Date(dateString); // Tanggal dalam UTC
+
+  // Ambil bagian-bagian UTC langsung
+  const day = date.getUTCDate();
+  const month = date.toLocaleString("id-ID", {
+    month: "long",
+    timeZone: "UTC"
+  });
+  const year = date.getUTCFullYear();
+  const hour = String(date.getUTCHours()).padStart(2, "0");
+  const minute = String(date.getUTCMinutes()).padStart(2, "0");
+
+  return `${day} ${month} ${year} ${hour}:${minute}`;
+}
+
+
 
 /**
  * Generate human readable transaction code.

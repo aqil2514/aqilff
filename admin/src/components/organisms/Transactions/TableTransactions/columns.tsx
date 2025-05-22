@@ -1,5 +1,5 @@
 import { Transaction } from "@/@types/transaction";
-import { formatToIndonesianDateTime, formatToRupiah } from "@/lib/utils";
+import { formatToIndonesianDateTimeUTC, formatToRupiah } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
 import { DetailDialog } from "../DetailDialog";
 
@@ -14,7 +14,7 @@ export const columns: ColumnDef<Transaction>[] = [
     cell: ({ row }) => {
       const date = row.original.transaction_at;
 
-      const formatted = formatToIndonesianDateTime(date)
+      const formatted = formatToIndonesianDateTimeUTC(date)
 
       return formatted;
     },
