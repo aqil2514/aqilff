@@ -2,6 +2,7 @@ import { Transaction } from "@/@types/transaction";
 import { formatToIndonesianDateTimeUTC, formatToRupiah } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
 import { DetailDialog } from "../DetailDialog";
+import { DeleteDialog } from "../DeleteDialog";
 
 export const columns: ColumnDef<Transaction>[] = [
   {
@@ -42,6 +43,7 @@ export const columns: ColumnDef<Transaction>[] = [
     cell: ({ row }) => (
       <div className="flex gap-2">
         <DetailDialog row={row} />
+        <DeleteDialog row={row} />
       </div>
     ),
   },

@@ -1,6 +1,6 @@
 import { Transaction, TransactionItem } from "@/@types/transaction";
 import { supabaseAdmin } from "@/lib/supabaseServer";
-import { update_stock_log } from "@/lib/utils-server";
+import { update_stock_log, updateStock } from "@/lib/utils-server";
 import { formatTransaction, TransactionSchema } from "@/schema/transaction";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -73,15 +73,15 @@ export async function POST(req: NextRequest) {
     const { product_id, quantity } = insertedItems;
 
     // Kurangi stok
-    const rpc = await supabaseAdmin.rpc("update_stock", {
-      p_product_id: product_id,
-      p_delta: -quantity,
+    const { success, error: stockError } = await updateStock({
+      product_id,
+      quantity,
+      operation: "decrement",
     });
 
-    if (rpc.error) {
-      console.error(rpc.error);
+    if (!success) {
       return NextResponse.json(
-        { message: "Gagal memperbarui stok", rpcError: rpc.error },
+        { message: "Gagal memperbarui stok", rpcError: stockError },
         { status: 500 }
       );
     }

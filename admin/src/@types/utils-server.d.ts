@@ -18,7 +18,7 @@ type UpdateLogStockRpcArgs = {
   /**
    * Sumber perubahan stok, misalnya: "transaksi", "penyesuaian", atau "retur".
    */
-  source: "transaction" | "penyesuaian";
+  source: "transaction" | "transaction-delete" | "penyesuaian";
 
   /**
    * ID referensi dari transaksi atau aktivitas yang menyebabkan perubahan stok.
@@ -44,4 +44,10 @@ export interface UpdateLogStock {
    * Objek error dari Supabase, jika pencatatan log stok gagal.
    */
   logError?: PostgrestError;
+}
+
+export interface UpdateStockParams {
+  product_id: string;
+  quantity: number;
+  operation: "increment" | "decrement";
 }
