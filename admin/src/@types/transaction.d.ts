@@ -77,7 +77,7 @@ export interface TransactionItem {
   /**
    * Deleted At = Tanggal penghapusan Item Transaksi.
    */
-  deleted_at: string;
+  deleted_at?: string;
 }
 
 /**
