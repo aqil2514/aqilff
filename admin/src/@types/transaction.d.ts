@@ -21,12 +21,12 @@ export interface TransactionItem {
    * ID unik dari tabel transaction_item.
    */
   id?: string;
-  
+
   /**
    * ID unik dari tabel transaction.
    */
   transaction_id?: string;
-  
+
   /**
    * ID unik dari produk.
    */
@@ -73,6 +73,11 @@ export interface TransactionItem {
    * Subtotal item = (price_per_unit - discount) * quantity.
    */
   subtotal: number;
+
+  /**
+   * Deleted At = Tanggal penghapusan Item Transaksi.
+   */
+  deleted_at: string;
 }
 
 /**
@@ -120,7 +125,12 @@ export interface Transaction {
    * Tanggal dan waktu transaksi dibuat.
    */
   created_at: Date;
-  
+
+  /**
+   * Deleted At = Tanggal penghapusan Item Transaksi.
+   */
+  deleted_at: string;
+
   /**
    * Tanggal dan waktu transaksi terjadi.
    */

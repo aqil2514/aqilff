@@ -37,16 +37,16 @@ export async function DELETE(req: NextRequest) {
     .select("*")
     .eq("transaction_id", transaction.id);
 
-  if (tIData?.length === 0 || tIError)
+  if (tIError)
     return NextResponse.json(
       {
-        message: "Terjadi kesalahan saat ambil data Transaksi",
-        transactionError,
+        message: "Terjadi kesalahan saat ambil data Item Transaksi",
+        tIError,
       },
       { status: 500 }
     );
 
-  transactionItems = tIData;
+  transactionItems = tIData ?? [];
 
   for (const item of transactionItems) {
     const { logError, message, status } = await update_stock_log({
@@ -74,10 +74,35 @@ export async function DELETE(req: NextRequest) {
     }
   }
 
-  await supabaseAdmin.from("transactions").delete().eq("id", transaction.id);
+  // Soft delete transaction_items
+  const now = new Date().toISOString();
+  const { error: itemsUpdateError } = await supabaseAdmin
+    .from("transaction_items")
+    .update({ deleted_at: now })
+    .eq("transaction_id", transaction.id);
+
+  if (itemsUpdateError) {
+    return NextResponse.json(
+      { message: "Gagal menghapus item transaksi secara soft delete", error: itemsUpdateError },
+      { status: 500 }
+    );
+  }
+
+  // Soft delete transaction
+  const { error: transactionUpdateError } = await supabaseAdmin
+    .from("transactions")
+    .update({ deleted_at: now })
+    .eq("id", transaction.id);
+
+  if (transactionUpdateError) {
+    return NextResponse.json(
+      { message: "Gagal menghapus transaksi secara soft delete", error: transactionUpdateError },
+      { status: 500 }
+    );
+  }
 
   return NextResponse.json(
-    { message: "Transaksi berhasil dihapus" },
+    { message: "Transaksi berhasil dihapus secara soft delete" },
     { status: 200 }
   );
 }

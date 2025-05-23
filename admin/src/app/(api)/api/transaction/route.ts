@@ -6,7 +6,10 @@ export async function GET(req: NextRequest) {
   const start = searchParams.get("start");
   const end = searchParams.get("end");
 
-  let transactionQuery = supabase.from("transactions").select("*");
+  let transactionQuery = supabase
+    .from("transactions")
+    .select("*")
+
   if (start && end) {
     const startDate = new Date(start);
     const endDate = new Date(end);
@@ -34,7 +37,6 @@ export async function GET(req: NextRequest) {
   const transactions = transactionDataRes.data;
   const transactionIds = transactions.map((tx) => tx.id);
 
-  // Jika tidak ada transaksi ditemukan, tidak perlu lanjut query item
   if (transactionIds.length === 0) {
     return NextResponse.json(
       {
@@ -48,7 +50,7 @@ export async function GET(req: NextRequest) {
   const transactionItemsRes = await supabase
     .from("transaction_items")
     .select("*")
-    .in("transaction_id", transactionIds); // <-- filter berdasarkan transaction_id
+    .in("transaction_id", transactionIds)
 
   if (transactionItemsRes.error) {
     return NextResponse.json(
