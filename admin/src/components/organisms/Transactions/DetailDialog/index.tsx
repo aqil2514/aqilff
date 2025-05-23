@@ -29,7 +29,6 @@ export function DetailDialog({ row }: { row: Row<Transaction> }) {
 
   const { transactionItems } = useTransactionData();
 
-  // Filter item berdasarkan ID transaksi
   const items = transactionItems.filter(
     (item: TransactionItem) => item.transaction_id === id
   );

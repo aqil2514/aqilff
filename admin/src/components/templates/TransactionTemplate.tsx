@@ -9,6 +9,7 @@ import TransactionProvider, {
 import { fetchProducts } from "@/lib/fetchers";
 import TransactionTable from "../organisms/Transactions/TableTransactions/transactions-table";
 import { RetrieveDataPopover } from "../organisms/Transactions/RetrieveData";
+import { Loader2 } from "lucide-react";
 
 export default function TransactionTemplate() {
   const {
@@ -16,14 +17,6 @@ export default function TransactionTemplate() {
     isLoading,
     error,
   } = useSWR("/api/products", fetchProducts);
-
-  // const [dateRange, setDateRange] = useState<{
-  //   start: string;
-  //   end: string;
-  // } | null>(null);
-
-  // const [isLoadingTransactions, setIsLoadingTransactions] =
-  //   useState<boolean>(false);
 
   if (isLoading) return <MainWrapper>Loading produk...</MainWrapper>;
   if (error) return <MainWrapper>Gagal memuat produk!</MainWrapper>;
@@ -46,17 +39,23 @@ export default function TransactionTemplate() {
 const CoreData = () => {
   const { dateRange, isLoadingTransactions } = useTransactionData();
 
-  return (
-    <>
-      {!dateRange ? (
-        <div className="text-center mt-10 text-muted-foreground">
-          Silakan pilih rentang tanggal untuk melihat data transaksi.
-        </div>
-      ) : isLoadingTransactions ? (
-        <div className="text-center mt-10">Memuat data...</div>
-      ) : (
-        <TransactionTable />
-      )}
-    </>
-  );
+  if (!dateRange) {
+    return (
+      <div className="text-center mt-10 text-muted-foreground">
+        <p>Silakan pilih rentang tanggal untuk melihat data transaksi.</p>
+        <p className="text-sm mt-2">Gunakan tombol &quot;Ambil Data&quot; di atas.</p>
+      </div>
+    );
+  }
+
+  if (isLoadingTransactions) {
+    return (
+      <div className="flex flex-col items-center mt-10 text-muted-foreground">
+        <Loader2 className="animate-spin w-8 h-8 mb-2" />
+        <p>Memuat data transaksi...</p>
+      </div>
+    );
+  }
+
+  return <TransactionTable />;
 };

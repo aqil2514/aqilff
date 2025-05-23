@@ -11,9 +11,7 @@ export async function GET(req: NextRequest) {
     const startDate = new Date(start);
     const endDate = new Date(end);
 
-    // Set waktu start ke awal hari
     startDate.setUTCHours(0, 0, 0, 0);
-    // Set waktu end ke akhir hari
     endDate.setUTCHours(23, 59, 59, 999);
 
     transactionQuery = transactionQuery
@@ -21,16 +19,41 @@ export async function GET(req: NextRequest) {
       .lte("transaction_at", endDate.toISOString());
   }
 
-  const [transactionDataRes, transactionItemsRes] = await Promise.all([
-    transactionQuery,
-    supabase.from("transaction_items").select("*"),
-  ]);
+  const transactionDataRes = await transactionQuery;
 
-  if (transactionDataRes.error || transactionItemsRes.error) {
+  if (transactionDataRes.error) {
     return NextResponse.json(
       {
-        message: "Gagal mengambil data",
+        message: "Gagal mengambil data transaksi",
         transactionError: transactionDataRes.error,
+      },
+      { status: 500 }
+    );
+  }
+
+  const transactions = transactionDataRes.data;
+  const transactionIds = transactions.map((tx) => tx.id);
+
+  // Jika tidak ada transaksi ditemukan, tidak perlu lanjut query item
+  if (transactionIds.length === 0) {
+    return NextResponse.json(
+      {
+        transactions: [],
+        transactionItems: [],
+      },
+      { status: 200 }
+    );
+  }
+
+  const transactionItemsRes = await supabase
+    .from("transaction_items")
+    .select("*")
+    .in("transaction_id", transactionIds); // <-- filter berdasarkan transaction_id
+
+  if (transactionItemsRes.error) {
+    return NextResponse.json(
+      {
+        message: "Gagal mengambil data item transaksi",
         itemError: transactionItemsRes.error,
       },
       { status: 500 }
@@ -39,7 +62,7 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json(
     {
-      transactions: transactionDataRes.data,
+      transactions,
       transactionItems: transactionItemsRes.data,
     },
     { status: 200 }

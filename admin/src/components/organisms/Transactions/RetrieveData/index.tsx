@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -6,12 +8,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-
 import { TbDatabaseCog } from "react-icons/tb";
 import React from "react";
 import { useRetrieveDataLogic } from "./logics";
+import { Loader2 } from "lucide-react";
+import { useTransactionData } from "@/components/providers/TransactionProvider";
 
-export type RetriveDataProps = {
+export type RetrieveDataProps = {
   onRetrieve: (range: { start: string; end: string }) => void;
   setIsLoadingTransactions: React.Dispatch<React.SetStateAction<boolean>>;
 };
@@ -23,8 +26,9 @@ export function RetrieveDataPopover() {
     setStartDate,
     endDate,
     startDate,
-    isDateRangeValid,
+    isDateRangeValid
   } = useRetrieveDataLogic();
+  const {isLoadingTransactions} = useTransactionData()
 
   return (
     <Popover>
@@ -43,7 +47,7 @@ export function RetrieveDataPopover() {
           <div className="space-y-2">
             <h4 className="font-medium leading-none">Pilih Rentang Tanggal</h4>
             <p className="text-sm text-muted-foreground">
-              Tentukan tanggal awal dan akhir untuk mengambil data transaksi
+              Tentukan tanggal awal dan akhir untuk mengambil data transaksi.
             </p>
           </div>
           <div className="grid gap-2">
@@ -72,14 +76,15 @@ export function RetrieveDataPopover() {
             <Button
               onClick={() => handleRetrieve()}
               className="w-full mt-2"
-              disabled={!isDateRangeValid}
-              aria-disabled={!isDateRangeValid}
+              disabled={!isDateRangeValid || isLoadingTransactions}
+              aria-disabled={!isDateRangeValid || isLoadingTransactions}
               title={
                 !isDateRangeValid
                   ? "Tanggal awal harus kurang dari atau sama dengan tanggal akhir"
                   : undefined
               }
             >
+              {isLoadingTransactions && <Loader2 className="animate-spin w-4 h-4 mr-2" />}
               Ambil Data
             </Button>
           </div>
