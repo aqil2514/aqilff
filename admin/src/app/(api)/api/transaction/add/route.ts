@@ -4,8 +4,6 @@ import { update_stock_log } from "@/lib/utils-server";
 import { formatTransaction, TransactionSchema } from "@/schema/transaction";
 import { NextRequest, NextResponse } from "next/server";
 
-//TODO : Di sini ada bug. Jadi, waktu input sama waktu db ga sama. Entah salah di BE atau di FE
-
 export async function POST(req: NextRequest) {
   const raw = (await req.json()) as Transaction;
   const body = formatTransaction(raw);

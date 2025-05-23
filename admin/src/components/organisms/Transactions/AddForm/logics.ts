@@ -9,9 +9,11 @@ import axios, { isAxiosError } from "axios";
 import React, { useMemo, useState } from "react";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import { useRetrieveDataLogic } from "../RetrieveData/logics";
 
 export function useTransactionFormLogics() {
   const { products, transactions } = useTransactionData();
+  const { handleRetrieve } = useRetrieveDataLogic();
 
   const form = useForm<Transaction>({
     defaultValues: {
@@ -127,6 +129,7 @@ export function useTransactionFormLogics() {
       const { data } = await axios.post("/api/transaction/add", formData);
 
       toast(data.message, { type: "success" });
+      await handleRetrieve({ showToast: false });
     } catch (error) {
       if (isAxiosError(error)) {
         const data = error.response?.data;

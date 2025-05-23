@@ -1,12 +1,11 @@
-import { useTransactionData } from "@/components/providers/TransactionProvider";
 import TransactionTable from "./transactions-table";
 
-export default function TableProducts() {
-  const { transactions } = useTransactionData();
+// TODO : Ada semacam bug. Jadi pas tambah data, user harus refresh dulu agar data terbaru. Fix ini nanti
 
+export default function TableTransactions() {
   return (
     <div>
-      <TransactionTable data={transactions} />
+      <TransactionTable />
     </div>
   );
 }
