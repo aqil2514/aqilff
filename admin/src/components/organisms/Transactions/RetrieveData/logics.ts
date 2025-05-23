@@ -57,6 +57,7 @@ export function useRetrieveDataLogic() {
         if (showToast) {
           toast("Data berhasil diambil", { type: "success" });
         }
+        
         setDateRange({ end: endDate, start: startDate });
       } catch (error) {
         if (isAxiosError(error)) {

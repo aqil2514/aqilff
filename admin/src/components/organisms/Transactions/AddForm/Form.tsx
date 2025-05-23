@@ -8,12 +8,25 @@ import {
   FieldArrayWithId,
   UseFieldArrayAppend,
   UseFieldArrayRemove,
+  UseFormGetValues,
   UseFormRegister,
+  UseFormSetValue,
 } from "react-hook-form";
 
 import { IoMdAddCircle } from "react-icons/io";
 import { IoBarcode } from "react-icons/io5";
 import { FaTrashAlt } from "react-icons/fa";
+
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function TransactionAddForm() {
   const {
@@ -23,7 +36,7 @@ export default function TransactionAddForm() {
     isLoading,
     getTransactionCode,
     reset,
-    ...transactionItemProps
+    ...restProps
   } = useTransactionFormLogics();
 
   return (
@@ -39,7 +52,12 @@ export default function TransactionAddForm() {
       <div className="space-y-2">
         <div className="flex gap-2">
           <Label htmlFor="transaction_code">Kode Transaksi :</Label>
-          <Button type="button" variant={"ghost"} className="cursor-pointer" onClick={getTransactionCode}>
+          <Button
+            type="button"
+            variant={"ghost"}
+            className="cursor-pointer"
+            onClick={getTransactionCode}
+          >
             <IoBarcode />
           </Button>
         </div>
@@ -54,9 +72,16 @@ export default function TransactionAddForm() {
         <Input id="customer_name" {...register("customer_name")} />
       </div>
 
+      <SelectPaymentMethod {...restProps} />
+
       <div className="border rounded-2xl px-2 py-2 space-y-4">
         <p className="italic">Item yang dibeli</p>
-        <TransactionItem register={register} {...transactionItemProps} />
+        <TransactionItem register={register} {...restProps} />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="notes">Keterangan :</Label>
+        <Textarea id="notes" {...register("notes")} />
       </div>
 
       <div className="flex gap-2 items-center">
@@ -193,5 +218,31 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
         ))}
       </datalist>
     </>
+  );
+};
+
+const SelectPaymentMethod: React.FC<{
+  setValue: UseFormSetValue<Transaction>;
+  getValues: UseFormGetValues<Transaction>;
+}> = ({ setValue, getValues }) => {
+  return (
+    <div className="space-y-2">
+      <Label>Metode Pembayaran</Label>
+      <Select
+        defaultValue={getValues("payment_method")}
+        onValueChange={(e) => setValue("payment_method", e)}
+      >
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder="Metode Pembayaran" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectLabel>Metode Pembayaran</SelectLabel>
+            <SelectItem value="cash">Cash</SelectItem>
+            <SelectItem value="digital">Digital</SelectItem>
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+    </div>
   );
 };

@@ -83,7 +83,7 @@ export async function DELETE(req: NextRequest) {
 
   if (itemsUpdateError) {
     return NextResponse.json(
-      { message: "Gagal menghapus item transaksi secara soft delete", error: itemsUpdateError },
+      { message: "Gagal menghapus item transaksi", error: itemsUpdateError },
       { status: 500 }
     );
   }
@@ -96,13 +96,13 @@ export async function DELETE(req: NextRequest) {
 
   if (transactionUpdateError) {
     return NextResponse.json(
-      { message: "Gagal menghapus transaksi secara soft delete", error: transactionUpdateError },
+      { message: "Gagal menghapus transaksi", error: transactionUpdateError },
       { status: 500 }
     );
   }
 
   return NextResponse.json(
-    { message: "Transaksi berhasil dihapus secara soft delete" },
+    { message: "Transaksi berhasil dihapus" },
     { status: 200 }
   );
 }

@@ -5,23 +5,6 @@ import { formatToRupiah } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";
 
-// export default function TransactionTable() {
-//   const { transactions: data } = useTransactionData();
-//   const visibleData = data.filter((d) => !d.deleted_at);
-//   const omzet = formatToRupiah(
-//     visibleData.reduce((acc, curr) => {
-//       return acc + curr.total_amount;
-//     }, 0)
-//   );
-
-//   return (
-//     <>
-//       <DataTable columns={columns} data={visibleData} />
-//       <p>Total Omzet Hari Ini {omzet} dari {visibleData.length} transaksi</p>
-//     </>
-//   );
-// }
-
 export default function TransactionTable() {
   const { transactions: data } = useTransactionData();
 
