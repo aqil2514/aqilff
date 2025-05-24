@@ -88,13 +88,17 @@ export function formatToIndonesianDateTime(dateString: string): string {
     timeZone: "Asia/Jakarta",
   };
 
-  const formattedDate = new Intl.DateTimeFormat("id-ID", optionsDate).format(date);
+  const formattedDate = new Intl.DateTimeFormat("id-ID", optionsDate).format(
+    date
+  );
 
   // Cek apakah waktu valid dan bukan jam 00:00 (opsional, bisa dikustom)
   const hasTime = date.getUTCHours() !== 0 || date.getUTCMinutes() !== 0;
 
   if (hasTime) {
-    const formattedTime = new Intl.DateTimeFormat("id-ID", optionsTime).format(date);
+    const formattedTime = new Intl.DateTimeFormat("id-ID", optionsTime).format(
+      date
+    );
     return `${formattedDate} ${formattedTime}`;
   }
 
@@ -108,7 +112,7 @@ export function formatToIndonesianDateTimeUTC(dateString: string): string {
   const day = date.getUTCDate();
   const month = date.toLocaleString("id-ID", {
     month: "long",
-    timeZone: "UTC"
+    timeZone: "UTC",
   });
   const year = date.getUTCFullYear();
   const hour = String(date.getUTCHours()).padStart(2, "0");
@@ -117,8 +121,6 @@ export function formatToIndonesianDateTimeUTC(dateString: string): string {
   return `${day} ${month} ${year} ${hour}:${minute}`;
 }
 
-
-
 /**
  * Generate human readable transaction code.
  * Format: TRX-YYYYMMDD-XXXX (e.g. TRX-20250519-0001)
@@ -126,9 +128,10 @@ export function formatToIndonesianDateTimeUTC(dateString: string): string {
  * @param lastCodeToday - kode transaksi terakhir hari ini, jika ada (e.g. "TRX-20250519-0003")
  * @returns string - kode transaksi baru
  */
-export function generateTransactionCode(
+export function generateCode(
   dateStr: string,
-  lastCodeToday?: string
+  lastCodeToday?: string,
+  prefix?: "TRX" | "PUR"
 ): string {
   let nextNumber = 1;
 
@@ -141,7 +144,7 @@ export function generateTransactionCode(
   }
 
   const paddedNumber = nextNumber.toString().padStart(4, "0");
-  return `TRX-${dateStr}-${paddedNumber}`;
+  return `${prefix}-${dateStr}-${paddedNumber}`;
 }
 
 export function getLocalDateTimeValue(): string {

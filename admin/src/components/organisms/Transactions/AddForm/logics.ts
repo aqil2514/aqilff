@@ -2,7 +2,7 @@ import { Transaction } from "@/@types/transaction";
 import { useTransactionData } from "@/components/providers/TransactionProvider";
 import {
   formatToRupiah,
-  generateTransactionCode,
+  generateCode,
   getLocalDateTimeValue,
 } from "@/lib/utils";
 import axios, { isAxiosError } from "axios";
@@ -59,7 +59,7 @@ export function useTransactionFormLogics() {
 
     const lastTransaction = filteredTransaction.at(-1);
 
-    const newCode = generateTransactionCode(dateOnly, lastTransaction);
+    const newCode = generateCode(dateOnly, lastTransaction, "TRX");
 
     setValue("transaction_code", newCode);
   };

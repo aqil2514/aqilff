@@ -13,8 +13,13 @@ import { MdAdd } from "react-icons/md";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import React from "react";
 import TransactionAddForm from "./Form";
+import { useTransactionData } from "@/components/providers/TransactionProvider";
 
 export default function AddTransactionFormDialog() {
+  const { dateRange } = useTransactionData();
+
+  if (!dateRange) return null;
+
   return (
     <Dialog>
       <DialogTrigger asChild>

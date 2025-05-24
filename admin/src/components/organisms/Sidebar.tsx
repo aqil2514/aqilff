@@ -22,6 +22,7 @@ import { GrTransaction } from "react-icons/gr";
 
 import { ChevronUp, User2 } from "lucide-react";
 import { logoutUser } from "@/lib/utils";
+import { BiPurchaseTagAlt } from "react-icons/bi";
 
 import { IoFastFoodOutline } from "react-icons/io5";
 import { MdDashboard } from "react-icons/md";
@@ -57,6 +58,11 @@ const items: MenuItem[] = [
     name: "Transaksi",
     url: "/transactions",
     icon: GrTransaction,
+  },
+  {
+    name: "Pembelian",
+    url: "/purchases",
+    icon: BiPurchaseTagAlt,
   },
 ];
 
