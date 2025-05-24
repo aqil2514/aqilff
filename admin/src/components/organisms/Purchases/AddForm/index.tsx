@@ -16,9 +16,9 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { usePurchaseData } from "@/components/providers/PurchasesProvider";
 
 export function PurchaseAddFormDialog() {
-  const { purchases } = usePurchaseData();
+  const { dateRange } = usePurchaseData();
 
-  if (purchases.length < 1) return null;
+  if (!dateRange) return null;
 
   return (
     <Dialog>

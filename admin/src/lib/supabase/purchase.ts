@@ -1,5 +1,6 @@
 import { supabaseAdmin } from "../supabaseServer";
 import { Purchase, PurchaseItem } from "@/@types/purchases";
+import { update_stock_log, updateStock } from "../utils-server";
 
 type InsertPurchase = Omit<Purchase, "items">;
 type InsertPurchaseItem = Omit<PurchaseItem, "purchase_id">;
@@ -22,7 +23,7 @@ export async function insertPurchaseData(payload: InsertPurchase) {
 export async function insertPurchaseItemData(
   payload: InsertPurchaseItem,
   purchaseId: string
-) {
+): Promise<PurchaseItem> {
   const { data, error } = await supabaseAdmin
     .from("purchase_items")
     .insert({
@@ -33,8 +34,32 @@ export async function insertPurchaseItemData(
     .single();
 
   if (error) {
-    console.error("Gagal menyimpan transaksi:", error);
-    throw new Error("Gagal menyimpan transaksi");
+    console.error("Gagal menyimpan purchase item:", error);
+    throw new Error("Gagal menyimpan purchase item");
+  }
+
+  const { product_id, quantity } = payload;
+
+  const { success, error: stockError } = await updateStock({
+    product_id: String(product_id),
+    quantity,
+    operation: "increment",
+  });
+
+  if (!success) {
+    throw new Error(`Gagal memperbarui stok: ${stockError?.message}`);
+  }
+
+  const { logError, message: logMsg } = await update_stock_log({
+    product_id: String(product_id),
+    quantity,
+    source: "purchase",
+    reference_id: purchaseId,
+  });
+
+  if (logError) {
+    console.error("Gagal mencatat log stok:", logError);
+    throw new Error(`Log stok error: ${logMsg}`);
   }
 
   return data as PurchaseItem;

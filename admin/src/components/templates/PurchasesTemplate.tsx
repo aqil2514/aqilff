@@ -3,7 +3,9 @@ import useSWR from "swr";
 import MainWrapper from "../atoms/main-wrapper";
 import { PurchaseAddFormDialog } from "../organisms/Purchases/AddForm";
 import { fetchProducts } from "@/lib/fetchers";
-import PurchaseProvider, { usePurchaseData } from "../providers/PurchasesProvider";
+import PurchaseProvider, {
+  usePurchaseData,
+} from "../providers/PurchasesProvider";
 import RetrieveData from "../organisms/Purchases/RetrieveData";
 
 export default function PurchaseTemplate() {
@@ -32,12 +34,15 @@ export default function PurchaseTemplate() {
 }
 
 const CoreData = () => {
-  const {purchases} = usePurchaseData()
+  const { dateRange } = usePurchaseData();
 
-  if(purchases.length < 1) return (
+  if (!dateRange)
+    return (
       <div className="text-center mt-10 text-muted-foreground">
         <p>Silakan pilih rentang tanggal untuk melihat data Pembelian.</p>
-        <p className="text-sm mt-2">Gunakan tombol &quot;Ambil Data&quot; di atas.</p>
+        <p className="text-sm mt-2">
+          Gunakan tombol &quot;Ambil Data&quot; di atas.
+        </p>
       </div>
     );
 
