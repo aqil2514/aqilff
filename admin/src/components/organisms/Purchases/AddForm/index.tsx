@@ -1,6 +1,8 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -11,8 +13,13 @@ import {
 import { MdAdd } from "react-icons/md";
 import PurchaseAddForm from "./Form";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { usePurchaseData } from "@/components/providers/PurchasesProvider";
 
 export function PurchaseAddFormDialog() {
+  const { purchases } = usePurchaseData();
+
+  if (purchases.length < 1) return null;
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -34,7 +41,9 @@ export function PurchaseAddFormDialog() {
           </DialogHeader>
           <PurchaseAddForm />
           <DialogFooter>
-            <Button type="submit">Save changes</Button>
+            <DialogClose asChild>
+              <Button>Tutup</Button>
+            </DialogClose>
           </DialogFooter>
         </ScrollArea>
       </DialogContent>

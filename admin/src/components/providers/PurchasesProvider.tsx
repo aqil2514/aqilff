@@ -7,12 +7,21 @@ import React, {
   useState,
 } from "react";
 
+type RangeData = {
+  start: string;
+  end: string;
+};
+
 interface PurchaseContextProps {
   products: Product[];
   purchases: Purchase[];
   setPurchases: React.Dispatch<SetStateAction<Purchase[]>>;
   purchaseItems: PurchaseItem[];
   setPurchaseItems: React.Dispatch<SetStateAction<PurchaseItem[]>>;
+  dateRange: RangeData | null;
+  setDateRange: React.Dispatch<SetStateAction<RangeData | null>>;
+  isLoadingPurchases: boolean;
+  setIsLoadingPurchases: React.Dispatch<SetStateAction<boolean>>;
 }
 
 const PurchaseContext = createContext<PurchaseContextProps>(
@@ -30,6 +39,9 @@ export default function PurchaseProvider({
 }: PurchaseProviderProps) {
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [purchaseItems, setPurchaseItems] = useState<PurchaseItem[]>([]);
+  const [dateRange, setDateRange] = useState<RangeData | null>(null);
+  const [isLoadingPurchases, setIsLoadingPurchases] =
+    useState<boolean>(false);
 
   return (
     <PurchaseContext.Provider
@@ -39,6 +51,10 @@ export default function PurchaseProvider({
         purchases,
         setPurchaseItems,
         setPurchases,
+        isLoadingPurchases,
+        setIsLoadingPurchases,
+        dateRange,
+        setDateRange,
       }}
     >
       {children}

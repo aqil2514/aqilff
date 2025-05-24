@@ -5,7 +5,7 @@ export interface Purchase {
   /**
    * Identifikasi unik pembelian (UUID).
    */
-  id: string;
+  id?: string;
 
   /**
    * Tanggal dan waktu pembelian dilakukan (format ISO 8601).

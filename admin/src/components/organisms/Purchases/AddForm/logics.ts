@@ -8,6 +8,15 @@ import { useCallback, useState } from "react";
 import axios, { isAxiosError } from "axios";
 import { toast } from "react-toastify";
 
+export type ListForm = {
+  supplierName: () => string[];
+  supplierType: () => string[];
+  productName: () => {
+    name: string;
+    id: string;
+  }[];
+};
+
 export function usePurchaseAddTransactionLogics() {
   const { purchases, products } = usePurchaseData();
   const form = useForm<Purchase>({
@@ -29,11 +38,13 @@ export function usePurchaseAddTransactionLogics() {
     const purchaseCode = purchases.map((pur) => pur.purchase_code);
     const lastCode = purchaseCode.at(-1);
 
+    console.log(purchases)
+
     const newCode = generateCode(dateOnly, lastCode, "PUR");
     setValue("purchase_code", newCode);
   };
 
-  const list: Record<string, () => string[]> = {
+  const list: ListForm = {
     supplierName: useCallback(() => {
       const res = purchases
         .map((pur) => pur.supplier_name ?? "")
@@ -50,8 +61,10 @@ export function usePurchaseAddTransactionLogics() {
     }, [purchases]),
     productName: useCallback(() => {
       const result = products
-        .map((prod) => prod.name)
-        .filter((prod) => prod !== "")
+        .map((prod) => {
+          return { name: prod.name, id: prod.id };
+        })
+        .filter((prod) => prod.name !== "")
         .sort();
 
       return result;

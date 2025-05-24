@@ -1,6 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { usePurchaseAddTransactionLogics } from "./logics";
+import { ListForm, usePurchaseAddTransactionLogics } from "./logics";
 import { Button } from "@/components/ui/button";
 import { IoBarcode } from "react-icons/io5";
 import {
@@ -8,6 +8,7 @@ import {
   UseFieldArrayAppend,
   UseFieldArrayRemove,
   UseFormRegister,
+  UseFormSetValue,
   UseFormWatch,
 } from "react-hook-form";
 import { Purchase } from "@/@types/purchases";
@@ -108,9 +109,10 @@ interface PurchaseItemProps {
   fields: FieldArrayWithId<Purchase, "items", "id">[];
   watch: UseFormWatch<Purchase>;
   register: UseFormRegister<Purchase>;
-  list: Record<string, () => string[]>;
+  list: ListForm;
   append: UseFieldArrayAppend<Purchase, "items">;
   remove: UseFieldArrayRemove;
+  setValue: UseFormSetValue<Purchase>;
 }
 
 const PurchaseItem: React.FC<PurchaseItemProps> = ({
@@ -120,6 +122,7 @@ const PurchaseItem: React.FC<PurchaseItemProps> = ({
   list,
   append,
   remove,
+  setValue,
 }) => {
   return (
     <>
@@ -138,6 +141,14 @@ const PurchaseItem: React.FC<PurchaseItemProps> = ({
                 list="product-name-list"
                 id={`items.${index}.product_name`}
                 {...register(`items.${index}.product_name`)}
+                onBlur={(e) => {
+                  const selectedProd = list
+                    .productName()
+                    .filter((prod) => prod.name === e.target.value)[0];
+                  if (!selectedProd) return;
+
+                  setValue(`items.${index}.product_id`, selectedProd.id);
+                }}
               />
             </div>
             <div className="space-y-2">
@@ -149,7 +160,9 @@ const PurchaseItem: React.FC<PurchaseItemProps> = ({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor={`items.${index}.remaining_quantity`}>Kuantiti Tersisa : </Label>
+              <Label htmlFor={`items.${index}.remaining_quantity`}>
+                Kuantiti Tersisa :{" "}
+              </Label>
               <Input
                 type="number"
                 id={`items.${index}.remaining_quantity`}
@@ -208,7 +221,7 @@ const PurchaseItem: React.FC<PurchaseItemProps> = ({
 
       <datalist id="product-name-list">
         {list.productName().map((li) => (
-          <option value={li} key={li} />
+          <option value={li.name} key={li.id} />
         ))}
       </datalist>
     </>

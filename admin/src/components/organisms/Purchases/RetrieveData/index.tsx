@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,27 +6,20 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { TbDatabaseCog } from "react-icons/tb";
-import React from "react";
-import { useRetrieveDataLogic } from "./logics";
 import { Loader2 } from "lucide-react";
-import { useTransactionData } from "@/components/providers/TransactionProvider";
+import { TbDatabaseCog } from "react-icons/tb";
+import { useRetrieveDataLogic } from "./logics";
 
-export type RetrieveDataProps = {
-  onRetrieve: (range: { start: string; end: string }) => void;
-  setIsLoadingTransactions: React.Dispatch<React.SetStateAction<boolean>>;
-};
-
-export function RetrieveDataPopover() {
+export default function RetrieveData() {
   const {
-    handleRetrieve,
-    setEndDate,
+    startDate,
     setStartDate,
     endDate,
-    startDate,
-    isDateRangeValid
+    setEndDate,
+    isDateRangeValid,
+    handleRetrieve,
+    isLoadingPurchases,
   } = useRetrieveDataLogic();
-  const {isLoadingTransactions} = useTransactionData()
 
   return (
     <Popover>
@@ -76,15 +67,17 @@ export function RetrieveDataPopover() {
             <Button
               onClick={() => handleRetrieve()}
               className="w-full mt-2"
-              disabled={!isDateRangeValid || isLoadingTransactions}
-              aria-disabled={!isDateRangeValid || isLoadingTransactions}
+              disabled={!isDateRangeValid || isLoadingPurchases}
+              aria-disabled={!isDateRangeValid || isLoadingPurchases}
               title={
                 !isDateRangeValid
                   ? "Tanggal awal harus kurang dari atau sama dengan tanggal akhir"
                   : undefined
               }
             >
-              {isLoadingTransactions && <Loader2 className="animate-spin w-4 h-4 mr-2" />}
+              {isLoadingPurchases && (
+                <Loader2 className="animate-spin w-4 h-4 mr-2" />
+              )}
               Ambil Data
             </Button>
           </div>
