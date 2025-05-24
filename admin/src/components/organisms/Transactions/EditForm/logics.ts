@@ -1,36 +1,31 @@
 import { Transaction } from "@/@types/transaction";
 import { useTransactionData } from "@/components/providers/TransactionProvider";
-import {
-  formatToRupiah,
-  generateTransactionCode,
-  getLocalDateTimeValue,
-} from "@/lib/utils";
-import axios, { isAxiosError } from "axios";
-import React, { useMemo, useState } from "react";
+import { formatToRupiah } from "@/lib/utils";
+import { Row } from "@tanstack/react-table";
+import { useMemo, useState } from "react";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
+import { calculateItemTotal, getTotalPrice } from "../transaction-utils";
+import axios, { isAxiosError } from "axios";
 import { toast } from "react-toastify";
-import { useRetrieveDataLogic } from "../RetrieveData/logics";
-import {
-  calculateItemTotal,
-  defaultTransactionItem,
-  getTotalPrice,
-} from "../transaction-utils";
 
-export function useTransactionFormLogics() {
-  const { products, transactions } = useTransactionData();
-  const { handleRetrieve } = useRetrieveDataLogic();
+export function useTransactionEditFormLogic({ original }: Row<Transaction>) {
+  const { products, transactionItems } = useTransactionData();
+
+  const trItems = transactionItems.filter(
+    (tr) => tr.transaction_id === original.id
+  );
 
   const form = useForm<Transaction>({
     defaultValues: {
-      customer_name: "",
-      payment_method: "cash",
-      items: [defaultTransactionItem],
-      transaction_at: getLocalDateTimeValue(),
+      ...original,
+      items: trItems,
+      transaction_at: new Date(original.transaction_at)
+        .toISOString()
+        .slice(0, 16),
     },
   });
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { control } = form;
+  const { register, getValues, setValue, control } = form;
 
   const fieldArray = useFieldArray({
     control,
@@ -47,24 +42,7 @@ export function useTransactionFormLogics() {
     return Array.from(productsNameSet).sort();
   }, [products]);
 
-  const getTransactionCode = () => {
-    const { setValue } = form;
-    const transactionDate = form.getValues("transaction_at"); // contoh: "2025-05-20T12:30"
-    const dateOnly = transactionDate.slice(0, 10).split("-").join(""); // "20250520"
-
-    const filteredTransaction = transactions
-      .filter((tr) => tr.transaction_code.includes(dateOnly))
-      .map((tr) => tr.transaction_code)
-      .sort();
-
-    const lastTransaction = filteredTransaction.at(-1);
-
-    const newCode = generateTransactionCode(dateOnly, lastTransaction);
-
-    setValue("transaction_code", newCode);
-  };
-
-  const nowTime = new Date().toISOString().slice(0, 16);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const productChangeHandler = (index: number, productName: string) => {
     const { setValue, getValues } = form;
@@ -104,11 +82,9 @@ export function useTransactionFormLogics() {
   const transactionSubmit: SubmitHandler<Transaction> = async (formData) => {
     try {
       setIsLoading(true);
-
-      const { data } = await axios.post("/api/transaction/add", formData);
+      const { data } = await axios.put("/api/transaction/edit", formData);
 
       toast(data.message, { type: "success" });
-      await handleRetrieve({ showToast: false });
     } catch (error) {
       if (isAxiosError(error)) {
         const data = error.response?.data;
@@ -122,17 +98,17 @@ export function useTransactionFormLogics() {
   };
 
   return {
-    ...form,
-    ...fieldArray,
-    products,
-    productsName,
-    getTransactionCode,
-    productChangeHandler,
-    subTotalChangeHandler,
-    subTotal,
-    nowTime,
-    totalPrice,
-    transactionSubmit,
+    form,
+    fieldArray,
+    register,
+    getValues,
+    setValue,
     isLoading,
+    productsName,
+    transactionSubmit,
+    subTotal,
+    subTotalChangeHandler,
+    productChangeHandler,
+    totalPrice,
   };
 }

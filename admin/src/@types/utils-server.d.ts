@@ -18,7 +18,7 @@ type UpdateLogStockRpcArgs = {
   /**
    * Sumber perubahan stok, misalnya: "transaksi", "penyesuaian", atau "retur".
    */
-  source: "transaction" | "transaction-delete" | "penyesuaian";
+  source: "transaction" | "transaction-delete" | "transaction-edit" | "rollback-transaction" |"penyesuaian";
 
   /**
    * ID referensi dari transaksi atau aktivitas yang menyebabkan perubahan stok.

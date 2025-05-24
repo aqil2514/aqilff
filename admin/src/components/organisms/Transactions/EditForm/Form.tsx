@@ -1,47 +1,29 @@
-import { Input } from "@/components/ui/input";
-import { useTransactionFormLogics } from "./logics";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import React from "react";
 import { Transaction } from "@/@types/transaction";
-import {
-  FieldArrayWithId,
-  UseFieldArrayAppend,
-  UseFieldArrayRemove,
-  UseFormGetValues,
-  UseFormRegister,
-  UseFormSetValue,
-} from "react-hook-form";
-
-import { IoMdAddCircle } from "react-icons/io";
-import { IoBarcode } from "react-icons/io5";
-import { FaTrashAlt } from "react-icons/fa";
-
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
+import { Row } from "@tanstack/react-table";
+import { useTransactionEditFormLogic } from "./logics";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { SelectPaymentMethod } from "../AddForm/Form";
+import React from "react";
+import { UseFieldArrayReturn, UseFormReturn } from "react-hook-form";
+import { Button } from "@/components/ui/button";
 import { defaultTransactionItem } from "../transaction-utils";
+import { IoMdAddCircle } from "react-icons/io";
+import { FaTrashAlt } from "react-icons/fa";
+import { Textarea } from "@/components/ui/textarea";
 
-export default function TransactionAddForm() {
-  const {
-    register,
-    handleSubmit,
-    transactionSubmit,
-    isLoading,
-    getTransactionCode,
-    reset,
-    ...restProps
-  } = useTransactionFormLogics();
+export default function EditTransactionForm({
+  row,
+}: {
+  row: Row<Transaction>;
+}) {
+  const { isLoading, transactionSubmit, ...restProps } =
+    useTransactionEditFormLogic(row);
+
+  const { reset, register, getValues, setValue, handleSubmit } = restProps.form;
 
   return (
-    <form onSubmit={handleSubmit(transactionSubmit)} className="my-4 space-y-4">
+    <form className="my-4 space-y-4" onSubmit={handleSubmit(transactionSubmit)}>
       <div className="space-y-2">
         <Label htmlFor="transaction_at">Waktu Transaksi</Label>
         <Input
@@ -51,17 +33,7 @@ export default function TransactionAddForm() {
         />
       </div>
       <div className="space-y-2">
-        <div className="flex gap-2">
-          <Label htmlFor="transaction_code">Kode Transaksi :</Label>
-          <Button
-            type="button"
-            variant={"ghost"}
-            className="cursor-pointer"
-            onClick={getTransactionCode}
-          >
-            <IoBarcode />
-          </Button>
-        </div>
+        <Label htmlFor="transaction_code">Kode Transaksi :</Label>
         <Input
           id="transaction_code"
           {...register("transaction_code")}
@@ -73,11 +45,11 @@ export default function TransactionAddForm() {
         <Input id="customer_name" {...register("customer_name")} />
       </div>
 
-      <SelectPaymentMethod {...restProps} />
+      <SelectPaymentMethod getValues={getValues} setValue={setValue} />
 
       <div className="border rounded-2xl px-2 py-2 space-y-4">
         <p className="italic">Item yang dibeli</p>
-        <TransactionItem register={register} {...restProps} />
+        <TransactionItem {...restProps} />
       </div>
 
       <div className="space-y-2">
@@ -91,7 +63,7 @@ export default function TransactionAddForm() {
           type="submit"
           className="bg-blue-500 text-white px-4 py-2"
         >
-          {isLoading ? "Menyimpan" : "Simpan Transaksi"}
+          {isLoading ? "Mengedit..." : "Edit Transaksi"}
         </Button>
         <Button type="button" onClick={() => reset()}>
           Reset
@@ -102,32 +74,30 @@ export default function TransactionAddForm() {
 }
 
 interface TransactionItemProps {
-  fields: FieldArrayWithId<Transaction, "items", "id">[];
-  register: UseFormRegister<Transaction>;
+  fieldArray: UseFieldArrayReturn<Transaction, "items", "id">;
+  form: UseFormReturn<Transaction, unknown, Transaction>;
+  productsName: string[];
   productChangeHandler: (index: number, productName: string) => void;
+  subTotal: (index: number) => string;
   subTotalChangeHandler: (
     e: React.ChangeEvent<HTMLInputElement>,
     index: number
   ) => void;
-  subTotal: (index: number) => string;
   totalPrice: string;
-  append: UseFieldArrayAppend<Transaction, "items">;
-  productsName: string[];
-  remove: UseFieldArrayRemove;
 }
 
-export const TransactionItem: React.FC<TransactionItemProps> = ({
-  fields,
-  register,
+const TransactionItem: React.FC<TransactionItemProps> = ({
+  fieldArray,
+  form,
+  productsName,
   productChangeHandler,
   subTotal,
   subTotalChangeHandler,
-  append,
   totalPrice,
-  productsName,
-  remove,
 }) => {
-  
+  const { fields, append, remove } = fieldArray;
+  const { register } = form;
+
   return (
     <>
       {fields.map((field, index) => (
@@ -210,31 +180,5 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
         ))}
       </datalist>
     </>
-  );
-};
-
-export const SelectPaymentMethod: React.FC<{
-  setValue: UseFormSetValue<Transaction>;
-  getValues: UseFormGetValues<Transaction>;
-}> = ({ setValue, getValues }) => {
-  return (
-    <div className="space-y-2">
-      <Label>Metode Pembayaran</Label>
-      <Select
-        defaultValue={getValues("payment_method")}
-        onValueChange={(e) => setValue("payment_method", e)}
-      >
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Metode Pembayaran" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            <SelectLabel>Metode Pembayaran</SelectLabel>
-            <SelectItem value="cash">Cash</SelectItem>
-            <SelectItem value="digital">Digital</SelectItem>
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-    </div>
   );
 };
