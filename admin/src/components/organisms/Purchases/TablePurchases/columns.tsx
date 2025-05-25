@@ -1,6 +1,7 @@
 import { ColumnDef, InitialTableState } from "@tanstack/react-table";
-import { formatToIndonesianDateTimeUTC } from "@/lib/utils";
+import { formatToIndonesianDateTimeUTC, formatToRupiah } from "@/lib/utils";
 import { Purchase } from "@/@types/purchases";
+import DetailDialog from "../DetailDialog";
 
 export const columns: ColumnDef<Purchase>[] = [
   {
@@ -26,36 +27,36 @@ export const columns: ColumnDef<Purchase>[] = [
     cell: ({ row }) => row.original.supplier_type || "-",
   },
   {
+    accessorKey: "price",
+    header: "Harga",
+    cell: ({ row }) => {
+      const price = row.original.items.map((item) => item.price);
+      const totalPrice = price.reduce((acc, curr) => {
+        return acc + curr;
+      }, 0);
+
+      return formatToRupiah(totalPrice);
+    },
+  },
+  {
     accessorKey: "items",
     header: "Jumlah Item",
     cell: ({ row }) => {
-      console.log(row.original)
-      return `${row.original.items?.length || 0} produk`},
-  },
-  {
-    accessorKey: "notes",
-    header: "Catatan",
-    cell: ({ row }) => row.original.notes || "-",
-  },
-  {
-    accessorKey: "created_at",
-    header: "Waktu Input",
-    cell: ({ row }) => {
-      const createdAt = row.original.created_at;
-      return createdAt ? formatToIndonesianDateTimeUTC(createdAt) : "-";
+      return `${row.original.items.length} item`;
     },
   },
-  // {
-  //   id: "actions",
-  //   header: "Aksi",
-  //   cell: ({ row }) => (
-  //     <div className="flex gap-2">
-  //       <DetailDialog row={row} />
-  //       <DeleteDialog row={row} />
-  //       <EditDialog row={row} />
-  //     </div>
-  //   ),
-  // },
+  {
+    id: "actions",
+    header: "Aksi",
+    cell: ({ row }) => (
+      <div className="flex gap-2">
+        <DetailDialog row={row} />
+        {/* <DetailDialog row={row} />
+        <DeleteDialog row={row} />
+        <EditDialog row={row} /> */}
+      </div>
+    ),
+  },
 ];
 
-export const initialState:InitialTableState = {}
+export const initialState: InitialTableState = {};

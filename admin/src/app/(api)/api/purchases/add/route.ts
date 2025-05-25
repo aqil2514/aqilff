@@ -10,10 +10,18 @@ export async function POST(req: NextRequest) {
     const raw = (await req.json()) as Purchase;
     const { items, ...purchasePayload } = raw;
 
+    const fixedItems = items.map((item) => {
+      return {
+        ...item,
+        hpp: item.price / item.quantity,
+        remaining_quantity: item.quantity,
+      };
+    });
+
     const data = await insertPurchaseData(purchasePayload);
 
     await Promise.all(
-      items.map((item) => insertPurchaseItemData(item, String(data.id)))
+      fixedItems.map((item) => insertPurchaseItemData(item, String(data.id)))
     );
 
     return NextResponse.json(

@@ -46,9 +46,15 @@ export function usePurchaseAddTransactionLogics() {
     supplierName: useCallback(() => {
       const res = purchases
         .map((pur) => pur.supplier_name ?? "")
-        .filter((v) => v !== "")
-        .sort();
-      return res;
+        .filter((v) => v !== "");
+
+      const supplierNameSet = new Set<string>();
+
+      for (const r of res) {
+        supplierNameSet.add(r);
+      }
+
+      return Array.from(supplierNameSet).sort();
     }, [purchases]),
     supplierType: useCallback(() => {
       const res = purchases

@@ -189,7 +189,9 @@ const PurchaseItem: React.FC<PurchaseItemProps> = ({
                 step={500}
                 id={`items.${index}.hpp`}
                 readOnly
-                {...register(`items.${index}.hpp`)}
+                onChange={(e) => {
+                  setValue(`items.${index}.hpp`, Number(e.target.value))
+                }}
                 value={hpp}
                 disabled
               />

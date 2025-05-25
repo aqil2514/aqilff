@@ -36,7 +36,7 @@ const InnerTemplate = () => {
   } = usePurchaseData();
 
   return (
-    <MainWrapper className="!block pt-16 px-2">
+    <MainWrapper className="!block pt-16 px-2 space-y-2">
       <h1 className="text-center">Pembelian</h1>
       <div className="flex gap-4 items-center">
         <PurchaseAddFormDialog />
