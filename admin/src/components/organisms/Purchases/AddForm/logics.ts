@@ -38,8 +38,6 @@ export function usePurchaseAddTransactionLogics() {
     const purchaseCode = purchases.map((pur) => pur.purchase_code);
     const lastCode = purchaseCode.at(-1);
 
-    console.log(purchases);
-
     const newCode = generateCode(dateOnly, lastCode, "PUR");
     setValue("purchase_code", newCode);
   };

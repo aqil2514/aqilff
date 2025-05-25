@@ -118,11 +118,14 @@ export async function getPurchaseDataAndItemsByDateRange(
   startDate: string,
   endDate: string
 ): Promise<Purchase[]> {
+  const fullStart = `${startDate}T00:00:00`;
+  const fullEnd = `${endDate}T23:59:59`;
+
   const { data: purchases, error } = await supabaseAdmin
     .from("purchases")
     .select("*")
-    .gte("purchase_date", startDate)
-    .lte("purchase_date", endDate)
+    .gte("purchase_date", fullStart)
+    .lte("purchase_date", fullEnd)
     .order("purchase_date", { ascending: true });
 
   if (error) {
