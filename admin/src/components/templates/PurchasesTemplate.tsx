@@ -49,6 +49,7 @@ const InnerTemplate = () => {
         />
       </div>
       <CoreData />
+      <PurchaseFooter />
     </MainWrapper>
   );
 };
@@ -69,7 +70,10 @@ const CoreData = () => {
   if (purchases.length === 0)
     return (
       <div className="text-center mt-10 text-muted-foreground">
-        <p>Tidak ada atau belum ada data pada tanggal {dateRange.start} sampai {dateRange.end}.</p>
+        <p>
+          Tidak ada atau belum ada data pada tanggal {dateRange.start} sampai{" "}
+          {dateRange.end}.
+        </p>
         <p className="text-sm mt-2">
           Gunakan tombol &quot;Tambah Data&quot; di atas.
         </p>
@@ -77,4 +81,42 @@ const CoreData = () => {
     );
 
   return <TablePurchases />;
+};
+
+const PurchaseFooter = () => {
+  const { purchases, dateRange } = usePurchaseData();
+
+  const totalQuantity = purchases.reduce((sum, p) => {
+    return sum + p.items.reduce((itemSum, item) => itemSum + item.quantity, 0);
+  }, 0);
+
+  const totalPrice = purchases.reduce((sum, p) => {
+    return (
+      sum +
+      p.items.reduce((itemSum, item) => itemSum + item.quantity * item.hpp, 0)
+    );
+  }, 0);
+
+  if (!dateRange || purchases.length === 0) return null;
+
+  return (
+    <div className="mt-4 p-4 border rounded-md bg-muted text-sm flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+      <div>
+        Menampilkan {purchases.length} transaksi dari{" "}
+        <span className="font-medium">{dateRange.start}</span> hingga{" "}
+        <span className="font-medium">{dateRange.end}</span>
+      </div>
+      <div className="flex gap-4">
+        <div>
+          Total Barang: <span className="font-semibold">{totalQuantity}</span>
+        </div>
+        <div>
+          Total Harga:{" "}
+          <span className="font-semibold">
+            Rp {totalPrice.toLocaleString()}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
 };
