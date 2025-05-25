@@ -98,10 +98,19 @@ export async function getPurchaseDataAndItems(): Promise<Purchase[]> {
 
   const purchasesWithItems: Purchase[] = await Promise.all(
     purchases.map(async (purchase) => {
-      const items = await getPurchaseItemData();
+      const { data: items, error } = await supabaseAdmin
+        .from("purchase_items")
+        .select("*")
+        .eq("purchase_id", purchase.id);
+
+      if (error) {
+        console.error(`Gagal mengambil item untuk purchase ${purchase.id}:`, error);
+        throw new Error("Gagal mengambil item pembelian");
+      }
+
       return {
         ...purchase,
-        items,
+        items: items || [],
       };
     })
   );
@@ -135,10 +144,23 @@ export async function getPurchaseDataAndItemsByDateRange(
 
   const purchasesWithItems: Purchase[] = await Promise.all(
     (purchases || []).map(async (purchase) => {
-      const items = await getPurchaseItemData();
+      const { data: items, error: itemsError } = await supabaseAdmin
+        .from("purchase_items")
+        .select("*")
+        .eq("purchase_id", purchase.id);
+
+      if (itemsError) {
+        console.error(
+          "Gagal mengambil item untuk purchase",
+          purchase.id,
+          itemsError
+        );
+        throw new Error("Gagal mengambil item pembelian");
+      }
+
       return {
         ...purchase,
-        items,
+        items: items || [],
       };
     })
   );

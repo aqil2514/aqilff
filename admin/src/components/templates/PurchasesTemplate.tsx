@@ -7,6 +7,7 @@ import PurchaseProvider, {
   usePurchaseData,
 } from "../providers/PurchasesProvider";
 import { RetrieveDataPopover } from "../molecules/RetrieveData";
+import TablePurchases from "../organisms/Purchases/TablePurchases";
 
 export default function PurchaseTemplate() {
   const {
@@ -53,7 +54,7 @@ const InnerTemplate = () => {
 };
 
 const CoreData = () => {
-  const { dateRange } = usePurchaseData();
+  const { dateRange, purchases } = usePurchaseData();
 
   if (!dateRange)
     return (
@@ -65,5 +66,15 @@ const CoreData = () => {
       </div>
     );
 
-  return <div>Data berhasil diambil, namun belum dapat ditampilkan</div>;
+  if (purchases.length === 0)
+    return (
+      <div className="text-center mt-10 text-muted-foreground">
+        <p>Tidak ada atau belum ada data pada tanggal {dateRange.start} sampai {dateRange.end}.</p>
+        <p className="text-sm mt-2">
+          Gunakan tombol &quot;Tambah Data&quot; di atas.
+        </p>
+      </div>
+    );
+
+  return <TablePurchases />;
 };

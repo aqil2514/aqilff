@@ -7,6 +7,7 @@ import {
   ColumnDef,
   getSortedRowModel,
   getFilteredRowModel,
+  InitialTableState,
 } from "@tanstack/react-table";
 
 import {
@@ -21,19 +22,18 @@ import {
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  initialState?: InitialTableState;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  initialState
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
     columns,
-    initialState: {
-      sorting: [{ id: "transaction_code", desc: false }],
-      columnVisibility: { id: false },
-    },
+    initialState,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),

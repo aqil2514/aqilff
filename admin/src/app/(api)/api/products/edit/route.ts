@@ -66,7 +66,6 @@ export async function PUT(req: NextRequest) {
       reference_id: `manual-${Date.now()}`,
       source: "penyesuaian",
     });
-    console.log(logResult);
 
     if (logResult.status !== 200) {
       console.error("Gagal mencatat log stok:", logResult.logError);

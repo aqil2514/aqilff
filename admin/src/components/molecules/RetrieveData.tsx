@@ -78,12 +78,12 @@ const getDataFromServer = async <T extends any[]>(
       params: { start: startDate, end: endDate },
     });
 
-    console.log(data)
-
     const payload = data?.[data_src];
 
     if (!Array.isArray(payload) || payload.length === 0) {
       toast(`Data ${data_src} tidak ditemukan.`, { type: "info" });
+      setDateRange({ start: startDate, end: endDate });
+      setData([] as any);
       return;
     }
 
