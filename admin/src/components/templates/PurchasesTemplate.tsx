@@ -6,7 +6,7 @@ import { fetchProducts } from "@/lib/fetchers";
 import PurchaseProvider, {
   usePurchaseData,
 } from "../providers/PurchasesProvider";
-import RetrieveData from "../organisms/Purchases/RetrieveData";
+import { RetrieveDataPopover } from "../molecules/RetrieveData";
 
 export default function PurchaseTemplate() {
   const {
@@ -21,17 +21,36 @@ export default function PurchaseTemplate() {
 
   return (
     <PurchaseProvider products={products.data}>
-      <MainWrapper className="!block pt-16 px-2">
-        <h1 className="text-center">Pembelian</h1>
-        <div className="flex gap-4 items-center">
-          <PurchaseAddFormDialog />
-          <RetrieveData />
-        </div>
-        <CoreData />
-      </MainWrapper>
+      <InnerTemplate />
     </PurchaseProvider>
   );
 }
+
+const InnerTemplate = () => {
+  const {
+    setDateRange,
+    setPurchases,
+    isLoadingPurchases,
+    setIsLoadingPurchases,
+  } = usePurchaseData();
+
+  return (
+    <MainWrapper className="!block pt-16 px-2">
+      <h1 className="text-center">Pembelian</h1>
+      <div className="flex gap-4 items-center">
+        <PurchaseAddFormDialog />
+        <RetrieveDataPopover
+          data_src="purchases"
+          isLoading={isLoadingPurchases}
+          setData={setPurchases}
+          setDateRange={setDateRange}
+          setIsLoading={setIsLoadingPurchases}
+        />
+      </div>
+      <CoreData />
+    </MainWrapper>
+  );
+};
 
 const CoreData = () => {
   const { dateRange } = usePurchaseData();

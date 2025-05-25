@@ -38,7 +38,7 @@ export function usePurchaseAddTransactionLogics() {
     const purchaseCode = purchases.map((pur) => pur.purchase_code);
     const lastCode = purchaseCode.at(-1);
 
-    console.log(purchases)
+    console.log(purchases);
 
     const newCode = generateCode(dateOnly, lastCode, "PUR");
     setValue("purchase_code", newCode);
@@ -55,9 +55,14 @@ export function usePurchaseAddTransactionLogics() {
     supplierType: useCallback(() => {
       const res = purchases
         .map((pur) => pur.supplier_type ?? "")
-        .filter((v) => v !== "")
-        .sort();
-      return res;
+        .filter((v) => v !== "");
+
+      const supplierTypeSet = new Set<string>();
+
+      for (const r of res) {
+        supplierTypeSet.add(r);
+      }
+      return Array.from(supplierTypeSet).sort();
     }, [purchases]),
     productName: useCallback(() => {
       const result = products
@@ -76,7 +81,7 @@ export function usePurchaseAddTransactionLogics() {
   const purchaseSubmit: SubmitHandler<Purchase> = async (formData) => {
     try {
       setIsLoading(true);
-      const { data } = await axios.post("/api/purchase/add", formData);
+      const { data } = await axios.post("/api/purchases/add", formData);
 
       toast(data.message, { type: "success" });
     } catch (error) {

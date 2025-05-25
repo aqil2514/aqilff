@@ -1,4 +1,7 @@
-import { getPurchaseDataAndItems, getPurchaseDataAndItemsByDateRange } from "@/lib/supabase/purchase";
+import {
+  getPurchaseDataAndItems,
+  getPurchaseDataAndItemsByDateRange,
+} from "@/lib/supabase/purchase";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -8,16 +11,15 @@ export async function GET(req: NextRequest) {
   const endDate = searchParams.get("endDate");
 
   try {
-    let data;
+    let purchases;
 
     if (startDate && endDate) {
-      data = await getPurchaseDataAndItemsByDateRange(startDate, endDate);
+      purchases = await getPurchaseDataAndItemsByDateRange(startDate, endDate);
     } else {
-      data = await getPurchaseDataAndItems();
+      purchases = await getPurchaseDataAndItems();
     }
 
-
-    return NextResponse.json({ data }, { status: 200 });
+    return NextResponse.json({ purchases }, { status: 200 });
   } catch (error) {
     console.error("Gagal mengambil data pembelian:", error);
     return NextResponse.json(

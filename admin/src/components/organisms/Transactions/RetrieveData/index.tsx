@@ -26,9 +26,9 @@ export function RetrieveDataPopover() {
     setStartDate,
     endDate,
     startDate,
-    isDateRangeValid
+    isDateRangeValid,
   } = useRetrieveDataLogic();
-  const {isLoadingTransactions} = useTransactionData()
+  const { isLoadingTransactions } = useTransactionData();
 
   return (
     <Popover>
@@ -84,7 +84,9 @@ export function RetrieveDataPopover() {
                   : undefined
               }
             >
-              {isLoadingTransactions && <Loader2 className="animate-spin w-4 h-4 mr-2" />}
+              {isLoadingTransactions && (
+                <Loader2 className="animate-spin w-4 h-4 mr-2" />
+              )}
               Ambil Data
             </Button>
           </div>
