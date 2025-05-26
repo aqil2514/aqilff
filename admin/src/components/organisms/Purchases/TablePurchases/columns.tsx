@@ -1,5 +1,5 @@
 import { ColumnDef, InitialTableState } from "@tanstack/react-table";
-import { formatToIndonesianDateTimeUTC, formatToRupiah } from "@/lib/utils";
+import { formatToIndonesianDateTime,  formatToRupiah } from "@/lib/utils";
 import { Purchase } from "@/@types/purchases";
 import DetailDialog from "../DetailDialog";
 
@@ -13,7 +13,7 @@ export const columns: ColumnDef<Purchase>[] = [
     header: "Tanggal Pembelian",
     cell: ({ row }) => {
       const date = row.original.purchase_date;
-      return formatToIndonesianDateTimeUTC(date);
+      return formatToIndonesianDateTime(date);
     },
   },
   {
