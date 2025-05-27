@@ -14,11 +14,16 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const purchaseData = await getPurchaseDataAndItemsByDateRange(start, end);
+  const purchaseData = await getPurchaseDataAndItemsByDateRange(start, end, {
+    showDeletedData: true,
+  });
   const arrayCode = purchaseData.map((pur) => pur.purchase_code);
   const lastCode = arrayCode.sort().at(-1);
   const dateOnly = start.slice(0, 10).split("-").join("");
   const newCode = generateCode(dateOnly, lastCode, "PUR");
 
-  return NextResponse.json({ newCode, message:"Kode Pembayaran berhasil dibuat" }, { status: 200 });
+  return NextResponse.json(
+    { newCode, message: "Kode Pembayaran berhasil dibuat" },
+    { status: 200 }
+  );
 }

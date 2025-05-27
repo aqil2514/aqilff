@@ -131,18 +131,25 @@ export async function getPurchaseDataAndItems(): Promise<Purchase[]> {
  */
 export async function getPurchaseDataAndItemsByDateRange(
   startDate: string,
-  endDate: string
+  endDate: string,
+  options?: { showDeletedData: boolean }
 ): Promise<Purchase[]> {
   const fullStart = `${startDate}T00:00:00`;
   const fullEnd = `${endDate}T23:59:59`;
+  const showDeletedData = options?.showDeletedData ?? false;
 
-  const { data: purchases, error } = await supabaseAdmin
+  let purchaseQuery = supabaseAdmin
     .from("purchases")
     .select("*")
     .gte("purchase_date", fullStart)
     .lte("purchase_date", fullEnd)
-    .is("deleted_at", null)
     .order("purchase_date", { ascending: true });
+
+  if (!showDeletedData) {
+    purchaseQuery = purchaseQuery.is("deleted_at", null);
+  }
+
+  const { data: purchases, error } = await purchaseQuery;
 
   if (error) {
     console.error("Gagal mengambil data pembelian:", error);
@@ -151,11 +158,16 @@ export async function getPurchaseDataAndItemsByDateRange(
 
   const purchasesWithItems: Purchase[] = await Promise.all(
     (purchases || []).map(async (purchase) => {
-      const { data: items, error: itemsError } = await supabaseAdmin
+      let itemQuery = supabaseAdmin
         .from("purchase_items")
         .select("*")
-        .eq("purchase_id", purchase.id)
-        .is("deleted_at", null); // filter juga item
+        .eq("purchase_id", purchase.id);
+
+      if (!showDeletedData) {
+        itemQuery = itemQuery.is("deleted_at", null);
+      }
+
+      const { data: items, error: itemsError } = await itemQuery;
 
       if (itemsError) {
         console.error(

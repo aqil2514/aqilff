@@ -68,8 +68,6 @@ export function usePurchaseAddTransactionLogics() {
         .map((pur) => pur.value ?? "")
         .filter((v) => v !== "");
 
-        console.log(res)
-
       const supplierNameSet = new Set<string>();
 
       for (const r of res) {

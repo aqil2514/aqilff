@@ -19,7 +19,6 @@ export default function PurchaseTemplate() {
   if (isLoading) return <MainWrapper>Loading produk...</MainWrapper>;
   if (error) return <MainWrapper>Gagal memuat produk!</MainWrapper>;
   if (!resource) return null;
-  console.log(resource)
 
   return (
     <PurchaseProvider resource={resource}>
