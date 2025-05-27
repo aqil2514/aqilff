@@ -19,8 +19,15 @@ import { FaTrashAlt } from "react-icons/fa";
 import { Textarea } from "@/components/ui/textarea";
 
 export default function PurchaseAddForm() {
-  const { register, getCode, list, isLoading, purchaseSubmit, ...restProps } =
-    usePurchaseAddTransactionLogics();
+  const {
+    register,
+    getCode,
+    list,
+    isLoading,
+    purchaseSubmit,
+    isGettingCode,
+    ...restProps
+  } = usePurchaseAddTransactionLogics();
   return (
     <>
       <form
@@ -43,8 +50,13 @@ export default function PurchaseAddForm() {
               variant={"ghost"}
               className="cursor-pointer"
               onClick={getCode}
+              disabled={isGettingCode}
             >
-              <IoBarcode />
+              {isGettingCode ? (
+                <div className="animate-spin w-4 h-4 border-2 border-t-transparent border-blue-500 rounded-full" />
+              ) : (
+                <IoBarcode />
+              )}
             </Button>
           </div>
           <Input id="purchase_code" {...register("purchase_code")} disabled />
@@ -190,7 +202,7 @@ const PurchaseItem: React.FC<PurchaseItemProps> = ({
                 id={`items.${index}.hpp`}
                 readOnly
                 onChange={(e) => {
-                  setValue(`items.${index}.hpp`, Number(e.target.value))
+                  setValue(`items.${index}.hpp`, Number(e.target.value));
                 }}
                 value={hpp}
                 disabled

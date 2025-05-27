@@ -1,7 +1,7 @@
 "use client";
 import { Purchase } from "@/@types/purchases";
 import { usePurchaseData } from "@/components/providers/PurchasesProvider";
-import { generateCode, getLocalDateTimeValue } from "@/lib/utils";
+import { getLocalDateTimeValue } from "@/lib/utils";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import { defaultPurchaseItemValue } from "../purchase-utils";
 import { useCallback, useState } from "react";
@@ -18,7 +18,7 @@ export type ListForm = {
 };
 
 export function usePurchaseAddTransactionLogics() {
-  const { purchases, products } = usePurchaseData();
+  const { resource } = usePurchaseData();
   const form = useForm<Purchase>({
     defaultValues: {
       purchase_date: getLocalDateTimeValue(),
@@ -26,27 +26,49 @@ export function usePurchaseAddTransactionLogics() {
     },
   });
 
+  const [isGettingCode, setIsGettingCode] = useState<boolean>(false);
+
   const fieldArray = useFieldArray({
     name: "items",
     control: form.control,
   });
 
-  const getCode = () => {
-    const { getValues, setValue } = form;
-    const date = getValues("purchase_date");
-    const dateOnly = date.slice(0, 10).split("-").join("");
-    const purchaseCode = purchases.map((pur) => pur.purchase_code);
-    const lastCode = purchaseCode.at(-1);
+  const getCode = async () => {
+    try {
+      const { getValues, setValue } = form;
+      const date = getValues("purchase_date");
 
-    const newCode = generateCode(dateOnly, lastCode, "PUR");
-    setValue("purchase_code", newCode);
+      setIsGettingCode(true);
+      const { data } = await axios.get("/api/purchases/get-code", {
+        params: {
+          start: date.slice(0, 10).split("-").join(""),
+          end: date.slice(0, 10).split("-").join(""),
+        },
+      });
+
+      toast(data.message, { type: "success" });
+      const newCode = data.newCode;
+
+      setValue("purchase_code", newCode);
+    } catch (error) {
+      if (isAxiosError(error)) {
+        const data = error.response?.data;
+
+        toast(data.message, { type: "error" });
+      }
+      console.error(error);
+    } finally {
+      setIsGettingCode(false);
+    }
   };
 
   const list: ListForm = {
     supplierName: useCallback(() => {
-      const res = purchases
-        .map((pur) => pur.supplier_name ?? "")
+      const res = resource.supplierNames
+        .map((pur) => pur.value ?? "")
         .filter((v) => v !== "");
+
+        console.log(res)
 
       const supplierNameSet = new Set<string>();
 
@@ -55,10 +77,10 @@ export function usePurchaseAddTransactionLogics() {
       }
 
       return Array.from(supplierNameSet).sort();
-    }, [purchases]),
+    }, [resource]),
     supplierType: useCallback(() => {
-      const res = purchases
-        .map((pur) => pur.supplier_type ?? "")
+      const res = resource.supplierTypes
+        .map((pur) => pur.value ?? "")
         .filter((v) => v !== "");
 
       const supplierTypeSet = new Set<string>();
@@ -67,17 +89,17 @@ export function usePurchaseAddTransactionLogics() {
         supplierTypeSet.add(r);
       }
       return Array.from(supplierTypeSet).sort();
-    }, [purchases]),
+    }, [resource]),
     productName: useCallback(() => {
-      const result = products
+      const result = resource.productData
         .map((prod) => {
-          return { name: prod.name, id: prod.id };
+          return { name: prod.value, id: prod.key as string };
         })
         .filter((prod) => prod.name !== "")
         .sort();
 
       return result;
-    }, [products]),
+    }, [resource]),
   };
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -100,5 +122,13 @@ export function usePurchaseAddTransactionLogics() {
     }
   };
 
-  return { ...form, ...fieldArray, getCode, list, isLoading, purchaseSubmit };
+  return {
+    ...form,
+    ...fieldArray,
+    getCode,
+    isGettingCode,
+    list,
+    isLoading,
+    purchaseSubmit,
+  };
 }

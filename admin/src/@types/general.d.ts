@@ -3,3 +3,8 @@ export interface MenuItem {
   url: string;
   icon?: JSX.Element;
 }
+
+export interface DataListOption {
+  value: string;
+  key?: string;
+}

@@ -2,7 +2,7 @@
 import useSWR from "swr";
 import MainWrapper from "../atoms/main-wrapper";
 import { PurchaseAddFormDialog } from "../organisms/Purchases/AddForm";
-import { fetchProducts } from "@/lib/fetchers";
+import { fetchPurchaseResources } from "@/lib/fetchers";
 import PurchaseProvider, {
   usePurchaseData,
 } from "../providers/PurchasesProvider";
@@ -11,17 +11,18 @@ import TablePurchases from "../organisms/Purchases/TablePurchases";
 
 export default function PurchaseTemplate() {
   const {
-    data: products,
+    data:resource,
     isLoading,
     error,
-  } = useSWR("/api/products", fetchProducts);
+  } = useSWR("/api/purchases/get-resource", fetchPurchaseResources);
 
   if (isLoading) return <MainWrapper>Loading produk...</MainWrapper>;
   if (error) return <MainWrapper>Gagal memuat produk!</MainWrapper>;
-  if (!products) return null;
+  if (!resource) return null;
+  console.log(resource)
 
   return (
-    <PurchaseProvider products={products.data}>
+    <PurchaseProvider resource={resource}>
       <InnerTemplate />
     </PurchaseProvider>
   );

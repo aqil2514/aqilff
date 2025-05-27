@@ -1,4 +1,4 @@
-import { Product } from "@/@types/products";
+import { DataListOption } from "@/@types/general";
 import { Purchase, PurchaseItem } from "@/@types/purchases";
 import React, {
   createContext,
@@ -12,8 +12,14 @@ type RangeData = {
   end: string;
 };
 
+type Resource = {
+  supplierNames: DataListOption[];
+  supplierTypes: DataListOption[];
+  productData: DataListOption[];
+};
+
 interface PurchaseContextProps {
-  products: Product[];
+  resource: Resource;
   purchases: Purchase[];
   setPurchases: React.Dispatch<SetStateAction<Purchase[]>>;
   purchaseItems: PurchaseItem[];
@@ -30,23 +36,22 @@ const PurchaseContext = createContext<PurchaseContextProps>(
 
 type PurchaseProviderProps = {
   children: React.ReactNode;
-  products: Product[];
+  resource: Resource;
 };
 
 export default function PurchaseProvider({
-  products,
+  resource,
   children,
 }: PurchaseProviderProps) {
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [purchaseItems, setPurchaseItems] = useState<PurchaseItem[]>([]);
   const [dateRange, setDateRange] = useState<RangeData | null>(null);
-  const [isLoadingPurchases, setIsLoadingPurchases] =
-    useState<boolean>(false);
+  const [isLoadingPurchases, setIsLoadingPurchases] = useState<boolean>(false);
 
   return (
     <PurchaseContext.Provider
       value={{
-        products,
+        resource,
         purchaseItems,
         purchases,
         setPurchaseItems,
