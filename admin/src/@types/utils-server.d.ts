@@ -24,7 +24,10 @@ type UpdateLogStockRpcArgs = {
     | "transaction-edit"
     | "rollback-transaction"
     | "penyesuaian"
-    | "purchase";
+    | "purchase"
+    | "purchase-delete"
+    | "purchase-update-rollback"
+    ;
 
   /**
    * ID referensi dari transaksi atau aktivitas yang menyebabkan perubahan stok.
