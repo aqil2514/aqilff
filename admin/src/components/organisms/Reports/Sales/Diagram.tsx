@@ -4,7 +4,7 @@ import { Transaction, TransactionItem } from "@/@types/transaction";
 import { useReportSalesData } from "@/components/providers/ReportSalesProvider";
 import { ChartConfig, ChartContainer } from "@/components/ui/chart";
 import { useMemo } from "react";
-import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import { Cell, Pie, PieChart, Tooltip } from "recharts";
 
 const chartConfig = {
   desktop: { label: "Desktop", color: "#2563eb" },
@@ -56,7 +56,6 @@ export default function Chart() {
   return (
   <div>
     <ChartContainer config={chartConfig} className="h-[300px] w-full">
-      <ResponsiveContainer width="100%" height="95%">
         <PieChart>
           <Pie
             data={data}
@@ -80,7 +79,6 @@ export default function Chart() {
             labelFormatter={(label) => `Kategori: ${label}`}
           />
         </PieChart>
-      </ResponsiveContainer>
     </ChartContainer>
   </div>
 );
