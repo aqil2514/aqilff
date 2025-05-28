@@ -9,12 +9,12 @@ export async function GET() {
     getPurchaseData(),
   ]);
 
-  const productData: DataListOption[] = products.map((prod) => {
-    return {
+  const productData: DataListOption[] = products
+    .map((prod) => ({
       value: prod.name,
       key: prod.id,
-    };
-  });
+    }))
+    .sort((a, b) => a.value.localeCompare(b.value));
 
   const supplierNameSet = new Set<string>();
   const supplierTypeSet = new Set<string>();
