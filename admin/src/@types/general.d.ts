@@ -8,3 +8,8 @@ export interface DataListOption {
   value: string;
   key?: string;
 }
+
+export interface ChartPieData {
+  name: string;
+  value: number;
+}
