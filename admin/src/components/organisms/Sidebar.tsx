@@ -19,13 +19,12 @@ import {
 } from "../ui/dropdown-menu";
 
 import { GrTransaction } from "react-icons/gr";
-
-import { ChevronUp, User2 } from "lucide-react";
+import { ChevronUp, User2, BarChart2 } from "lucide-react";
 import { logoutUser } from "@/lib/utils";
 import { BiPurchaseTagAlt } from "react-icons/bi";
-
 import { IoFastFoodOutline } from "react-icons/io5";
 import { MdDashboard } from "react-icons/md";
+import { FcSalesPerformance } from "react-icons/fc";
 
 import { MenuItem } from "@/@types/general";
 import { usePathname } from "next/navigation";
@@ -37,6 +36,7 @@ export function AppSidebar() {
       <SidebarHeader>Admin Aqil Frozen Food</SidebarHeader>
       <SidebarContent>
         <Navigation />
+        <Reports />
       </SidebarContent>
       <Footer />
     </Sidebar>
@@ -66,6 +66,24 @@ const items: MenuItem[] = [
   },
 ];
 
+const reportItems: MenuItem[] = [
+  {
+    name: "Laporan Penjualan",
+    url: "/reports/sales",
+    icon: FcSalesPerformance,
+  },
+  {
+    name: "Laporan Pembelian",
+    url: "/reports/purchases",
+    icon: BarChart2,
+  },
+  {
+    name: "Laba Rugi",
+    url: "/reports/profit-loss",
+    icon: BarChart2,
+  },
+];
+
 const Navigation = () => {
   const pathname = usePathname();
 
@@ -75,6 +93,30 @@ const Navigation = () => {
       <SidebarGroupContent>
         <SidebarMenu>
           {items.map((item) => (
+            <SidebarMenuItem key={item.name}>
+              <SidebarMenuButton asChild isActive={pathname === item.url}>
+                <Link href={item.url}>
+                  <item.icon />
+                  <span>{item.name}</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
+      </SidebarGroupContent>
+    </SidebarGroup>
+  );
+};
+
+const Reports = () => {
+  const pathname = usePathname();
+
+  return (
+    <SidebarGroup>
+      <SidebarGroupLabel>Laporan</SidebarGroupLabel>
+      <SidebarGroupContent>
+        <SidebarMenu>
+          {reportItems.map((item) => (
             <SidebarMenuItem key={item.name}>
               <SidebarMenuButton asChild isActive={pathname === item.url}>
                 <Link href={item.url}>
