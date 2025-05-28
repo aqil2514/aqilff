@@ -1,17 +1,17 @@
 "use client";
 import useSWR from "swr";
 import MainWrapper from "../atoms/main-wrapper";
-import { PurchaseAddFormDialog } from "../organisms/Purchases/AddForm";
 import { fetchPurchaseResources } from "@/lib/fetchers";
 import PurchaseProvider, {
   usePurchaseData,
 } from "../providers/PurchasesProvider";
 import { RetrieveDataPopover } from "../molecules/RetrieveData";
 import TablePurchases from "../organisms/Purchases/TablePurchases";
+import PurchaseDialog from "../organisms/Purchases/Form";
 
 export default function PurchaseTemplate() {
   const {
-    data:resource,
+    data: resource,
     isLoading,
     error,
   } = useSWR("/api/purchases/get-resource", fetchPurchaseResources);
@@ -39,7 +39,8 @@ const InnerTemplate = () => {
     <MainWrapper className="!block pt-16 px-2 space-y-2">
       <h1 className="text-center">Pembelian</h1>
       <div className="flex gap-4 items-center">
-        <PurchaseAddFormDialog />
+        {/* <PurchaseAddFormDialog /> */}
+        <PurchaseDialog type="add-form" />
         <RetrieveDataPopover
           data_src="purchases"
           isLoading={isLoadingPurchases}

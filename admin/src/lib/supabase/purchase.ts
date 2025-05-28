@@ -263,49 +263,84 @@ export async function updatePurchaseData({
   purchase,
   items,
 }: UpdatePurchasePayload): Promise<Purchase> {
-  // Ambil data lama
-  const { data: oldItems, error: oldItemsError } = await supabaseAdmin
-    .from("purchase_items")
-    .select("*")
-    .eq("purchase_id", purchase.id);
+  const data = await getPurchaseDataAndItems();
+  const selectedData = data.find((pur) => pur.id === purchase.id);
+  if (!selectedData) throw new Error("Data tidak ditemukan");
 
-  if (oldItemsError) throw new Error("Gagal mengambil data item lama");
+  const newData: Purchase = {
+    ...purchase,
+    notes: purchase.notes,
+    purchase_date: purchase.purchase_date,
+    supplier_name: purchase.supplier_name,
+    supplier_type: purchase.supplier_type,
+    items,
+  };
 
-  // Rollback stok item lama
-  for (const item of oldItems || []) {
-    await updateStock({
-      product_id: String(item.product_id),
-      quantity: item.quantity,
-      operation: "decrement",
-    });
+  const { items: newItems, ...newPurchase } = newData;
 
-    await update_stock_log({
-      product_id: String(item.product_id),
-      quantity: item.quantity,
-      source: "purchase-update-rollback",
-      reference_id: `purchase-update-${purchase.id}`,
-    });
-  }
-
-  // Soft delete item lama
-  const now = new Date().toISOString();
-  await supabaseAdmin
-    .from("purchase_items")
-    .update({ deleted_at: now })
-    .eq("purchase_id", purchase.id);
-
-  // Update data pembelian
-  const { error: purchaseUpdateError } = await supabaseAdmin
+  const { error: updatePurchaseError } = await supabaseAdmin
     .from("purchases")
-    .update(purchase)
+    .update(newPurchase)
     .eq("id", purchase.id);
 
-  if (purchaseUpdateError) {
-    throw new Error("Gagal mengupdate data pembelian");
+  if (updatePurchaseError) {
+    console.error(updatePurchaseError);
+    throw new Error("Terjadi kesalahan saat update data");
   }
 
-  // Masukkan item baru
-  for (const item of items) {
+  // Ambil semua data item lama
+  const { data: oldItemData, error: oldDataFetchError } = await supabaseAdmin
+    .from("purchase_items")
+    .select<"*", PurchaseItem>("*")
+    .eq("purchase_id", purchase.id);
+
+  if (!oldItemData || oldItemData.length <= 0 || oldDataFetchError) {
+    console.error(oldDataFetchError);
+    throw new Error("Terjadi kesalahan saat ambil data lama");
+  }
+
+  // Kurangi stoknya sebanyak jumlah yang sebelumnya ditambahkan
+  for (const item of oldItemData) {
+    const { product_id, quantity } = item;
+    const { error: errorTemporaryDeleteStock } = await updateStock({
+      product_id: String(product_id),
+      operation: "decrement",
+      quantity,
+    });
+
+    if (errorTemporaryDeleteStock) {
+      console.error(errorTemporaryDeleteStock);
+      throw new Error("Terjadi kesalahan saat mengurangi stok");
+    }
+
+    const { logError: logTemporaryDeleteError } = await update_stock_log({
+      product_id: String(product_id),
+      quantity: -quantity,
+      reference_id: "update-stock-delete",
+      source: "purchase-update-rollback",
+    });
+
+    if (logTemporaryDeleteError) {
+      console.error(logTemporaryDeleteError);
+      throw new Error(
+        "Terjadi kesalahan saat mencatat data yang akan dikurangi"
+      );
+    }
+  }
+
+  // Hapus semua itemnya
+  const { error: errorDeleteItems } = await supabaseAdmin
+    .from("purchase_items")
+    .delete()
+    .eq("purchase_id", purchase.id);
+
+  if (errorDeleteItems) {
+    console.error(errorDeleteItems);
+    throw new Error("Terjadi kesalahan saat hapus Item");
+  }
+
+  // Input ulang semua item yang akan ditambah
+  for (const item of newItems) {
     await insertPurchaseItemData(item, String(purchase.id));
   }
 

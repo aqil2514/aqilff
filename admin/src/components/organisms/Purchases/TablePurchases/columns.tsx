@@ -3,6 +3,7 @@ import { formatToIndonesianDateTime,  formatToRupiah } from "@/lib/utils";
 import { Purchase } from "@/@types/purchases";
 import DetailDialog from "../DetailDialog";
 import { DeletePurchaseDialog } from "../DeleteDialog";
+import PurchaseDialog from "../Form";
 
 export const columns: ColumnDef<Purchase>[] = [
   {
@@ -53,6 +54,7 @@ export const columns: ColumnDef<Purchase>[] = [
       <div className="flex gap-2">
         <DetailDialog row={row} />
         <DeletePurchaseDialog row={row} />
+        <PurchaseDialog type="edit-form" row={row} />
         {/* <DetailDialog row={row} />
         <DeleteDialog row={row} />
         <EditDialog row={row} /> */}
