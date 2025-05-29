@@ -14,12 +14,10 @@ import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import axios, { isAxiosError } from "axios";
-import { useRetrieveDataLogic } from "../RetrieveData/logics";
 
 export function DeleteDialog({ row }: { row: Row<Transaction> }) {
   const { id, transaction_code } = row.original;
   const [loading, setLoading] = useState(false);
-  const { handleRetrieve } = useRetrieveDataLogic();
 
   const handleDelete = async () => {
     try {
@@ -30,7 +28,6 @@ export function DeleteDialog({ row }: { row: Row<Transaction> }) {
 
       toast(data.message, { type: "success" });
 
-      await handleRetrieve({ showToast: false });
     } catch (error) {
       if (isAxiosError(error)) {
         const data = error.response?.data;

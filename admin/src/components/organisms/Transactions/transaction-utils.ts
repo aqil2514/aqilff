@@ -14,6 +14,7 @@ export const defaultTransactionItem = {
   quantity: 1,
   subtotal: 0,
   tip: 0,
+  margin: 0,
 };
 
 export function calculateItemTotal(sub: number, tip: number, discount: number) {
@@ -45,4 +46,3 @@ export function getSubTotal(index: number, form: FormType) {
 
   return result;
 }
-

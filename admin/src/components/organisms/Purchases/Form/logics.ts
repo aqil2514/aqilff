@@ -8,6 +8,7 @@ import axios, { isAxiosError } from "axios";
 import { toast } from "react-toastify";
 import { DialogType } from ".";
 import { Row } from "@tanstack/react-table";
+import { getDataCode } from "@/lib/utils/server";
 
 export type ListForm = {
   supplierName: () => string[];
@@ -32,34 +33,14 @@ export function usePurchaseLogics(type: DialogType, row: Row<Purchase>) {
     control: form.control,
   });
 
-  const getCode = async () => {
-    try {
-      const { getValues, setValue } = form;
-      const date = getValues("purchase_date");
-
-      setIsGettingCode(true);
-      const { data } = await axios.get("/api/purchases/get-code", {
-        params: {
-          start: date.slice(0, 10).split("-").join(""),
-          end: date.slice(0, 10).split("-").join(""),
-        },
-      });
-
-      toast(data.message, { type: "success" });
-      const newCode = data.newCode;
-
-      setValue("purchase_code", newCode);
-    } catch (error) {
-      if (isAxiosError(error)) {
-        const data = error.response?.data;
-
-        toast(data.message, { type: "error" });
-      }
-      console.error(error);
-    } finally {
-      setIsGettingCode(false);
-    }
-  };
+  const getCode = () =>
+    getDataCode({
+      form,
+      setIsGettingCode,
+      codeField: "purchase_code",
+      dateField: "purchase_date",
+      dataSrc: "purchase",
+    });
 
   const list: ListForm = {
     supplierName: useCallback(() => {

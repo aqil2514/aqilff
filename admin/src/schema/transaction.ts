@@ -28,6 +28,7 @@ export function formatTransaction(raw: Transaction): Transaction {
       product_sku: item.product_sku || undefined,
       quantity: Number(item.quantity),
       subtotal: Number(item.subtotal),
+      margin: Number(item.margin),
     })),
   };
 }
@@ -42,6 +43,7 @@ export const TransactionItemSchema = z.object({
   product_sku: z.string().optional(),
   quantity: z.number(),
   subtotal: z.number(),
+  margin: z.number(),
 });
 
 export const TransactionSchema = z.object({

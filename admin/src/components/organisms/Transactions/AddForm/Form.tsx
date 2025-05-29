@@ -37,6 +37,7 @@ export default function TransactionAddForm() {
     isLoading,
     getTransactionCode,
     reset,
+    isGettingCode,
     ...restProps
   } = useTransactionFormLogics();
 
@@ -58,8 +59,13 @@ export default function TransactionAddForm() {
             variant={"ghost"}
             className="cursor-pointer"
             onClick={getTransactionCode}
+            disabled={isGettingCode}
           >
-            <IoBarcode />
+            {isGettingCode ? (
+              <div className="animate-spin w-4 h-4 border-2 border-t-transparent border-blue-500 rounded-full" />
+            ) : (
+              <IoBarcode />
+            )}
           </Button>
         </div>
         <Input
@@ -127,7 +133,6 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
   productsName,
   remove,
 }) => {
-  
   return (
     <>
       {fields.map((field, index) => (

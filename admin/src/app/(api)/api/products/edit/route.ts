@@ -1,5 +1,5 @@
 import { supabaseAdmin } from "@/lib/supabaseServer";
-import { update_stock_log } from "@/lib/utils-server";
+import { update_stock_log } from "@/lib/utils/server/rpc";
 import { uploadImageToSupabase } from "@/utils/supabase";
 import { NextRequest, NextResponse } from "next/server";
 

@@ -1,6 +1,6 @@
 import { Transaction, TransactionItem } from "@/@types/transaction";
 import { supabaseAdmin } from "@/lib/supabaseServer";
-import { update_stock_log, updateStock } from "@/lib/utils-server";
+import { update_stock_log, updateStock } from "@/lib/utils/server/rpc";
 import { formatTransaction, TransactionSchema } from "@/schema/transaction";
 import { NextRequest, NextResponse } from "next/server";
 

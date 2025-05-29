@@ -7,15 +7,11 @@ import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import { calculateItemTotal, getTotalPrice } from "../transaction-utils";
 import axios, { isAxiosError } from "axios";
 import { toast } from "react-toastify";
-import { useRetrieveDataLogic } from "../RetrieveData/logics";
 
 export function useTransactionEditFormLogic({ original }: Row<Transaction>) {
-  const { products, transactionItems } = useTransactionData();
-  const { handleRetrieve } = useRetrieveDataLogic();
+  const { products } = useTransactionData();
 
-  const trItems = transactionItems.filter(
-    (tr) => tr.transaction_id === original.id
-  );
+  const trItems = original.items;
 
   const form = useForm<Transaction>({
     defaultValues: {
@@ -87,7 +83,6 @@ export function useTransactionEditFormLogic({ original }: Row<Transaction>) {
       const { data } = await axios.put("/api/transaction/edit", formData);
 
       toast(data.message, { type: "success" });
-      await handleRetrieve({ showToast: false });
     } catch (error) {
       if (isAxiosError(error)) {
         const data = error.response?.data;

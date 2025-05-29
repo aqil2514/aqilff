@@ -1,5 +1,5 @@
 import { Product } from "@/@types/products";
-import { Transaction, TransactionItem } from "@/@types/transaction";
+import { Transaction } from "@/@types/transaction";
 import React, {
   createContext,
   SetStateAction,
@@ -18,8 +18,6 @@ interface TransactionContextState {
   setDateRange: React.Dispatch<SetStateAction<RangeData | null>>;
   transactions: Transaction[];
   setTransactions: React.Dispatch<SetStateAction<Transaction[]>>;
-  transactionItems: TransactionItem[];
-  setTransactionItems: React.Dispatch<SetStateAction<TransactionItem[]>>;
   isLoadingTransactions: boolean;
   setIsLoadingTransactions: React.Dispatch<SetStateAction<boolean>>;
 }
@@ -37,9 +35,7 @@ export default function TransactionProvider({
   products,
 }: TransactionProviderProps) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [transactionItems, setTransactionItems] = useState<TransactionItem[]>(
-    []
-  );
+  
   const [isLoadingTransactions, setIsLoadingTransactions] =
     useState<boolean>(false);
 
@@ -51,10 +47,8 @@ export default function TransactionProvider({
         isLoadingTransactions,
         setIsLoadingTransactions,
         products,
-        setTransactionItems,
         dateRange,
         setDateRange,
-        transactionItems,
         transactions,
         setTransactions,
       }}

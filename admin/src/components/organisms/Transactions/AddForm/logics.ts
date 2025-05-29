@@ -1,24 +1,19 @@
 import { Transaction } from "@/@types/transaction";
 import { useTransactionData } from "@/components/providers/TransactionProvider";
-import {
-  formatToRupiah,
-  generateCode,
-  getLocalDateTimeValue,
-} from "@/lib/utils";
+import { formatToRupiah, getLocalDateTimeValue } from "@/lib/utils";
 import axios, { isAxiosError } from "axios";
 import React, { useMemo, useState } from "react";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import { useRetrieveDataLogic } from "../RetrieveData/logics";
 import {
   calculateItemTotal,
   defaultTransactionItem,
   getTotalPrice,
 } from "../transaction-utils";
+import { getDataCode } from "@/lib/utils/server";
 
 export function useTransactionFormLogics() {
-  const { products, transactions } = useTransactionData();
-  const { handleRetrieve } = useRetrieveDataLogic();
+  const { products } = useTransactionData();
 
   const form = useForm<Transaction>({
     defaultValues: {
@@ -30,6 +25,8 @@ export function useTransactionFormLogics() {
   });
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isGettingCode, setIsGettingCode] = useState<boolean>(false);
+
   const { control } = form;
 
   const fieldArray = useFieldArray({
@@ -47,22 +44,14 @@ export function useTransactionFormLogics() {
     return Array.from(productsNameSet).sort();
   }, [products]);
 
-  const getTransactionCode = () => {
-    const { setValue } = form;
-    const transactionDate = form.getValues("transaction_at"); // contoh: "2025-05-20T12:30"
-    const dateOnly = transactionDate.slice(0, 10).split("-").join(""); // "20250520"
-
-    const filteredTransaction = transactions
-      .filter((tr) => tr.transaction_code.includes(dateOnly))
-      .map((tr) => tr.transaction_code)
-      .sort();
-
-    const lastTransaction = filteredTransaction.at(-1);
-
-    const newCode = generateCode(dateOnly, lastTransaction, "TRX");
-
-    setValue("transaction_code", newCode);
-  };
+  const getTransactionCode = () =>
+    getDataCode({
+      form,
+      codeField: "transaction_code",
+      dateField: "transaction_at",
+      setIsGettingCode,
+      dataSrc: "transaction",
+    });
 
   const nowTime = new Date().toISOString().slice(0, 16);
 
@@ -108,7 +97,6 @@ export function useTransactionFormLogics() {
       const { data } = await axios.post("/api/transaction/add", formData);
 
       toast(data.message, { type: "success" });
-      await handleRetrieve({ showToast: false });
     } catch (error) {
       if (isAxiosError(error)) {
         const data = error.response?.data;
@@ -127,6 +115,7 @@ export function useTransactionFormLogics() {
     products,
     productsName,
     getTransactionCode,
+    isGettingCode,
     productChangeHandler,
     subTotalChangeHandler,
     subTotal,

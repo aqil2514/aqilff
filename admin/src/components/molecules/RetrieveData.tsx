@@ -47,7 +47,7 @@ export type RetrieveDataProps<T extends any[]> = {
 // ======================
 // Helper: Fetch Data
 // ======================
-const getDataFromServer = async <T extends any[]>(
+export const getDataFromServer = async <T extends any[]>(
   options: GetDataFromServer<T>
 ) => {
   const {
@@ -74,7 +74,12 @@ const getDataFromServer = async <T extends any[]>(
   try {
     setIsLoading(true);
 
-    const { data } = await axios.get(`/api/${data_src}`, {
+    const apiRoute: Record<DataSrc, string> = {
+      purchases: "/api/purchases",
+      transactions: "/api/transaction",
+    };
+
+    const { data } = await axios.get(apiRoute[data_src], {
       params: { start: startDate, end: endDate },
     });
 

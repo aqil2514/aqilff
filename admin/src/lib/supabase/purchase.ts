@@ -1,6 +1,6 @@
 import { supabaseAdmin } from "../supabaseServer";
 import { Purchase, PurchaseItem } from "@/@types/purchases";
-import { update_stock_log, updateStock } from "../utils-server";
+import { update_stock_log, updateStock } from "../utils/server/rpc";
 
 type InsertPurchase = Omit<Purchase, "items">;
 type InsertPurchaseItem = Omit<PurchaseItem, "purchase_id">;

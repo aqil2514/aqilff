@@ -8,8 +8,8 @@ import TransactionProvider, {
 } from "../providers/TransactionProvider";
 import { fetchProducts } from "@/lib/fetchers";
 import TransactionTable from "../organisms/Transactions/TableTransactions/transactions-table";
-import { RetrieveDataPopover } from "../organisms/Transactions/RetrieveData";
 import { Loader2 } from "lucide-react";
+import { RetrieveDataPopover } from "../molecules/RetrieveData";
 
 export default function TransactionTemplate() {
   const {
@@ -24,17 +24,35 @@ export default function TransactionTemplate() {
 
   return (
     <TransactionProvider products={products.data}>
-      <MainWrapper className="!block pt-16 px-4">
-        <h1 className="text-center">Daftar Transaksi</h1>
-        <div className="flex gap-4 items-center">
-          <AddTransactionFormDialog />
-          <RetrieveDataPopover />
-        </div>
-        <CoreData />
-      </MainWrapper>
+      <InnerTemplate />
     </TransactionProvider>
   );
 }
+
+const InnerTemplate = () => {
+  const {
+    isLoadingTransactions,
+    setTransactions,
+    setDateRange,
+    setIsLoadingTransactions,
+  } = useTransactionData();
+  return (
+    <MainWrapper className="!block pt-16 px-4">
+      <h1 className="text-center">Daftar Transaksi</h1>
+      <div className="flex gap-4 items-center">
+        <AddTransactionFormDialog />
+        <RetrieveDataPopover
+          data_src="transactions"
+          isLoading={isLoadingTransactions}
+          setData={setTransactions}
+          setDateRange={setDateRange}
+          setIsLoading={setIsLoadingTransactions}
+        />
+      </div>
+      <CoreData />
+    </MainWrapper>
+  );
+};
 
 const CoreData = () => {
   const { dateRange, isLoadingTransactions } = useTransactionData();
@@ -43,7 +61,9 @@ const CoreData = () => {
     return (
       <div className="text-center mt-10 text-muted-foreground">
         <p>Silakan pilih rentang tanggal untuk melihat data transaksi.</p>
-        <p className="text-sm mt-2">Gunakan tombol &quot;Ambil Data&quot; di atas.</p>
+        <p className="text-sm mt-2">
+          Gunakan tombol &quot;Ambil Data&quot; di atas.
+        </p>
       </div>
     );
   }

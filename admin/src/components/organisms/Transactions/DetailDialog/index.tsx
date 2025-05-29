@@ -1,5 +1,4 @@
-import { Transaction, TransactionItem } from "@/@types/transaction";
-import { useTransactionData } from "@/components/providers/TransactionProvider";
+import { Transaction } from "@/@types/transaction";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,24 +13,18 @@ import {
 import { Row } from "@tanstack/react-table";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { format } from "date-fns";
+import { formatToIndonesianDateTimeUTC } from "@/lib/utils";
 
 export function DetailDialog({ row }: { row: Row<Transaction> }) {
   const {
-    id,
     transaction_code,
     customer_name,
     total_amount,
     payment_method,
     notes,
-    transaction_at
+    transaction_at,
+    items
   } = row.original;
-
-  const { transactionItems } = useTransactionData();
-
-  const items = transactionItems.filter(
-    (item: TransactionItem) => item.transaction_id === id
-  );
 
   return (
     <Dialog>
@@ -97,7 +90,7 @@ export function DetailDialog({ row }: { row: Row<Transaction> }) {
           )}
           <p>
             <span className="font-medium">Tanggal Transaksi:</span>{" "}
-            {format(new Date(transaction_at), "dd MMMM yyyy, HH:mm")}
+            {formatToIndonesianDateTimeUTC(transaction_at)}
           </p>
           {notes && (
             <p>

@@ -1,5 +1,5 @@
 import { UpdateLogStock, UpdateLogStockRpcArgs, UpdateStockParams } from "@/@types/utils-server";
-import { supabaseAdmin } from "./supabaseServer";
+import { supabaseAdmin } from "../../supabaseServer";
 
 export async function update_stock_log({
   product_id,
