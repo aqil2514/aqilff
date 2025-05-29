@@ -63,6 +63,11 @@ export interface TransactionItem {
   subtotal: number;
 
   /**
+   * Selisih dari harga beli dan harga jual.
+   */
+  margin: number;
+
+  /**
    * Deleted At = Tanggal penghapusan Item Transaksi.
    */
   deleted_at?: string;

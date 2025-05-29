@@ -50,12 +50,10 @@ export default function Chart() {
     return getCategoryTotals(items, products);
   }, [items, products]);
 
-  // Hitung total untuk dapatkan persentase
   const total = useMemo(() => data.reduce((sum, d) => sum + d.value, 0), [data]);
 
   return (
-  <div>
-    <ChartContainer config={chartConfig} className="h-[300px] w-full">
+    <ChartContainer config={chartConfig} className="h-full w-full">
         <PieChart>
           <Pie
             data={data}
@@ -76,10 +74,9 @@ export default function Chart() {
           </Pie>
           <Tooltip
             formatter={(value: number) => formatRupiah(value)}
-            labelFormatter={(label) => `Kategori: ${label}`}
+            labelFormatter={() => "Kategori"}
           />
         </PieChart>
     </ChartContainer>
-  </div>
 );
 }
