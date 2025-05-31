@@ -1,5 +1,82 @@
 import { Transaction, TransactionItem } from "@/@types/transaction";
 import { supabaseAdmin } from "../supabaseServer";
+import { PurchaseItem } from "@/@types/purchases";
+
+interface HPPResult {
+  totalHPP: number;
+  usedItems: { id: string; quantity: number; price: number }[];
+}
+
+export async function calculateAndUpdateHPP(
+  product_id: string,
+  quantity: number
+): Promise<{ success: boolean; hppResult?: HPPResult; error?: string }> {
+  const purchaseItems = await getAvailablePurchaseItemsFIFO(product_id);
+
+  let remainingQty = quantity;
+  let totalHPP = 0;
+  const usedItems: HPPResult["usedItems"] = [];
+
+  for (const item of purchaseItems) {
+    if (remainingQty <= 0) break;
+
+    const availableQty = item.remaining_quantity;
+    const qtyToUse = Math.min(availableQty, remainingQty);
+
+    // Update sisa stok
+    const { error } = await supabaseAdmin
+      .from("purchase_items")
+      .update({ remaining_quantity: availableQty - qtyToUse })
+      .eq("id", item.id);
+
+    if (error) {
+      console.error("Gagal update remaining_quantity:", error);
+      return { success: false, error: "Gagal update remaining_quantity" };
+    }
+
+    usedItems.push({
+      id: item.id as string,
+      quantity: qtyToUse,
+      price: item.hpp,
+    });
+
+    totalHPP += qtyToUse * item.hpp;
+    remainingQty -= qtyToUse;
+  }
+
+  if (remainingQty > 0) {
+    return {
+      success: false,
+      error:
+        "Produk belum memiliki riwayat pembelian yang valid (HPP kosong)",
+    };
+  }
+
+  return {
+    success: true,
+    hppResult: {
+      totalHPP,
+      usedItems,
+    },
+  };
+}
+
+
+export async function getAvailablePurchaseItemsFIFO(product_id: string): Promise<PurchaseItem[]> {
+  const { data, error } = await supabaseAdmin
+    .from("purchase_items")
+    .select("*")
+    .eq("product_id", product_id)
+    .gt("remaining_quantity", 0)
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    console.error("Gagal mengambil purchase_items:", error);
+    throw new Error("Gagal mengambil data pembelian untuk produk ini");
+  }
+
+  return data as PurchaseItem[];
+}
 
 // Ambil semua transaksi (tanpa item)
 export async function getTransactionData(): Promise<Transaction[]> {
@@ -114,4 +191,34 @@ export async function getTransactionDataAndItemsByDateRange(
   );
 
   return withItems;
+}
+
+// Simpan transaksi
+export async function saveTransaction(payload: Transaction) {
+  const { data: createdTransaction, error: transactionError } =
+    await supabaseAdmin.from("transactions").insert(payload).select().single();
+
+  if (transactionError) {
+    console.error("Transaction insert error:", transactionError);
+    return {
+      message: "Terjadi kesalahan saat input data transaksi",
+      success: false,
+    };
+  }
+
+  return { createdTransaction, success: true };
+}
+
+export async function saveTransactionItems(payload: TransactionItem[], transactionId:string) {
+  const insertItems = payload.map((item) => {
+      const itemPayload = { ...item, transaction_id: transactionId };
+      return supabaseAdmin
+        .from("transaction_items")
+        .insert<typeof itemPayload>(itemPayload)
+        .select();
+    });
+  
+    const itemInsertResults = await Promise.all(insertItems);
+
+    return itemInsertResults
 }

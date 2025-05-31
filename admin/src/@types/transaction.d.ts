@@ -1,4 +1,3 @@
-
 /**
  * Item individual dalam suatu transaksi.
  * Menyimpan snapshot data produk saat transaksi dilakukan,
@@ -34,6 +33,11 @@ export interface TransactionItem {
    * Satuan produk, seperti "pcs", "kg", "pak", dll (opsional).
    */
   product_unit?: string;
+
+  /**
+   * Harga Per Produk
+   */
+  hpp?: number;
 
   /**
    * Diskon per unit produk (opsional).
@@ -81,7 +85,7 @@ export interface Transaction {
   /**
    * ID unik transaksi (biasanya UUID).
    */
-  id: string;
+  id?: string;
 
   /**
    * Kode transaksi yang lebih ramah pengguna, misalnya "TRX-20250518-001".
@@ -91,7 +95,7 @@ export interface Transaction {
   /**
    * Daftar item produk yang dibeli dalam transaksi ini.
    */
-  items: TransactionItem[];
+  items?: TransactionItem[];
 
   /**
    * Total jumlah pembayaran untuk seluruh item dalam transaksi ini.
@@ -117,7 +121,7 @@ export interface Transaction {
   /**
    * Tanggal dan waktu transaksi dibuat.
    */
-  created_at: Date;
+  created_at?: Date;
 
   /**
    * Deleted At = Tanggal penghapusan Item Transaksi.
