@@ -4,7 +4,7 @@ import { Transaction, TransactionItem } from "@/@types/transaction";
 import { useReportSalesData } from "@/components/providers/ReportSalesProvider";
 import { ChartConfig, ChartContainer } from "@/components/ui/chart";
 import { useMemo } from "react";
-import { Cell, Pie, PieChart, Tooltip } from "recharts";
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
 const chartConfig = {
   desktop: { label: "Desktop", color: "#2563eb" },
@@ -22,7 +22,10 @@ const formatRupiah = (value: number) =>
   }).format(value);
 
 // Hitung total harga per kategori
-function getCategoryTotals(items: TransactionItem[], products: Product[]): ChartPieData[] {
+function getCategoryTotals(
+  items: TransactionItem[],
+  products: Product[]
+): ChartPieData[] {
   const totals = new Map<string, number>();
 
   for (const item of items) {
@@ -40,7 +43,6 @@ function getCategoryTotals(items: TransactionItem[], products: Product[]): Chart
 // Komponen utama chart
 export default function Chart() {
   const { transaction, products } = useReportSalesData();
-  
 
   const items = useMemo(() => {
     return transaction.flatMap((tr: Transaction) => tr.items);
@@ -50,10 +52,14 @@ export default function Chart() {
     return getCategoryTotals(items as TransactionItem[], products);
   }, [items, products]);
 
-  const total = useMemo(() => data.reduce((sum, d) => sum + d.value, 0), [data]);
+  const total = useMemo(
+    () => data.reduce((sum, d) => sum + d.value, 0),
+    [data]
+  );
 
   return (
     <ChartContainer config={chartConfig} className="h-full w-full">
+      <ResponsiveContainer>
         <PieChart>
           <Pie
             data={data}
@@ -62,7 +68,7 @@ export default function Chart() {
             outerRadius="80%"
             dataKey="value"
             label={({ name, value }) =>
-              `${name}: ${(value / total * 100).toFixed(1)}%`
+              `${name}: ${((value / total) * 100).toFixed(1)}%`
             }
           >
             {data.map((entry, index) => (
@@ -77,6 +83,7 @@ export default function Chart() {
             labelFormatter={() => "Kategori"}
           />
         </PieChart>
+      </ResponsiveContainer>
     </ChartContainer>
-);
+  );
 }

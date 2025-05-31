@@ -10,7 +10,7 @@ import { ScrollArea } from "../ui/scroll-area";
 export default function ReportSalesTemplate() {
   return (
     <ReportSalesProvider>
-      <MainWrapper className="pt-20 px-4 pb-6 bg-gray-50 min-h-screen">
+      <MainWrapper className="pt-20 px-4 pb-6 bg-gray-50 min-h-screen overflow-auto">
         <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-4 min-h-[calc(100vh-5rem)]">
           {/* TABEL */}
           <div className="bg-white shadow-md rounded-xl p-4 overflow-auto">
