@@ -24,6 +24,8 @@ export function calculateItemTotal(sub: number, tip: number, discount: number) {
 export function getTotalPrice(form: FormType) {
   const { watch, setValue } = form;
   const itemArray = watch(`items`);
+  if(!itemArray) return "";
+
   const total = itemArray.reduce((acc, item) => {
     const subTotal = Number(item.subtotal || 0);
     const discount = Number(item.discount || 0);

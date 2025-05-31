@@ -52,7 +52,7 @@ export async function PUT(req: NextRequest) {
       product_id,
       quantity,
       source: "rollback-transaction",
-      reference_id: transactionId,
+      reference_id: transactionId as string,
     });
 
     if (logError) {
@@ -128,7 +128,7 @@ export async function PUT(req: NextRequest) {
       product_id,
       quantity: -quantity,
       source: "transaction-edit",
-      reference_id: transactionId,
+      reference_id: transactionId as string,
     });
 
     if (logError) {

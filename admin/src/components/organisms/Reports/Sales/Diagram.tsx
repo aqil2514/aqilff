@@ -47,7 +47,7 @@ export default function Chart() {
   }, [transaction]);
 
   const data: ChartPieData[] = useMemo(() => {
-    return getCategoryTotals(items, products);
+    return getCategoryTotals(items as TransactionItem[], products);
   }, [items, products]);
 
   const total = useMemo(() => data.reduce((sum, d) => sum + d.value, 0), [data]);

@@ -49,12 +49,12 @@ export function DetailDialog({ row }: { row: Row<Transaction> }) {
 
         <ScrollArea className="max-h-[50vh] pr-2">
           <div className="space-y-3">
-            {items.length === 0 ? (
+            {items?.length === 0 ? (
               <p className="text-sm text-muted-foreground">
                 Tidak ada item dalam transaksi ini.
               </p>
             ) : (
-              items.map((item, index) => (
+              items?.map((item, index) => (
                 <div key={index} className="p-2 border rounded-lg shadow-sm">
                   <div className="font-medium">{item.product_name}</div>
                   <div className="text-sm text-muted-foreground">

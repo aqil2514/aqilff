@@ -10,9 +10,8 @@ export function formatTransaction(raw: Transaction): Transaction {
     total_amount: Number(raw.total_amount),
     customer_name: raw.customer_name || undefined,
     notes: raw.notes || undefined,
-    created_at: new Date(raw.created_at),
     transaction_at: raw.transaction_at,
-    items: raw.items.map((item: any) => ({
+    items: raw?.items?.map((item: any) => ({
       product_id: item.product_id,
       product_name: item.product_name,
       price_per_unit: Number(item.price_per_unit),
