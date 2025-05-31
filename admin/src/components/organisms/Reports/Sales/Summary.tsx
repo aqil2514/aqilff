@@ -112,37 +112,62 @@ const SummaryStats = () => {
   const { transaction } = useReportSalesData();
 
   const summary = useMemo(() => {
-    let totalOmzet = 0;
-    let totalUnitTerjual = 0;
-    const produkTerjual: Record<string, { name: string; quantity: number }> =
-      {};
+    let totalRevenue = 0;
+    let totalUnitsSold = 0;
+    let totalMargin = 0;
+    let totalHPP = 0;
+
+    const productMap: Record<
+      string,
+      {
+        name: string;
+        quantity: number;
+        amount: number;
+        margin: number;
+        hpp: number;
+      }
+    > = {};
 
     for (const trx of transaction) {
-      totalOmzet += trx.total_amount;
+      totalRevenue += trx.total_amount;
 
       for (const item of trx.items ?? []) {
-        totalUnitTerjual += item.quantity;
+        totalUnitsSold += item.quantity;
+        totalMargin += item.margin ?? 0;
+        totalHPP += (item.hpp ?? 0);
 
-        if (!produkTerjual[item.product_id]) {
-          produkTerjual[item.product_id] = {
+        if (!productMap[item.product_id]) {
+          productMap[item.product_id] = {
             name: item.product_name,
             quantity: 0,
+            amount: 0,
+            margin: 0,
+            hpp: 0,
           };
         }
 
-        produkTerjual[item.product_id].quantity += item.quantity;
+        const prod = productMap[item.product_id];
+        prod.quantity += item.quantity;
+        prod.amount += item.subtotal ?? 0;
+        prod.margin += item.margin ?? 0;
+        prod.hpp += (item.hpp ?? 0) * item.quantity;
       }
     }
 
-    const produkPalingLaris = Object.values(produkTerjual).sort(
-      (a, b) => b.quantity - a.quantity
-    )[0];
+    const sortedByQty = Object.values(productMap).sort((a, b) => b.quantity - a.quantity);
+    const sortedByAmount = Object.values(productMap).sort((a, b) => b.amount - a.amount);
+    const sortedByMargin = Object.values(productMap).sort((a, b) => b.margin - a.margin);
 
     return {
-      totalOmzet,
-      totalUnitTerjual,
-      totalTransaksi: transaction.length,
-      produkPalingLaris,
+      totalRevenue: Math.round(totalRevenue),
+      totalUnitsSold,
+      totalMargin: Math.round(totalMargin),
+      totalHPP: Math.round(totalHPP),
+      marginPercentage: totalRevenue > 0 ? (totalMargin / totalRevenue) * 100 : 0,
+      totalTransactions: transaction.length,
+      bestSellingProduct: sortedByQty[0],
+      highestRevenueProduct: sortedByAmount[0],
+      mostProfitableProduct: sortedByMargin[0],
     };
   }, [transaction]);
 
@@ -152,24 +177,67 @@ const SummaryStats = () => {
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 bg-gray-50 p-4 rounded-lg">
       <div>
         <p className="text-sm text-gray-600">Total Transaksi</p>
-        <p className="text-xl font-semibold">{summary.totalTransaksi}</p>
+        <p className="text-xl font-semibold">{summary.totalTransactions}</p>
       </div>
       <div>
         <p className="text-sm text-gray-600">Total Omzet</p>
         <p className="text-xl font-semibold">
-          Rp {summary.totalOmzet.toLocaleString("id-ID")}
+          Rp {summary.totalRevenue.toLocaleString("id-ID", { maximumFractionDigits: 0 })}
         </p>
       </div>
       <div>
         <p className="text-sm text-gray-600">Total Unit Terjual</p>
-        <p className="text-xl font-semibold">{summary.totalUnitTerjual} pcs</p>
+        <p className="text-xl font-semibold">{summary.totalUnitsSold} pcs</p>
       </div>
-      {summary.produkPalingLaris && (
+
+      <div>
+        <p className="text-sm text-gray-600">Total Modal (HPP)</p>
+        <p className="text-xl font-semibold">
+          Rp {summary.totalHPP.toLocaleString("id-ID", { maximumFractionDigits: 0 })}
+        </p>
+      </div>
+      <div>
+        <p className="text-sm text-gray-600">Total Margin Kotor</p>
+        <p className="text-xl font-semibold">
+          Rp {summary.totalMargin.toLocaleString("id-ID", { maximumFractionDigits: 0 })}
+        </p>
+      </div>
+      <div>
+        <p className="text-sm text-gray-600">Persentase Margin</p>
+        <p className="text-xl font-semibold">
+          {summary.marginPercentage.toLocaleString("id-ID", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
+          %
+        </p>
+      </div>
+
+      {summary.bestSellingProduct && (
         <div className="sm:col-span-2">
-          <p className="text-sm text-gray-600">Produk Terlaris</p>
+          <p className="text-sm text-gray-600">Produk Terlaris (Qty)</p>
           <p className="text-lg font-semibold">
-            {summary.produkPalingLaris.name} (
-            {summary.produkPalingLaris.quantity} pcs)
+            {summary.bestSellingProduct.name} ({summary.bestSellingProduct.quantity} pcs)
+          </p>
+        </div>
+      )}
+
+      {summary.highestRevenueProduct && (
+        <div className="sm:col-span-2">
+          <p className="text-sm text-gray-600">Produk Volume Terbesar (Omzet)</p>
+          <p className="text-lg font-semibold">
+            {summary.highestRevenueProduct.name} (Rp{" "}
+            {Math.round(summary.highestRevenueProduct.amount).toLocaleString("id-ID")})
+          </p>
+        </div>
+      )}
+
+      {summary.mostProfitableProduct && (
+        <div className="sm:col-span-2">
+          <p className="text-sm text-gray-600">Produk Paling Menguntungkan (Margin)</p>
+          <p className="text-lg font-semibold">
+            {summary.mostProfitableProduct.name} (Rp{" "}
+            {Math.round(summary.mostProfitableProduct.margin).toLocaleString("id-ID")})
           </p>
         </div>
       )}

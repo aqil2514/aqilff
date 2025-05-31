@@ -2,8 +2,9 @@ import { TransactionItem } from "@/@types/transaction";
 import { DataTable } from "@/components/molecules/DataTable";
 import { useReportSalesData } from "@/components/providers/ReportSalesProvider";
 import { formatToRupiah } from "@/lib/utils";
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, TableState } from "@tanstack/react-table";
 import { useMemo } from "react";
+import TableSortControl from "./TableSortControl";
 
 const columns: ColumnDef<TransactionItem>[] = [
   {
@@ -26,7 +27,7 @@ const columns: ColumnDef<TransactionItem>[] = [
 ];
 
 export default function TransactionItemTable() {
-  const { transaction, products } = useReportSalesData();
+  const { transaction, products, sorting, setSorting } = useReportSalesData();
 
   const transactionItem = transaction.flatMap((tr) => tr.items ?? []);
 
@@ -46,7 +47,7 @@ export default function TransactionItemTable() {
       } else {
         map.set(key, {
           ...item,
-          id: matchedProduct?.code ?? item.id, 
+          id: matchedProduct?.code ?? item.id,
         });
       }
     }
@@ -56,5 +57,14 @@ export default function TransactionItemTable() {
 
   if (!transaction?.length) return null;
 
-  return <DataTable columns={columns} data={summarizedItems} />;
+  const state:Partial<TableState> = {
+    sorting, 
+  }
+
+  return (
+    <>
+      <TableSortControl sorting={sorting} setSorting={setSorting} />
+      <DataTable columns={columns} data={summarizedItems} state={state} setSorting={setSorting} />
+    </>
+  );
 }

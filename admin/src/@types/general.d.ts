@@ -13,3 +13,10 @@ export interface ChartPieData {
   name: string;
   value: number;
 }
+
+type ColumnSort = {
+  id: string
+  desc: boolean
+}
+
+export type SortingState = ColumnSort[]

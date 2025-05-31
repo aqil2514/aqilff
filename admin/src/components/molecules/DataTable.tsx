@@ -8,6 +8,8 @@ import {
   getSortedRowModel,
   getFilteredRowModel,
   InitialTableState,
+  TableState,
+  ColumnSort,
 } from "@tanstack/react-table";
 
 import {
@@ -18,25 +20,32 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import React, { SetStateAction } from "react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   initialState?: InitialTableState;
+  state?: Partial<TableState>;
+  setSorting?: React.Dispatch<SetStateAction<ColumnSort[]>>
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  initialState
+  initialState,
+  state,
+  setSorting
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
     columns,
     initialState,
+    state,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    onSortingChange: setSorting,
   });
 
   return (
