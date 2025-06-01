@@ -1,6 +1,32 @@
 import { supabaseAdmin } from "@/lib/supabaseServer";
 import { NextRequest, NextResponse } from "next/server";
 
+/**
+ * Handler untuk HTTP DELETE request yang digunakan untuk menghapus produk dari database
+ * dan file gambar terkait dari Supabase Storage.
+ *
+ * Alur aksi:
+ * 1. Mendapatkan ID produk dari query parameter (?id=...).
+ * 2. Mengambil informasi gambar (`image_src`) dari database berdasarkan ID produk.
+ * 3. Jika gambar ada, menghapus file gambar dari Supabase Storage.
+ * 4. Menghapus data produk dari tabel `products`.
+ *
+ * @param {NextRequest} req - Objek request dari Next.js API Route.
+ * @returns {Promise<NextResponse>} Response JSON yang menjelaskan status penghapusan:
+ * - 200: Jika penghapusan berhasil.
+ * - 400: Jika ID tidak disediakan dalam query parameter.
+ * - 404: Jika produk tidak ditemukan di database.
+ * - 500: Jika terjadi kesalahan saat menghapus gambar atau data produk.
+ *
+ * @example
+ * DELETE /api/products?id=123
+ *
+ * Response:
+ * {
+ *   "message": "Data berhasil dihapus"
+ * }
+ */
+
 export async function DELETE(req: NextRequest) {
   const { searchParams } = req.nextUrl;
   const id = searchParams.get("id");
