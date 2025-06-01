@@ -62,6 +62,20 @@ export function formatToRupiah(amount: number | string): string {
   }).format(formattedAmount);
 }
 
+/**
+ * Format angka ke bentuk persen dengan maksimal 2 desimal.
+ * Contoh: 12.5 → "12.5%", 12.567 → "12.57%"
+ *
+ * @param value Angka persen dalam bentuk desimal biasa (misal: 12.5 untuk 12.5%)
+ * @param fractionDigits Jumlah angka di belakang koma (default: 2)
+ * @returns String persen, misalnya: "12.5%"
+ */
+export function formatToPercent(value: number, fractionDigits = 2): string {
+  if (isNaN(value)) return "-";
+  return `${value.toFixed(fractionDigits)}%`;
+}
+
+
 export function formatToIndonesianDate(dateString: string): string {
   const date = new Date(dateString);
   return new Intl.DateTimeFormat("id-ID", {

@@ -24,6 +24,15 @@ const columns: ColumnDef<TransactionItem>[] = [
     header: "Total",
     cell: ({ row }) => formatToRupiah(row.original.subtotal),
   },
+  {
+    accessorKey: "margin_total",
+    header: "Total Margin",
+    cell: ({ row }) => {
+      console.log(row.original);
+
+      return formatToRupiah(row.original.margin);
+    },
+  },
 ];
 
 export default function TransactionItemTable() {
@@ -57,14 +66,19 @@ export default function TransactionItemTable() {
 
   if (!transaction?.length) return null;
 
-  const state:Partial<TableState> = {
-    sorting, 
-  }
+  const state: Partial<TableState> = {
+    sorting,
+  };
 
   return (
     <>
       <TableSortControl sorting={sorting} setSorting={setSorting} />
-      <DataTable columns={columns} data={summarizedItems} state={state} setSorting={setSorting} />
+      <DataTable
+        columns={columns}
+        data={summarizedItems}
+        state={state}
+        setSorting={setSorting}
+      />
     </>
   );
 }

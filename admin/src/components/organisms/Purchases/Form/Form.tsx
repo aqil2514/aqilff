@@ -19,6 +19,7 @@ import { FaTrashAlt } from "react-icons/fa";
 import { Textarea } from "@/components/ui/textarea";
 import { DialogType } from ".";
 import { Row } from "@tanstack/react-table";
+import { formatToRupiah } from "@/lib/utils";
 
 export default function PurchaseForm({
   type,
@@ -40,6 +41,11 @@ export default function PurchaseForm({
     isGettingCode,
     ...restProps
   } = usePurchaseLogics(type, row as Row<Purchase>);
+
+  const totalBelanja = restProps.watch("items")?.reduce((total, item) => {
+  return total + (Number(item.price) || 0);
+}, 0);
+
 
   return (
     <>
@@ -95,6 +101,7 @@ export default function PurchaseForm({
         <div className="border rounded-2xl px-2 py-2 space-y-4">
           <p className="italic">Barang yang dibeli</p>
           <PurchaseItem register={register} list={list} {...restProps} />
+          <p>Total Belanja : {formatToRupiah(totalBelanja)} </p>
         </div>
         <div className="space-y-2">
           <Label htmlFor="notes">Keterangan :</Label>
@@ -204,7 +211,6 @@ const PurchaseItem: React.FC<PurchaseItemProps> = ({
               <Label htmlFor={`items.${index}.price`}>Harga : </Label>
               <Input
                 type="number"
-                step={500}
                 id={`items.${index}.price`}
                 {...register(`items.${index}.price`)}
               />
