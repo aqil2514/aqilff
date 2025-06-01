@@ -15,8 +15,13 @@ export const columns: ColumnDef<Transaction>[] = [
     header: "Waktu Transaksi",
     cell: ({ row }) => {
       const date = row.original.transaction_at;
+      const isNoted = row.original.notes;
 
-      const formatted = formatToIndonesianDateTimeUTC(date)
+      const formatted = formatToIndonesianDateTimeUTC(date);
+
+      if (isNoted) {
+        return <span title="Transaksi memiliki catatan">🗒️ {formatted}</span>;
+      }
 
       return formatted;
     },

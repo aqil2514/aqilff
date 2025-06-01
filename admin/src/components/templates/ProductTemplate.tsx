@@ -16,6 +16,14 @@ import { toast } from "react-toastify";
 import { fetchProducts } from "@/lib/fetchers";
 import { TransactionItem } from "@/@types/transaction";
 
+/**
+ * Product Template
+ * 
+ * Alur Route : 
+ * 
+ * 1. 
+ */
+
 export default function ProductTemplate() {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const refreshRef = useRef<HTMLButtonElement | null>(null);
@@ -50,15 +58,13 @@ export default function ProductTemplate() {
     };
   }, []);
 
-  const {
-    data,
-    isLoading,
-    error,
-  } = useSWR<{data:Product[], tItems:TransactionItem[]}>("/api/products", fetchProducts);
+  const { data, isLoading, error } = useSWR<{
+    data: Product[];
+    tItems: TransactionItem[];
+  }>("/api/products", fetchProducts);
 
   const products = data?.data;
-  const tItem = data?.tItems
-
+  const tItem = data?.tItems;
 
   if (isLoading) return <MainWrapper>Loading...</MainWrapper>;
   if (error) return <MainWrapper>Gagal memuat produk!</MainWrapper>;
