@@ -9,13 +9,12 @@ export async function PUT(req: NextRequest) {
   const body = formatTransaction(raw);
 
   const parsed = TransactionSchema.safeParse(body);
-
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.format() }, { status: 400 });
   }
 
   const data = parsed.data;
-  const transactionId = body.id;
+  const transactionId = raw.id as string;
   const { items, ...transactionPayload } = data;
 
   // 1. Ambil item lama
@@ -26,19 +25,19 @@ export async function PUT(req: NextRequest) {
 
   if (oldItemsError) {
     return NextResponse.json(
-      { message: "Gagal mengambil item transaksi lama", error: oldItemsError },
+      { message: "Gagal mengambil item lama", error: oldItemsError },
       { status: 500 }
     );
   }
 
-  // 2. Kembalikan stok lama
+  // 2. Rollback stok & purchase_items
   for (const item of oldItems || []) {
     const { product_id, quantity } = item as TransactionItem;
 
     const { success, error: rollbackError } = await updateStock({
       product_id,
       quantity,
-      operation: "increment", // rollback
+      operation: "increment",
     });
 
     if (!success) {
@@ -52,11 +51,30 @@ export async function PUT(req: NextRequest) {
       product_id,
       quantity,
       source: "rollback-transaction",
-      reference_id: transactionId as string,
+      reference_id: transactionId,
     });
 
     if (logError) {
-      console.error("Gagal log rollback stok", logError);
+      console.error("Gagal log rollback", logError);
+    }
+
+    // Rollback remaining_quantity
+    const { error: rollbackPurchaseError } = await supabaseAdmin.rpc(
+      "rollback_remaining_quantity",
+      {
+        product_id,
+        rollback_qty: quantity,
+      }
+    );
+
+    if (rollbackPurchaseError) {
+      return NextResponse.json(
+        {
+          message: "Gagal rollback remaining_quantity",
+          error: rollbackPurchaseError,
+        },
+        { status: 500 }
+      );
     }
   }
 
@@ -81,36 +99,95 @@ export async function PUT(req: NextRequest) {
 
   if (updateTransactionError) {
     return NextResponse.json(
-      {
-        message: "Gagal mengupdate data transaksi",
-        error: updateTransactionError,
-      },
+      { message: "Gagal mengupdate transaksi", error: updateTransactionError },
       { status: 500 }
     );
   }
 
-  // 5. Tambahkan item baru + update stok baru
-  const insertItems = items.map((item) => {
-    const itemPayload = { ...item, transaction_id: transactionId };
-    return supabaseAdmin
-      .from("transaction_items")
-      .insert<typeof itemPayload>(itemPayload)
-      .select();
-  });
+  // 5. Tambahkan item baru, hitung ulang HPP pakai FIFO
+  for (const item of items) {
+    const { product_id, quantity, price_per_unit } = item;
 
-  const itemInsertResults = await Promise.all(insertItems);
+    // Ambil pembelian sesuai FIFO
+    const { data: purchases, error: purchaseError } = await supabaseAdmin
+      .from("purchase_items")
+      .select("*")
+      .eq("product_id", product_id)
+      .gt("remaining_quantity", 0)
+      .order("created_at", { ascending: true });
 
-  for (const result of itemInsertResults) {
-    if (result.error) {
+    if (purchaseError) {
       return NextResponse.json(
-        { message: "Gagal menambahkan item baru", error: result.error },
+        { message: "Gagal mengambil data pembelian", error: purchaseError },
         { status: 500 }
       );
     }
 
-    const insertedItem = result.data?.[0] as TransactionItem;
-    const { product_id, quantity } = insertedItem;
+    let qtyNeeded = quantity;
+    let totalCost = 0;
+    const purchaseUpdates: { id: string; newQty: number }[] = [];
 
+    for (const p of purchases) {
+      if (qtyNeeded === 0) break;
+
+      const takeQty = Math.min(qtyNeeded, p.remaining_quantity);
+      totalCost += takeQty * p.purchase_price;
+      qtyNeeded -= takeQty;
+
+      purchaseUpdates.push({
+        id: p.id,
+        newQty: p.remaining_quantity - takeQty,
+      });
+    }
+
+    if (qtyNeeded > 0) {
+      return NextResponse.json(
+        { message: "Stok pembelian tidak cukup untuk produk", product_id },
+        { status: 400 }
+      );
+    }
+
+    const hpp = totalCost / quantity;
+    const margin = price_per_unit - hpp;
+
+    // Update remaining_quantity
+    for (const update of purchaseUpdates) {
+      const { error: updatePurchaseError } = await supabaseAdmin
+        .from("purchase_items")
+        .update({ remaining_quantity: update.newQty })
+        .eq("id", update.id);
+
+      if (updatePurchaseError) {
+        return NextResponse.json(
+          {
+            message: "Gagal update remaining_quantity",
+            error: updatePurchaseError,
+          },
+          { status: 500 }
+        );
+      }
+    }
+
+    // Insert item transaksi
+    const itemPayload = {
+      ...item,
+      transaction_id: transactionId,
+      hpp,
+      margin,
+    };
+
+    const { error: insertError } = await supabaseAdmin
+      .from("transaction_items")
+      .insert(itemPayload);
+
+    if (insertError) {
+      return NextResponse.json(
+        { message: "Gagal menambahkan item transaksi", error: insertError },
+        { status: 500 }
+      );
+    }
+
+    // Update stok produk (decrement)
     const { success, error: stockError } = await updateStock({
       product_id,
       quantity,
@@ -119,25 +196,26 @@ export async function PUT(req: NextRequest) {
 
     if (!success) {
       return NextResponse.json(
-        { message: "Gagal update stok baru", error: stockError },
+        { message: "Gagal mengurangi stok produk", error: stockError },
         { status: 500 }
       );
     }
 
+    // Log stok
     const { logError } = await update_stock_log({
       product_id,
       quantity: -quantity,
       source: "transaction-edit",
-      reference_id: transactionId as string,
+      reference_id: transactionId,
     });
 
     if (logError) {
-      console.error("Gagal log stok transaksi edit", logError);
+      console.error("Gagal log transaksi edit", logError);
     }
   }
 
   return NextResponse.json(
-    { message: "Berhasil edit transaksi" },
+    { message: "Transaksi berhasil diubah" },
     { status: 200 }
   );
 }

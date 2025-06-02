@@ -35,8 +35,6 @@ import { NextRequest, NextResponse } from "next/server";
  * 8. Simpan log pengurangan stok ke tabel log (misal: stock_logs atau purchase_items_logs).
  */
 
-// TODO : Ini ada yang salah logikanya
-
 export async function POST(req: NextRequest) {
   const raw = (await req.json()) as Transaction;
   const body = formatTransaction(raw);
