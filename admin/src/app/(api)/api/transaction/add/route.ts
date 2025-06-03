@@ -1,12 +1,13 @@
+import { Product } from "@/@types/products";
+import { PurchaseItem } from "@/@types/purchases";
 import { Transaction, TransactionItem } from "@/@types/transaction";
-import {
-  saveTransaction,
-  saveTransactionItems,
-} from "@/lib/supabase/transaction";
-import { supabaseAdmin } from "@/lib/supabaseServer";
-import { update_stock_log, updateStock } from "@/lib/utils/server/rpc";
-import { formatTransaction, TransactionSchema } from "@/schema/transaction";
+import { getProductData } from "@/lib/supabase/products";
+import { getPurchaseItemData } from "@/lib/supabase/purchase";
+import { saveTransaction, saveTransactionItems } from "@/lib/supabase/transaction";
+import { updateStock } from "@/lib/supabase/utils";
+import { TransactionSchema } from "@/schema/transaction";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 
 /**
  * Alur Penambahan Data Transaksi Penjualan
@@ -36,163 +37,267 @@ import { NextRequest, NextResponse } from "next/server";
  */
 
 export async function POST(req: NextRequest) {
-  const raw = (await req.json()) as Transaction;
-  const body = formatTransaction(raw);
+  const raw = await req.json();
+  const [productData, purchaseItemData] = await Promise.all([
+    getProductData(),
+    getPurchaseItemData(),
+  ]);
 
-  const parsed = TransactionSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.format() }, { status: 400 });
+  // Ini harus diformat. Kalau ga diformat, beberapa data ada yang masih dianggap String (Padahal number)
+  const formattedRaw = formatData(raw);
+
+  // Pengecekan di sini.
+  const { checkMessage, checkPassed } = checkData(
+    formattedRaw,
+    productData,
+    purchaseItemData
+  );
+  if (!checkPassed) {
+    return NextResponse.json({ message: checkMessage }, { status: 400 });
   }
 
-  const data = parsed.data;
-  const { items, ...transactionPayload } = data;
+  const { items, ...transaction } = formattedRaw;
+  // Pengolahan Item pada Transaction.items
+  const formattedItems = formatItems(
+    items as TransactionItem[],
+    purchaseItemData
+  );
 
-  // Simpan transaksi utama
-  const { success, createdTransaction, message: saveTrMessage } =
-    await saveTransaction(transactionPayload);
+  await saveTransaction(transaction);
+  await saveTransactionItems(formattedItems, String(transaction.id));
+  await updateStock(formattedItems, productData, purchaseItemData);
 
-  if (!success)
-    return NextResponse.json({ message: saveTrMessage }, { status: 400 });
+  return NextResponse.json({ message: "Data Berhasil Ditambah" }, { status: 200 });
+}
 
-  const transactionId = (createdTransaction as { id: string }).id;
+interface CheckDataResult {
+  checkPassed: boolean;
+  checkMessage: string;
+}
 
-  const enrichedItems: TransactionItem[] = [];
+/**
+ * @author Muhamad Aqil Maulana
+ *
+ * Pengecekan data untuk minimalisir error saat di pertengahan input ke DB
+ *
+ * Apa saja yang dicek?
+ *
+ * - Validasi ZOD
+ * - Apakah produk yang diinput ada di database?
+ * - Apakah kuantitinya ada di database?
+ * - Apakah data kedatangannya sudah ada?
+ *
+ * @param raw Data Mentah
+ * @param productData Data Produk
+ * @param purchaseItemData Data Purchase Item (Data kedatangan barang)
+ */
+function checkData(
+  raw: Transaction,
+  productData: Product[],
+  purchaseItemData: PurchaseItem[]
+): CheckDataResult {
+  // Validasi dengan ZOD
+  try {
+    TransactionSchema.parse(raw);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      console.error("❌ Zod Validation Error:", error.flatten());
+    } else {
+      console.error("❌ Unknown Error:", error);
+    }
+
+    return {
+      checkPassed: false,
+      checkMessage: "Terjadi kesalahan saat input data",
+    };
+  }
+
+  // Cek apakah di produk yang diinput ada di database?
+  const productName = productData.map((pr) => pr.name);
+  for (const item of raw.items as TransactionItem[]) {
+    if (!productName.includes(item.product_name)) {
+      return {
+        checkPassed: false,
+        checkMessage: `Produk '${item.product_name}' tidak ada di Database`,
+      };
+    }
+  }
+
+  // Cek apakah kuantitinya ada di database?
+  for (const item of raw.items as TransactionItem[]) {
+    const selectedData = productData.find(
+      (pr) => pr.name === item.product_name
+    );
+
+    if (item.quantity <= 0) {
+      return {
+        checkPassed: false,
+        checkMessage: `Jumlah item '${item.product_name}' tidak boleh nol atau negatif.`,
+      };
+    }
+
+    if (!selectedData) {
+      return {
+        checkPassed: false,
+        checkMessage: "Terjadi kesalahan saat pengecekan kuantiti",
+      };
+    }
+
+    if (selectedData.stock < item.quantity)
+      return {
+        checkPassed: false,
+        checkMessage: `Kuantiti yang tersedia hanya ${selectedData.stock}. Yang diminta ${item.quantity}`,
+      };
+  }
+
+  // Cek apakah data kedatangannya sudah ada?
+  for (const item of raw.items as TransactionItem[]) {
+    const selectedPurchaseItem = purchaseItemData.filter(
+      (pur) =>
+        pur.product_name === item.product_name && pur.remaining_quantity >= 0
+    );
+    if (selectedPurchaseItem.length <= 0)
+      return {
+        checkMessage: `Data untuk barang '${item.product_name}' belum tersedia`,
+        checkPassed: false,
+      };
+
+    const stockAmount = selectedPurchaseItem.reduce(
+      (acc, curr) => acc + curr.remaining_quantity,
+      0
+    );
+
+    if (stockAmount < item.quantity)
+      return {
+        checkPassed: false,
+        checkMessage: `Kuantiti ${item.product_name} di data kedatangan hanya ${stockAmount}`,
+      };
+  }
+
+  return { checkPassed: true, checkMessage: "Data lolos cek" };
+}
+
+/**
+ * Format raw data jadi ke data yang siap dicek
+ * @param raw Data Mentah
+ * @returns
+ */
+function formatData(raw: Transaction): Transaction {
+  const items: TransactionItem[] = [];
+  const transactionId = crypto.randomUUID();
+
+  for (const item of raw.items as TransactionItem[]) {
+    const result: TransactionItem = {
+      margin: Number(item.margin),
+      price_per_unit: Number(item.price_per_unit),
+      product_id: item.product_id,
+      product_name: item.product_name,
+      quantity: Number(item.quantity),
+      subtotal: Number(item.subtotal),
+      deleted_at: item.deleted_at,
+      discount: Number(item.discount),
+      hpp: Number(item.hpp),
+      id: item.id,
+      product_sku: item.product_sku,
+      product_unit: item.product_unit,
+      tip: Number(item.tip),
+      transaction_id: transactionId,
+    };
+
+    items.push(result);
+  }
+
+  const data: Transaction = {
+    id: transactionId,
+    payment_method: raw.payment_method,
+    total_amount: Number(raw.total_amount),
+    transaction_at: raw.transaction_at,
+    transaction_code: raw.transaction_code,
+    created_at: raw.created_at,
+    customer_name: raw.customer_name,
+    deleted_at: raw.deleted_at,
+    notes: raw.notes,
+    items,
+  };
+
+  return data;
+
+  /**
+   * Contoh datanya masih seperti ini
+   {
+  id: '9e89cf11-cc57-41dd-8842-7e316ccb9982',
+  payment_method: 'cash',
+  total_amount: 12000,
+  transaction_at: '2024-01-01T10:16',
+  transaction_code: 'TRX-20240101-0007',
+  created_at: undefined,
+  customer_name: 'zxcczx',
+  deleted_at: undefined,
+  notes: '',
+  items: [
+    {
+      margin: 0,
+      price_per_unit: 500,
+      product_id: 'ce50e007-8367-4bc1-b4a0-f6532e10ee1c',
+      product_name: 'Chocolate Dollars',
+      quantity: 24,
+      subtotal: 12000,
+      deleted_at: undefined,
+      discount: 0,
+      hpp: NaN,
+      id: undefined,
+      product_sku: '',
+      product_unit: '',
+      tip: 0,
+      transaction_id: '9e89cf11-cc57-41dd-8842-7e316ccb9982'
+    }
+  ]
+}
+   */
+}
+
+/**
+ * Format item agar siap digunakan
+ *
+ * - Penentuan HPP
+ * - Penentuan Margin
+ * @param items Data Item dari klien
+ * @param purchaseItemData Data kedatangan dari DB
+ */
+function formatItems(
+  items: TransactionItem[],
+  purchaseItemData: PurchaseItem[]
+) {
+  const result: TransactionItem[] = [];
 
   for (const item of items) {
-    const { product_id, quantity, price_per_unit } = item;
-
-    // Ambil daftar pembelian berdasarkan FIFO
-    const { data: purchaseItems, error: purchaseError } = await supabaseAdmin
-      .from("purchase_items")
-      .select("*")
-      .eq("product_id", product_id)
-      .gt("remaining_quantity", 0)
-      .is("deleted_at", null)
-      .order("created_at", { ascending: true });
-
-    if (purchaseError) {
-      console.error("Gagal ambil purchase_items:", purchaseError);
-      return NextResponse.json(
-        { message: "Gagal ambil riwayat pembelian produk" },
-        { status: 500 }
-      );
-    }
-
-    let remainingToFulfill = quantity;
-    let totalHPP = 0;
-    const usedPurchases: { unit_price: number; quantity: number }[] = [];
-
-    for (const purchase of purchaseItems || []) {
-      if (remainingToFulfill <= 0) break;
-
-      const usableQty = Math.min(purchase.remaining_quantity, remainingToFulfill);
-      usedPurchases.push({
-        unit_price: purchase.hpp,
-        quantity: usableQty,
+    const selectedPurchaseItem = purchaseItemData
+      .filter(
+        (pur) =>
+          pur.product_name === item.product_name && pur.remaining_quantity > 0
+      )
+      .sort((a, b) => {
+        const aDate = new Date(a.created_at as string).getTime();
+        const bDate = new Date(b.created_at as string).getTime();
+        return aDate - bDate; // FIFO
       });
 
-      remainingToFulfill -= usableQty;
+    let remainingQty = item.quantity;
+    let totalHpp = 0;
+
+    for (const batch of selectedPurchaseItem) {
+      if (remainingQty === 0) break;
+
+      const takeQty = Math.min(batch.remaining_quantity, remainingQty);
+      totalHpp += takeQty * batch.hpp;
+      remainingQty -= takeQty;
     }
 
-    if (remainingToFulfill > 0) {
-      return NextResponse.json(
-        {
-          message:
-            "Produk belum memiliki riwayat pembelian yang valid (HPP kosong)",
-        },
-        { status: 400 }
-      );
-    }
+    item.hpp = totalHpp;
+    item.margin = item.price_per_unit * item.quantity - item.hpp;
 
-    // Hitung total HPP
-    for (const used of usedPurchases) {
-      totalHPP += used.unit_price * used.quantity;
-    }
-
-    const finalHPP = totalHPP;
-    const finalMargin = (price_per_unit - totalHPP / quantity) * quantity;
-
-    enrichedItems.push({
-      ...item,
-      transaction_id: transactionId,
-      hpp: finalHPP,
-      margin: finalMargin,
-    });
-
-    // Update remaining_quantity di purchase_items
-    let qtyToDeduct = quantity;
-    for (const purchase of purchaseItems || []) {
-      if (qtyToDeduct <= 0) break;
-
-      const deductQty = Math.min(purchase.remaining_quantity, qtyToDeduct);
-
-      const { error: updateError } = await supabaseAdmin
-        .from("purchase_items")
-        .update({
-          remaining_quantity: purchase.remaining_quantity - deductQty,
-        })
-        .eq("id", purchase.id);
-
-      if (updateError) {
-        console.error("Gagal update remaining_quantity:", updateError);
-        return NextResponse.json(
-          { message: "Gagal mengurangi stok pembelian" },
-          { status: 500 }
-        );
-      }
-
-      qtyToDeduct -= deductQty;
-    }
+    result.push(item);
   }
 
-  // Simpan semua item transaksi ke DB
-  const itemInsertResults = await saveTransactionItems(enrichedItems, transactionId);
-
-  for (const result of itemInsertResults) {
-    if (result.error) {
-      console.error("Item insert error:", result.error);
-      return NextResponse.json(
-        {
-          message: "Terjadi kesalahan saat menyimpan item transaksi",
-          itemError: result.error,
-        },
-        { status: 500 }
-      );
-    }
-
-    const insertedItem = result.data?.[0] as TransactionItem;
-    const { product_id, quantity } = insertedItem;
-
-    // Kurangi stok total (update di tabel utama produk)
-    const { success, error: stockError } = await updateStock({
-      product_id,
-      quantity,
-      operation: "decrement",
-    });
-
-    if (!success) {
-      return NextResponse.json(
-        { message: "Gagal memperbarui stok", rpcError: stockError },
-        { status: 500 }
-      );
-    }
-
-    // Simpan log stok
-    const { logError, message: logMsg } = await update_stock_log({
-      product_id,
-      quantity: -quantity,
-      source: "transaction",
-      reference_id: transactionId,
-    });
-
-    if (logError) {
-      console.error("Log stok error:", logError);
-      return NextResponse.json({ message: logMsg, logError }, { status: 500 });
-    }
-  }
-
-  return NextResponse.json(
-    { message: "Berhasil tambah transaksi" },
-    { status: 201 }
-  );
+  return result;
 }

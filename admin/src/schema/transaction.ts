@@ -35,18 +35,24 @@ export function formatTransaction(raw: Transaction): Transaction {
 export const TransactionItemSchema = z.object({
   product_id: z.string(),
   product_name: z.string(),
-  price_per_unit: z.number(),
+  price_per_unit: z.number({ message: "Harga per Produk harus berupa angka" }),
   product_unit: z.string().optional(),
-  discount: z.number().optional(),
-  tip: z.number().optional(),
+  discount: z.number({ message: "Diskon harus berupa angka" }).optional(),
+  tip: z.number({ message: "Tip harus berupa angka" }).optional(),
   product_sku: z.string().optional(),
-  quantity: z.number(),
-  subtotal: z.number(),
+  quantity: z.number({ message: "Kuantiti harus berupa angka" }),
+  subtotal: z.number({ message: "Subtotal harus berupa angka" }),
   margin: z.number(),
 });
 
 export const TransactionSchema = z.object({
-  transaction_code: z.string(),
+  transaction_code: z
+    .string({ message: "Kode harus berupa string" })
+    .min(1, "Kode harus diisi")
+    .refine(
+      (val) => val.startsWith("TRX"),
+      "Kode transaksi harus diawali oleh TRX"
+    ),
   items: z.array(TransactionItemSchema),
   total_amount: z.number(),
   payment_method: z.union([

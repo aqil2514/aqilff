@@ -1,6 +1,8 @@
 import { UpdateLogStock, UpdateLogStockRpcArgs, UpdateStockParams } from "@/@types/utils-server";
 import { supabaseAdmin } from "../../supabaseServer";
 
+// TODO : Karena gua ga ngerti bahasa SQL dan pelajarinnya cukup makan waktu, mending nanti ini ubah aja semuanya jadi versi sendiri pakek bahasa TS ajah
+
 export async function update_stock_log({
   product_id,
   quantity,

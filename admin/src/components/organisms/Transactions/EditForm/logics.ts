@@ -6,6 +6,7 @@ import { useMemo, useState } from "react";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import { calculateItemTotal, getTotalPrice } from "../transaction-utils";
 import { toast } from "react-toastify";
+import axios, { isAxiosError } from "axios";
 
 export function useTransactionEditFormLogic({ original }: Row<Transaction>) {
   const { products } = useTransactionData();
@@ -76,27 +77,22 @@ export function useTransactionEditFormLogic({ original }: Row<Transaction>) {
 
   const totalPrice = getTotalPrice(form);
 
-  // const transactionSubmit: SubmitHandler<Transaction> = async (formData) => {
-  //   try {
-  //     setIsLoading(true);
-  //     const { data } = await axios.put("/api/transaction/edit", formData);
-
-  //     toast(data.message, { type: "success" });
-  //   } catch (error) {
-  //     if (isAxiosError(error)) {
-  //       const data = error.response?.data;
-
-  //       toast(data.message, { type: "error" });
-  //     }
-  //     console.error(error);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
   const transactionSubmit: SubmitHandler<Transaction> = async (formData) => {
-    console.log(formData);
-    console.log(setIsLoading);
-    toast("Fungsi Edit dalam pengembangan", {type:"info"})
+    try {
+      setIsLoading(true);
+      const { data } = await axios.put("/api/transaction/edit", formData);
+
+      toast(data.message, { type: "success" });
+    } catch (error) {
+      if (isAxiosError(error)) {
+        const data = error.response?.data;
+
+        toast(data.message, { type: "error" });
+      }
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return {

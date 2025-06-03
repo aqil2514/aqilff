@@ -33,6 +33,22 @@ const columns: ColumnDef<TransactionItem>[] = [
       return formatToRupiah(row.original.margin);
     },
   },
+  {
+    accessorKey: "hpp",
+    header: "Total HPP",
+    cell: ({ row }) => formatToRupiah(row.original.hpp ?? 0),
+  },
+  {
+    accessorKey: "margin_percentage",
+    header: "Margin (%)",
+    cell: ({ row }) => {
+      const margin = row.original.margin ?? 0;
+      const subtotal = row.original.subtotal ?? 0;
+      const percent = subtotal > 0 ? (margin / subtotal) * 100 : 0;
+
+      return `${percent.toFixed(1)}%`;
+    },
+  },
 ];
 
 export default function TransactionItemTable() {
@@ -53,10 +69,14 @@ export default function TransactionItemTable() {
         const existing = map.get(key)!;
         existing.quantity += item.quantity;
         existing.subtotal += item.subtotal;
+        existing.margin = (existing.margin ?? 0) + (item.margin ?? 0);
+        existing.hpp = (existing.hpp ?? 0) + (item.hpp ?? 0); // ➕ HPP
       } else {
         map.set(key, {
           ...item,
           id: matchedProduct?.code ?? item.id,
+          margin: item.margin ?? 0,
+          hpp: item.hpp ?? 0, // ➕ HPP
         });
       }
     }

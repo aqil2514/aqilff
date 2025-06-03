@@ -47,8 +47,7 @@ export async function calculateAndUpdateHPP(
   if (remainingQty > 0) {
     return {
       success: false,
-      error:
-        "Produk belum memiliki riwayat pembelian yang valid (HPP kosong)",
+      error: "Produk belum memiliki riwayat pembelian yang valid (HPP kosong)",
     };
   }
 
@@ -61,8 +60,9 @@ export async function calculateAndUpdateHPP(
   };
 }
 
-
-export async function getAvailablePurchaseItemsFIFO(product_id: string): Promise<PurchaseItem[]> {
+export async function getAvailablePurchaseItemsFIFO(
+  product_id: string
+): Promise<PurchaseItem[]> {
   const { data, error } = await supabaseAdmin
     .from("purchase_items")
     .select("*")
@@ -100,7 +100,6 @@ export async function getTransactionItemData(): Promise<TransactionItem[]> {
     .from("transaction_items")
     .select("*")
     .is("deleted_at", null)
-    .order("created_at", { ascending: true });
 
   if (error) {
     console.error("Gagal mengambil item transaksi:", error);
@@ -209,16 +208,38 @@ export async function saveTransaction(payload: Transaction) {
   return { createdTransaction, success: true };
 }
 
-export async function saveTransactionItems(payload: TransactionItem[], transactionId:string) {
-  const insertItems = payload.map((item) => {
-      const itemPayload = { ...item, transaction_id: transactionId };
-      return supabaseAdmin
-        .from("transaction_items")
-        .insert<typeof itemPayload>(itemPayload)
-        .select();
-    });
-  
-    const itemInsertResults = await Promise.all(insertItems);
+export async function updateTransaction(payload: Transaction) {
+  const transactionId = payload.id;
+  const { error: updateError } = await supabaseAdmin
+    .from("transactions")
+    .update(payload)
+    .eq("id", transactionId);
 
-    return itemInsertResults
+  if (updateError) {
+    console.error("Terjadi error saat update transaksi", updateError);
+
+    return {
+      message: "Terjadi error saat update transaksi",
+      success: false,
+    };
+  }
+
+  return { message: "Update transaksi berhasil", success: true };
+}
+
+export async function saveTransactionItems(
+  payload: TransactionItem[],
+  transactionId: string
+) {
+  const insertItems = payload.map((item) => {
+    const itemPayload = { ...item, transaction_id: transactionId };
+    return supabaseAdmin
+      .from("transaction_items")
+      .insert<typeof itemPayload>(itemPayload)
+      .select();
+  });
+
+  const itemInsertResults = await Promise.all(insertItems);
+
+  return itemInsertResults;
 }
