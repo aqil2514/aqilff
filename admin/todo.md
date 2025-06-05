@@ -1,0 +1,1 @@
+Route reports/puchases

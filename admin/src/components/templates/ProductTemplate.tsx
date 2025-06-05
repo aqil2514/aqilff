@@ -168,7 +168,7 @@ const ProductFooter = ({
         <RefreshButton buttonRef={refreshRef} />
         <p>
           Terdapat <strong>{totalProduct}</strong> total produk dengan{" "}
-          <strong>{totalStock}</strong> item. {formatToRupiah(totalPrice)}
+          <strong>{totalStock}</strong> item. <strong>{formatToRupiah(totalPrice)}</strong>
         </p>
       </CardContent>
     </Card>
