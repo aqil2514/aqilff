@@ -28,8 +28,6 @@ const columns: ColumnDef<TransactionItem>[] = [
     accessorKey: "margin_total",
     header: "Total Margin",
     cell: ({ row }) => {
-      console.log(row.original);
-
       return formatToRupiah(row.original.margin);
     },
   },

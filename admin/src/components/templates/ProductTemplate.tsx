@@ -15,13 +15,15 @@ import { RefreshCcw } from "lucide-react";
 import { toast } from "react-toastify";
 import { fetchProducts } from "@/lib/fetchers";
 import { TransactionItem } from "@/@types/transaction";
+import { Card, CardContent } from "../ui/card";
+import { formatToRupiah } from "@/lib/utils";
 
 /**
  * Product Template
- * 
- * Alur Route : 
- * 
- * 1. 
+ *
+ * Alur Route :
+ *
+ * 1.
  */
 
 export default function ProductTemplate() {
@@ -79,7 +81,7 @@ export default function ProductTemplate() {
           <InputName inputRef={inputRef} />
         </div>
         <TableProducts />
-        <RefreshButton buttonRef={refreshRef} />
+        <ProductFooter products={products} refreshRef={refreshRef} />
       </MainWrapper>
     </ProductsProvider>
   );
@@ -131,7 +133,7 @@ const RefreshButton = ({
       aria-label="Refresh"
       ref={buttonRef}
       disabled={isRefreshing}
-      className={`transition-transform duration-700 my-4 ${
+      className={`transition-transform duration-700 my-auto ${
         isRefreshing ? "animate-spin" : ""
       }`}
       style={{
@@ -144,5 +146,31 @@ const RefreshButton = ({
     >
       <RefreshCcw size={24} />
     </button>
+  );
+};
+
+const ProductFooter = ({
+  products,
+  refreshRef,
+}: {
+  products: Product[];
+  refreshRef: RefObject<HTMLButtonElement | null>;
+}) => {
+  const totalProduct = products.length;
+  const totalStock = products.reduce((acc, p) => acc + (p.stock || 0), 0);
+  const totalPrice = products
+    .filter((prod) => prod.is_active)
+    .reduce((acc, curr) => acc + curr.price * curr.stock, 0);
+
+  return (
+    <Card className="mt-4 py-2">
+      <CardContent className="text-sm text-muted-foreground flex items-center space-x-2">
+        <RefreshButton buttonRef={refreshRef} />
+        <p>
+          Terdapat <strong>{totalProduct}</strong> total produk dengan{" "}
+          <strong>{totalStock}</strong> item. {formatToRupiah(totalPrice)}
+        </p>
+      </CardContent>
+    </Card>
   );
 };

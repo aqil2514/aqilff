@@ -12,8 +12,7 @@ export async function updateStock(
     // Update purchase_items
     const relatedBatches = purchaseItemData
       .filter(
-        (p) =>
-          p.product_name === item.product_name && p.remaining_quantity > 0
+        (p) => p.product_name === item.product_name && p.remaining_quantity > 0
       )
       .sort((a, b) => {
         const aDate = new Date(a.created_at as string).getTime();
@@ -57,7 +56,7 @@ export async function updateStock(
 
     const { error: productError } = await supabaseAdmin
       .from("products")
-      .update({ stock: newStock })
+      .update({ stock: newStock, is_active: newStock === 0 ? false : true })
       .eq("id", selectedProduct.id);
 
     if (productError) {

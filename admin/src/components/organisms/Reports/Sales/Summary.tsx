@@ -24,7 +24,7 @@ const FilterDate = () => {
     isLoadingFetch,
     setIsLoadingFetch,
     setTransaction,
-    setProducts
+    setProducts,
   } = useReportSalesData();
 
   const [error, setError] = useState<string | null>(null);
@@ -125,6 +125,7 @@ const SummaryStats = () => {
         amount: number;
         margin: number;
         hpp: number;
+        marginPercentage?: number;
       }
     > = {};
 
@@ -134,7 +135,7 @@ const SummaryStats = () => {
       for (const item of trx.items ?? []) {
         totalUnitsSold += item.quantity;
         totalMargin += item.margin ?? 0;
-        totalHPP += (item.hpp ?? 0);
+        totalHPP += item.hpp ?? 0;
 
         if (!productMap[item.product_id]) {
           productMap[item.product_id] = {
@@ -153,17 +154,29 @@ const SummaryStats = () => {
         prod.hpp += (item.hpp ?? 0) * item.quantity;
       }
     }
+    for (const id in productMap) {
+      const prod = productMap[id];
+      prod.marginPercentage =
+        prod.amount > 0 ? (prod.margin / prod.amount) * 100 : 0;
+    }
 
-    const sortedByQty = Object.values(productMap).sort((a, b) => b.quantity - a.quantity);
-    const sortedByAmount = Object.values(productMap).sort((a, b) => b.amount - a.amount);
-    const sortedByMargin = Object.values(productMap).sort((a, b) => b.margin - a.margin);
+    const sortedByQty = Object.values(productMap).sort(
+      (a, b) => b.quantity - a.quantity
+    );
+    const sortedByAmount = Object.values(productMap).sort(
+      (a, b) => b.amount - a.amount
+    );
+    const sortedByMargin = Object.values(productMap).sort(
+      (a, b) => b.margin - a.margin
+    );
 
     return {
       totalRevenue: Math.round(totalRevenue),
       totalUnitsSold,
       totalMargin: Math.round(totalMargin),
       totalHPP: Math.round(totalHPP),
-      marginPercentage: totalRevenue > 0 ? (totalMargin / totalRevenue) * 100 : 0,
+      marginPercentage:
+        totalRevenue > 0 ? (totalMargin / totalRevenue) * 100 : 0,
       totalTransactions: transaction.length,
       bestSellingProduct: sortedByQty[0],
       highestRevenueProduct: sortedByAmount[0],
@@ -182,7 +195,10 @@ const SummaryStats = () => {
       <div>
         <p className="text-sm text-gray-600">Total Omzet</p>
         <p className="text-xl font-semibold">
-          Rp {summary.totalRevenue.toLocaleString("id-ID", { maximumFractionDigits: 0 })}
+          Rp{" "}
+          {summary.totalRevenue.toLocaleString("id-ID", {
+            maximumFractionDigits: 0,
+          })}
         </p>
       </div>
       <div>
@@ -193,13 +209,19 @@ const SummaryStats = () => {
       <div>
         <p className="text-sm text-gray-600">Total Modal (HPP)</p>
         <p className="text-xl font-semibold">
-          Rp {summary.totalHPP.toLocaleString("id-ID", { maximumFractionDigits: 0 })}
+          Rp{" "}
+          {summary.totalHPP.toLocaleString("id-ID", {
+            maximumFractionDigits: 0,
+          })}
         </p>
       </div>
       <div>
         <p className="text-sm text-gray-600">Total Margin Kotor</p>
         <p className="text-xl font-semibold">
-          Rp {summary.totalMargin.toLocaleString("id-ID", { maximumFractionDigits: 0 })}
+          Rp{" "}
+          {summary.totalMargin.toLocaleString("id-ID", {
+            maximumFractionDigits: 0,
+          })}
         </p>
       </div>
       <div>
@@ -217,27 +239,38 @@ const SummaryStats = () => {
         <div className="sm:col-span-2">
           <p className="text-sm text-gray-600">Produk Terlaris (Qty)</p>
           <p className="text-lg font-semibold">
-            {summary.bestSellingProduct.name} ({summary.bestSellingProduct.quantity} pcs)
+            {summary.bestSellingProduct.name} (
+            {summary.bestSellingProduct.quantity} pcs)
           </p>
         </div>
       )}
 
       {summary.highestRevenueProduct && (
         <div className="sm:col-span-2">
-          <p className="text-sm text-gray-600">Produk Volume Terbesar (Omzet)</p>
+          <p className="text-sm text-gray-600">
+            Produk Volume Terbesar (Omzet)
+          </p>
           <p className="text-lg font-semibold">
             {summary.highestRevenueProduct.name} (Rp{" "}
-            {Math.round(summary.highestRevenueProduct.amount).toLocaleString("id-ID")})
+            {Math.round(summary.highestRevenueProduct.amount).toLocaleString(
+              "id-ID"
+            )}
+            )
           </p>
         </div>
       )}
 
       {summary.mostProfitableProduct && (
         <div className="sm:col-span-2">
-          <p className="text-sm text-gray-600">Produk Paling Menguntungkan (Margin)</p>
+          <p className="text-sm text-gray-600">
+            Produk Paling Menguntungkan (Margin)
+          </p>
           <p className="text-lg font-semibold">
             {summary.mostProfitableProduct.name} (Rp{" "}
-            {Math.round(summary.mostProfitableProduct.margin).toLocaleString("id-ID")})
+            {Math.round(summary.mostProfitableProduct.margin).toLocaleString(
+              "id-ID"
+            )}
+            )
           </p>
         </div>
       )}
