@@ -23,6 +23,8 @@ import { ChevronUp, User2, BarChart2 } from "lucide-react";
 import { logoutUser } from "@/lib/utils";
 import { BiPurchaseTagAlt } from "react-icons/bi";
 import { IoFastFoodOutline } from "react-icons/io5";
+import { GiNotebook } from "react-icons/gi";
+
 import { MdDashboard } from "react-icons/md";
 import { FcSalesPerformance } from "react-icons/fc";
 
@@ -75,7 +77,7 @@ const reportItems: MenuItem[] = [
   {
     name: "Laporan Pembelian",
     url: "/reports/purchases",
-    icon: BarChart2,
+    icon: GiNotebook,
   },
   {
     name: "Laba Rugi",

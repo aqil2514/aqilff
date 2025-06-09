@@ -105,7 +105,6 @@ export default function EditFormProduct({ row }: { row: Row<Product> }) {
         <Input
           id="price"
           type="number"
-          step={500}
           {...register("price", { required: "Data harus diisi" })}
         />
       </div>

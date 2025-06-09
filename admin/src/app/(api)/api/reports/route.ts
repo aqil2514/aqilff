@@ -1,4 +1,5 @@
 import { getProductData } from "@/lib/supabase/products";
+import { getPurchaseDataAndItemsByDateRange } from "@/lib/supabase/purchase";
 import { getTransactionDataAndItemsByDateRange } from "@/lib/supabase/transaction";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -17,7 +18,15 @@ export async function GET(req: NextRequest) {
       getTransactionDataAndItemsByDateRange(startDate, endDate),
       getProductData(),
     ]);
+
     return NextResponse.json({ transactions, products }, { status: 200 });
+  } else if (source === "purchases") {
+    const [products, purchases] = await Promise.all([
+      getProductData(),
+      getPurchaseDataAndItemsByDateRange(startDate, endDate),
+    ]);
+
+    return NextResponse.json({ products, purchases }, { status: 200 });
   }
 
   return NextResponse.json({}, { status: 200 });
