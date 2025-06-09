@@ -36,7 +36,7 @@ export async function PUT(req: NextRequest) {
   const { error: updateError } = await supabaseAdmin
     .from("products")
     .update({
-      id: data.id,
+      code: data.code,
       brand: data.brand,
       name: data.name,
       category: data.category,
@@ -80,6 +80,7 @@ export async function PUT(req: NextRequest) {
 
 const getFormDataValue = (formData: FormData) => {
   const id = String(formData.get("id"));
+  const code = String(formData.get("code"));
   const brand = String(formData.get("brand"));
   const category = String(formData.get("category"));
   const price = Number(formData.get("price"));
@@ -92,6 +93,7 @@ const getFormDataValue = (formData: FormData) => {
 
   return {
     id,
+    code,
     brand,
     category,
     price,
