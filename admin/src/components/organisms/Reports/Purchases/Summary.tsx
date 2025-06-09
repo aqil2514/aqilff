@@ -111,7 +111,12 @@ const FilterDate = () => {
         {isLoadingFetch ? "Mengambil Data..." : "Ambil Data"}
       </Button>
 
-      <FilterText />
+      {startDate && endDate && (
+        <>
+          <FilterText />
+          <SortControls />
+        </>
+      )}
     </div>
   );
 };
@@ -127,7 +132,9 @@ const FilterText = () => {
     if (!selectedId) return;
 
     // Update / tambahkan filter
-    const existingFilterIndex = columnFilters.findIndex((f) => f.id === selectedId);
+    const existingFilterIndex = columnFilters.findIndex(
+      (f) => f.id === selectedId
+    );
     const updatedFilters = [...columnFilters];
 
     if (existingFilterIndex !== -1) {
@@ -179,6 +186,68 @@ const FilterText = () => {
         onChange={handleInputChange}
         disabled={!selectedId}
       />
+    </div>
+  );
+};
+
+const SortControls = () => {
+  const { setSorting } = useReportPurchaseData();
+  const [sortColumn, setSortColumn] = useState<string>("");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+
+  const handleSortChange = () => {
+    if (!sortColumn) return;
+
+    setSorting([
+      {
+        id: sortColumn,
+        desc: sortDirection === "desc",
+      },
+    ]);
+  };
+
+  return (
+    <div className="space-y-2 mt-4">
+      <Label>
+        <span className="text-xs mb-1 block">Urutkan Berdasarkan</span>
+        <div className="flex items-center gap-2">
+          <Select
+            onValueChange={(val) => setSortColumn(val)}
+            value={sortColumn}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Pilih Kolom" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Kolom</SelectLabel>
+                {columns.map((col) => (
+                  <SelectItem key={col.id} value={col.id as string}>
+                    {col.header as string}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+
+          <Select
+            onValueChange={(val) => setSortDirection(val as "asc" | "desc")}
+            value={sortDirection}
+          >
+            <SelectTrigger className="w-[120px]">
+              <SelectValue placeholder="Arah" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="asc">A-Z</SelectItem>
+              <SelectItem value="desc">Z-A</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Button variant="outline" onClick={handleSortChange}>
+            Terapkan
+          </Button>
+        </div>
+      </Label>
     </div>
   );
 };
