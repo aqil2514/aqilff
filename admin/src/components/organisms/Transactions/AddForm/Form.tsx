@@ -169,7 +169,6 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
             <Input
               id="discount"
               type="number"
-              step={500}
               {...register(`items.${index}.discount`)}
             />
           </div>
@@ -178,7 +177,6 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
             <Input
               id="tip"
               type="number"
-              step={500}
               {...register(`items.${index}.tip`)}
             />
           </div>

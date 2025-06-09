@@ -8,7 +8,6 @@ import {
   getSortedRowModel,
   getFilteredRowModel,
   InitialTableState,
-  TableState,
   ColumnSort,
 } from "@tanstack/react-table";
 
@@ -22,30 +21,45 @@ import {
 } from "@/components/ui/table";
 import React, { SetStateAction } from "react";
 
+interface ColumnFilter {
+  id: string;
+  value: unknown;
+}
+
+export type ColumnFiltersState = ColumnFilter[];
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  columnFilters?: ColumnFiltersState;
+  setColumnFilters?: React.Dispatch<SetStateAction<ColumnFiltersState>>;
   initialState?: InitialTableState;
-  state?: Partial<TableState>;
-  setSorting?: React.Dispatch<SetStateAction<ColumnSort[]>>
+  sorting?: ColumnSort[];
+  setSorting?: React.Dispatch<SetStateAction<ColumnSort[]>>;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   initialState,
-  state,
-  setSorting
+  columnFilters,
+  setColumnFilters,
+  sorting,
+  setSorting,
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
     columns,
     initialState,
-    state,
+    state: {
+      sorting,
+      columnFilters,
+    },
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
   });
 
   return (

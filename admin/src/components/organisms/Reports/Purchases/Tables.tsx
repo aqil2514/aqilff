@@ -2,55 +2,64 @@ import { PurchaseItem } from "@/@types/purchases";
 import { DataTable } from "@/components/molecules/DataTable";
 import { useReportPurchaseData } from "@/components/providers/ReportPurchaseProvider";
 import { formatToIndonesianDate, formatToRupiah } from "@/lib/utils";
-import { ColumnDef, TableState } from "@tanstack/react-table";
+import { ColumnDef } from "@tanstack/react-table";
 import { useMemo } from "react";
 
-type TableData = PurchaseItem & {
+type ReportPurchaseTable = PurchaseItem & {
   supplier_name: string;
 };
 
-const columns: ColumnDef<TableData>[] = [
+export const columns: ColumnDef<ReportPurchaseTable>[] = [
   {
     accessorKey: "created_at",
+    id: "created_at",
     header: "Tanggal Pembelian",
     cell: ({ row }) => formatToIndonesianDate(String(row.original.created_at)),
   },
   {
     accessorKey: "supplier_name",
+    id: "supplier_name",
     header: "Nama Supplier",
+    filterFn: "includesString"
   },
   {
     accessorKey: "product_id",
+    id: "product_id",
     header: "ID Produk",
   },
   {
     accessorKey: "product_name",
+    id: "product_name",
     header: "Nama Produk",
   },
   {
     accessorKey: "quantity",
+    id: "quantity",
     header: "Jumlah Beli",
     cell: ({ row }) => `${row.original.quantity} pcs`,
   },
   {
     accessorKey: "remaining_quantity",
+    id: "remaining_quantity",
     header: "Jumlah Saat Ini",
     cell: ({ row }) => `${row.original.remaining_quantity} pcs`,
   },
   {
     accessorKey: "hpp",
+    id: "hpp",
     header: "Total HPP",
     cell: ({ row }) => formatToRupiah(row.original.hpp ?? 0),
   },
   {
     accessorKey: "subtotal",
+    id: "subtotal",
     header: "Total Belanja",
     cell: ({ row }) => formatToRupiah(row.original.hpp * row.original.quantity),
   },
 ];
 
 export default function ReportPurchaseTable() {
-  const { purchase, products, sorting, setSorting } = useReportPurchaseData();
+  const { purchase, products, sorting, setSorting, setColumnFilters, columnFilters } = useReportPurchaseData();
 
   const purchaseItem = purchase.flatMap((tr) => tr.items ?? []);
 
@@ -71,19 +80,15 @@ export default function ReportPurchaseTable() {
     return newItems;
   }, [purchaseItem, products, purchase]);
 
-  if (!purchase?.length) return null;
-
-  const state: Partial<TableState> = {
-    sorting,
-  };
-
   return (
     <div className="bg-white shadow-2xl h-full w-full rounded-2xl p-4">
       <DataTable
         columns={columns}
         data={summarizedItem}
-        state={state}
+        sorting={sorting}
         setSorting={setSorting}
+        columnFilters={columnFilters}
+        setColumnFilters={setColumnFilters}
       />
     </div>
   );

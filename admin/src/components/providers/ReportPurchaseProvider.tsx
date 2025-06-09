@@ -1,7 +1,7 @@
 import { Product } from "@/@types/products";
 import { Purchase } from "@/@types/purchases";
 import { today } from "@/lib/variables";
-import { ColumnSort } from "@tanstack/react-table";
+import { ColumnFiltersState, ColumnSort } from "@tanstack/react-table";
 import React, {
   createContext,
   SetStateAction,
@@ -22,6 +22,8 @@ interface ReportPurchaseContextProps {
   setIsLoadingFetch: React.Dispatch<SetStateAction<boolean>>;
   sorting: ColumnSort[];
   setSorting: React.Dispatch<SetStateAction<ColumnSort[]>>;
+  columnFilters: ColumnFiltersState;
+  setColumnFilters: React.Dispatch<SetStateAction<ColumnFiltersState>>;
 }
 
 const ReportPurchaseContext = createContext<ReportPurchaseContextProps>(
@@ -39,6 +41,7 @@ export default function ReportPurchaseProvider({
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoadingFetch, setIsLoadingFetch] = useState<boolean>(false);
   const [sorting, setSorting] = useState<ColumnSort[]>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   const value: ReportPurchaseContextProps = {
     endDate,
@@ -53,6 +56,8 @@ export default function ReportPurchaseProvider({
     setProducts,
     setSorting,
     sorting,
+    columnFilters,
+    setColumnFilters,
   };
 
   return (

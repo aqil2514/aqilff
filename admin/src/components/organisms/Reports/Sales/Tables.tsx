@@ -2,7 +2,7 @@ import { TransactionItem } from "@/@types/transaction";
 import { DataTable } from "@/components/molecules/DataTable";
 import { useReportSalesData } from "@/components/providers/ReportSalesProvider";
 import { formatToRupiah } from "@/lib/utils";
-import { ColumnDef, TableState } from "@tanstack/react-table";
+import { ColumnDef } from "@tanstack/react-table";
 import { useMemo } from "react";
 import TableSortControl from "./TableSortControl";
 
@@ -84,17 +84,13 @@ export default function TransactionItemTable() {
 
   if (!transaction?.length) return null;
 
-  const state: Partial<TableState> = {
-    sorting,
-  };
-
   return (
     <>
       <TableSortControl sorting={sorting} setSorting={setSorting} />
       <DataTable
         columns={columns}
         data={summarizedItems}
-        state={state}
+        sorting={sorting}
         setSorting={setSorting}
       />
     </>
