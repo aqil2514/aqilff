@@ -55,8 +55,6 @@ const FilterDate = () => {
         },
       });
 
-      console.log(data)
-
       setPurchase(data.purchases);
       setProducts(data.products);
     } catch (err) {
