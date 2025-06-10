@@ -1,4 +1,4 @@
-import ReportSalesTemplate from "@/components/templates/ReportSalesTemplate";
+import ReportSalesTemplate from "@/components/templates/Reports/ReportSalesTemplate";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

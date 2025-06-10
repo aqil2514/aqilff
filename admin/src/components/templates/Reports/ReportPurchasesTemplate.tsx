@@ -1,8 +1,8 @@
 "use client"
-import MainWrapper from "../atoms/main-wrapper";
-import ReportPurchaseSummary from "../organisms/Reports/Purchases/Summary";
-import ReportPurchaseTable from "../organisms/Reports/Purchases/Tables";
-import ReportPurchaseProvider from "../providers/ReportPurchaseProvider";
+import MainWrapper from "../../atoms/main-wrapper";
+import ReportPurchaseSummary from "../../organisms/Reports/Purchases/Summary";
+import ReportPurchaseTable from "../../organisms/Reports/Purchases/Tables";
+import ReportPurchaseProvider from "../../providers/ReportPurchaseProvider";
 
 export default function ReportPurchaseTemplate() {
   return (

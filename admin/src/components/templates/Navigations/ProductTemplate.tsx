@@ -1,21 +1,21 @@
 "use client";
 
 import useSWR from "swr";
-import ProductsProvider from "../providers/ProductsProvider";
+import ProductsProvider from "../../providers/ProductsProvider";
 
-import MainWrapper from "../atoms/main-wrapper";
+import MainWrapper from "../../atoms/main-wrapper";
 
 import { Product } from "@/@types/products";
-import TableProducts from "../organisms/Products/TableProducts";
-import AddProductFormDialog from "../organisms/Products/AddForm";
-import { Input } from "../ui/input";
+import TableProducts from "../../organisms/Products/TableProducts";
+import AddProductFormDialog from "../../organisms/Products/AddForm";
+import { Input } from "../../ui/input";
 import { RefObject, useEffect, useRef, useState } from "react";
-import { useSearchProductLogic } from "../logics/productLogics";
+import { useSearchProductLogic } from "../../logics/productLogics";
 import { RefreshCcw } from "lucide-react";
 import { toast } from "react-toastify";
 import { fetchProducts } from "@/lib/fetchers";
 import { TransactionItem } from "@/@types/transaction";
-import { Card, CardContent } from "../ui/card";
+import { Card, CardContent } from "../../ui/card";
 import { formatToRupiah } from "@/lib/utils";
 
 /**

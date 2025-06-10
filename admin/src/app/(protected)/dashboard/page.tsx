@@ -1,4 +1,4 @@
-import DashboardTemplate from "@/components/templates/DashboardTemplate";
+import DashboardTemplate from "@/components/templates/Navigations/DashboardTemplate";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

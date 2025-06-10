@@ -1,4 +1,4 @@
-import AuthTemplate from "@/components/templates/AuthTemplate";
+import AuthTemplate from "@/components/templates/Authentication/AuthTemplate";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

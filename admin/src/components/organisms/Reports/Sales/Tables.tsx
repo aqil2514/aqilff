@@ -21,8 +21,13 @@ const columns: ColumnDef<TransactionItem>[] = [
   },
   {
     accessorKey: "subtotal",
-    header: "Total",
+    header: "Total Omzet",
     cell: ({ row }) => formatToRupiah(row.original.subtotal),
+  },
+  {
+    accessorKey: "hpp",
+    header: "Total HPP",
+    cell: ({ row }) => formatToRupiah(row.original.hpp ?? 0),
   },
   {
     accessorKey: "margin_total",
@@ -30,11 +35,6 @@ const columns: ColumnDef<TransactionItem>[] = [
     cell: ({ row }) => {
       return formatToRupiah(row.original.margin);
     },
-  },
-  {
-    accessorKey: "hpp",
-    header: "Total HPP",
-    cell: ({ row }) => formatToRupiah(row.original.hpp ?? 0),
   },
   {
     accessorKey: "margin_percentage",

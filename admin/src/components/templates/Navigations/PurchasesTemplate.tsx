@@ -1,13 +1,13 @@
 "use client";
 import useSWR from "swr";
-import MainWrapper from "../atoms/main-wrapper";
+import MainWrapper from "../../atoms/main-wrapper";
 import { fetchPurchaseResources } from "@/lib/fetchers";
 import PurchaseProvider, {
   usePurchaseData,
-} from "../providers/PurchasesProvider";
-import { RetrieveDataPopover } from "../molecules/RetrieveData";
-import TablePurchases from "../organisms/Purchases/TablePurchases";
-import PurchaseDialog from "../organisms/Purchases/Form";
+} from "../../providers/PurchasesProvider";
+import { RetrieveDataPopover } from "../../molecules/RetrieveData";
+import TablePurchases from "../../organisms/Purchases/TablePurchases";
+import PurchaseDialog from "../../organisms/Purchases/Form";
 
 export default function PurchaseTemplate() {
   const {

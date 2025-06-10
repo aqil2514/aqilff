@@ -1,4 +1,4 @@
-import TransactionTemplate from "@/components/templates/TransactionTemplate";
+import TransactionTemplate from "@/components/templates/Navigations/TransactionTemplate";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

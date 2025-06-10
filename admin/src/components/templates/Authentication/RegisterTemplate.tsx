@@ -1,15 +1,15 @@
 "use client";
 import React from "react";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import MainWrapper from "../atoms/main-wrapper";
-import AutoOpenDialog from "../organisms/DialogAutoOpen";
-import RegisterProvider from "../providers/RegisterProvider";
+import { Button } from "../../ui/button";
+import { Input } from "../../ui/input";
+import { Label } from "../../ui/label";
+import MainWrapper from "../../atoms/main-wrapper";
+import AutoOpenDialog from "../../organisms/DialogAutoOpen";
+import RegisterProvider from "../../providers/RegisterProvider";
 import {
   useKeyInputLogics,
   useRegisterFormLogics,
-} from "../logics/registerLogics";
+} from "../../logics/registerLogics";
 import {
   Dialog,
   DialogClose,
@@ -19,7 +19,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../ui/dialog";
+} from "../../ui/dialog";
 import { useRouter } from "next/navigation";
 
 export default function RegisterTemplate() {

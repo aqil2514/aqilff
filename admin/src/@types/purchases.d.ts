@@ -94,3 +94,104 @@ export interface PurchaseItem {
    */
   created_at?: string;
 }
+
+/**
+ * Interface untuk data rencana pembelian barang.
+ */
+export interface PurchasePlanItem {
+  /**
+   * ID unik dari item rencana.
+   */
+  id: string;
+
+  /**
+   * ID pengguna yang membuat data.
+   */
+  userId: string;
+
+  /**
+   * Nama barang.
+   */
+  itemName: string;
+
+  /**
+   * Jumlah unit per pack.
+   */
+  quantityPerPack: number;
+
+  /**
+   * Jumlah pack yang ingin dibeli.
+   */
+  packCount: number;
+
+  /**
+   * Kategori rencana pembelian produk.
+   * Contoh : Restok, Produk Baru
+   */
+  category: string;
+
+  /**
+   * Harga beli per pack.
+   */
+  purchasePrice: number;
+
+  /**
+   * Harga satuan per item.
+   */
+  unitCost: number;
+
+  /**
+   * Harga jual per item.
+   */
+  sellingPrice: number;
+
+  /**
+   * Margin nominal per item.
+   */
+  marginPerItem: number;
+
+  /**
+   * Margin dari harga beli (dalam persen).
+   */
+  marginFromCost: number;
+
+  /**
+   * Margin dari harga jual (dalam persen).
+   */
+  marginFromSelling: number;
+
+  /**
+   * Total nilai pembelian untuk seluruh pack.
+   */
+  totalPurchaseValue: number;
+
+  /**
+   * Total nilai penjualan untuk semua item.
+   */
+  totalSellingValue: number;
+
+  /**
+   * Laba total dari item ini.
+   */
+  profit: number;
+
+  /**
+   * Status rencana: Planned, Purchased, atau Cancelled.
+   */
+  status: 'Planned' | 'Purchased' | 'Cancelled' | string;
+  
+  /**
+   * Sumber Itemnya.
+   */
+  sourceItem: string;
+
+  /**
+   * Tanggal dibuat.
+   */
+  createdAt: string;
+
+  /**
+   * Tanggal diubah terakhir.
+   */
+  updatedAt: string;
+}

@@ -1,11 +1,11 @@
 "use client";
 
-import MainWrapper from "../atoms/main-wrapper";
-import Chart from "../organisms/Reports/Sales/Diagram";
-import Summary from "../organisms/Reports/Sales/Summary";
-import Table from "../organisms/Reports/Sales/Tables";
-import ReportSalesProvider from "../providers/ReportSalesProvider";
-import { ScrollArea } from "../ui/scroll-area";
+import MainWrapper from "../../atoms/main-wrapper";
+import Chart from "../../organisms/Reports/Sales/Diagram";
+import Summary from "../../organisms/Reports/Sales/Summary";
+import Table from "../../organisms/Reports/Sales/Tables";
+import ReportSalesProvider from "../../providers/ReportSalesProvider";
+import { ScrollArea } from "../../ui/scroll-area";
 
 export default function ReportSalesTemplate() {
   return (

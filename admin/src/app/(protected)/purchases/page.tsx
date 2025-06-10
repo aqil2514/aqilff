@@ -1,4 +1,4 @@
-import PurchaseTemplate from "@/components/templates/PurchasesTemplate";
+import PurchaseTemplate from "@/components/templates/Navigations/PurchasesTemplate";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

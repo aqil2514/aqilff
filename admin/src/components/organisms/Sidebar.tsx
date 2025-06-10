@@ -28,6 +28,8 @@ import { GiNotebook } from "react-icons/gi";
 import { MdDashboard } from "react-icons/md";
 import { FcSalesPerformance } from "react-icons/fc";
 
+import { MdEventNote } from "react-icons/md";
+
 import { MenuItem } from "@/@types/general";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
@@ -39,6 +41,7 @@ export function AppSidebar() {
       <SidebarContent>
         <Navigation />
         <Reports />
+        <Tools />
       </SidebarContent>
       <Footer />
     </Sidebar>
@@ -86,6 +89,14 @@ const reportItems: MenuItem[] = [
   },
 ];
 
+const toolsItem: MenuItem[] = [
+  {
+    name: "Rencana Pembelian",
+    url: "/tools/purchase-planning",
+    icon: MdEventNote,
+  },
+];
+
 const Navigation = () => {
   const pathname = usePathname();
 
@@ -119,6 +130,29 @@ const Reports = () => {
       <SidebarGroupContent>
         <SidebarMenu>
           {reportItems.map((item) => (
+            <SidebarMenuItem key={item.name}>
+              <SidebarMenuButton asChild isActive={pathname === item.url}>
+                <Link href={item.url}>
+                  <item.icon />
+                  <span>{item.name}</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
+      </SidebarGroupContent>
+    </SidebarGroup>
+  );
+};
+const Tools = () => {
+  const pathname = usePathname();
+
+  return (
+    <SidebarGroup>
+      <SidebarGroupLabel>Tools</SidebarGroupLabel>
+      <SidebarGroupContent>
+        <SidebarMenu>
+          {toolsItem.map((item) => (
             <SidebarMenuItem key={item.name}>
               <SidebarMenuButton asChild isActive={pathname === item.url}>
                 <Link href={item.url}>

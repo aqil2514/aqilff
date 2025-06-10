@@ -75,7 +75,6 @@ export function formatToPercent(value: number, fractionDigits = 2): string {
   return `${value.toFixed(fractionDigits)}%`;
 }
 
-
 export function formatToIndonesianDate(dateString: string): string {
   const date = new Date(dateString);
   return new Intl.DateTimeFormat("id-ID", {
@@ -169,4 +168,14 @@ export function getLocalDateTimeValue(): string {
   const hours = String(now.getHours()).padStart(2, "0");
   const minutes = String(now.getMinutes()).padStart(2, "0");
   return `${year}-${month}-${date}T${hours}:${minutes}`;
+}
+
+export function isValidUrl(text: string) {
+  try {
+    new URL(text);
+    
+    return true;
+  } catch {
+    return false;
+  }
 }

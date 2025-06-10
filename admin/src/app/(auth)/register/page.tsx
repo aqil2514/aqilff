@@ -1,4 +1,4 @@
-import RegisterTemplate from "@/components/templates/RegisterTemplate";
+import RegisterTemplate from "@/components/templates/Authentication/RegisterTemplate";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

@@ -1,12 +1,12 @@
 "use client";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import MainWrapper from "../atoms/main-wrapper";
-import { useLoginFormLogics } from "../logics/authLogics";
+import { Input } from "../../ui/input";
+import { Button } from "../../ui/button";
+import MainWrapper from "../../atoms/main-wrapper";
+import { useLoginFormLogics } from "../../logics/authLogics";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { useSession } from "../providers/SessionProvider";
-import { Label } from "../ui/label";
+import { useSession } from "../../providers/SessionProvider";
+import { Label } from "../../ui/label";
 
 export default function AuthTemplate() {
   const { user, loading } = useSession();

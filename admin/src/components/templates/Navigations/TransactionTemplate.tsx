@@ -1,15 +1,15 @@
 "use client";
 
 import useSWR from "swr";
-import MainWrapper from "../atoms/main-wrapper";
-import AddTransactionFormDialog from "../organisms/Transactions/AddForm";
+import MainWrapper from "../../atoms/main-wrapper";
+import AddTransactionFormDialog from "../../organisms/Transactions/AddForm";
 import TransactionProvider, {
   useTransactionData,
-} from "../providers/TransactionProvider";
+} from "../../providers/TransactionProvider";
 import { fetchProducts } from "@/lib/fetchers";
-import TransactionTable from "../organisms/Transactions/TableTransactions/transactions-table";
+import TransactionTable from "../../organisms/Transactions/TableTransactions/transactions-table";
 import { Loader2 } from "lucide-react";
-import { RetrieveDataPopover } from "../molecules/RetrieveData";
+import { RetrieveDataPopover } from "../../molecules/RetrieveData";
 
 export default function TransactionTemplate() {
   const {

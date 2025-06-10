@@ -1,4 +1,4 @@
-import ReportPurchaseTemplate from "@/components/templates/ReportPurchasesTemplate"
+import ReportPurchaseTemplate from "@/components/templates/Reports/ReportPurchasesTemplate"
 import { Metadata } from "next"
 
 export const metadata:Metadata = {
