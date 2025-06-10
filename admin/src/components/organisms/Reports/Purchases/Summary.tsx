@@ -17,7 +17,7 @@ import { columns } from "./Tables";
 
 export default function ReportPurchaseSummary() {
   return (
-    <div className="bg-white shadow-2xl h-full rounded-2xl p-4">
+    <div className="bg-white shadow-2xl h-full w-full rounded-2xl p-4">
       <FilterDate />
     </div>
   );
@@ -76,8 +76,8 @@ const FilterDate = () => {
   };
 
   return (
-    <div>
-      <div className="flex justify-between mb-4">
+    <>
+      <div className="flex gap-4 mb-4">
         <div className="space-y-2">
           <Label htmlFor="start-date">Tanggal Mulai</Label>
           <Input
@@ -117,7 +117,7 @@ const FilterDate = () => {
           <SortControls />
         </>
       )}
-    </div>
+    </>
   );
 };
 
@@ -208,46 +208,41 @@ const SortControls = () => {
 
   return (
     <div className="space-y-2 mt-4">
-      <Label>
-        <span className="text-xs mb-1 block">Urutkan Berdasarkan</span>
-        <div className="flex items-center gap-2">
-          <Select
-            onValueChange={(val) => setSortColumn(val)}
-            value={sortColumn}
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Pilih Kolom" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Kolom</SelectLabel>
-                {columns.map((col) => (
-                  <SelectItem key={col.id} value={col.id as string}>
-                    {col.header as string}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+      <Label>Urutkan Berdasarkan</Label>
+      <div className="flex items-center flex-wrap gap-2">
+        <Select onValueChange={(val) => setSortColumn(val)} value={sortColumn}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Pilih Kolom" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Kolom</SelectLabel>
+              {columns.map((col) => (
+                <SelectItem key={col.id} value={col.id as string}>
+                  {col.header as string}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
 
-          <Select
-            onValueChange={(val) => setSortDirection(val as "asc" | "desc")}
-            value={sortDirection}
-          >
-            <SelectTrigger className="w-[120px]">
-              <SelectValue placeholder="Arah" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="asc">A-Z</SelectItem>
-              <SelectItem value="desc">Z-A</SelectItem>
-            </SelectContent>
-          </Select>
+        <Select
+          onValueChange={(val) => setSortDirection(val as "asc" | "desc")}
+          value={sortDirection}
+        >
+          <SelectTrigger className="w-[120px]">
+            <SelectValue placeholder="Arah" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="asc">A-Z</SelectItem>
+            <SelectItem value="desc">Z-A</SelectItem>
+          </SelectContent>
+        </Select>
 
-          <Button variant="outline" onClick={handleSortChange}>
-            Terapkan
-          </Button>
-        </div>
-      </Label>
+        <Button variant="outline" onClick={handleSortChange}>
+          Terapkan
+        </Button>
+      </div>
     </div>
   );
 };
