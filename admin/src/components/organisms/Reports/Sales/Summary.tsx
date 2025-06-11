@@ -8,7 +8,7 @@ import React, { useMemo, useState } from "react";
 // TODO : Ini tambahin supaya bisa filter dkk kayak di Report Purchases
 export default function Summary() {
   return (
-    <div className="p-4 space-y-6">
+    <div className="bg-white shadow-md rounded-xl flex-1 overflow-auto p-4 space-y-6">
       <FilterDate />
 
       <SummaryStats />

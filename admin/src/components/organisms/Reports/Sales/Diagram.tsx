@@ -58,7 +58,7 @@ export default function Chart() {
   );
 
   return (
-    <ChartContainer config={chartConfig} className="h-full w-full">
+    <ChartContainer config={chartConfig} className="bg-white shadow-md rounded-xl p-4 flex-1 overflow-auto h-full w-full">
       <ResponsiveContainer>
         <PieChart>
           <Pie

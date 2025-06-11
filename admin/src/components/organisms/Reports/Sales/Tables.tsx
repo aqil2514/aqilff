@@ -85,7 +85,7 @@ export default function TransactionItemTable() {
   if (!transaction?.length) return null;
 
   return (
-    <>
+    <div className="bg-white shadow-md rounded-xl p-4 overflow-auto h-full">
       <TableSortControl sorting={sorting} setSorting={setSorting} />
       <DataTable
         columns={columns}
@@ -93,6 +93,6 @@ export default function TransactionItemTable() {
         sorting={sorting}
         setSorting={setSorting}
       />
-    </>
+    </div>
   );
 }
