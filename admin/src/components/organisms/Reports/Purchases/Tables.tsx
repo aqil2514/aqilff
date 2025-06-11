@@ -20,7 +20,7 @@ export const columns: ColumnDef<ReportPurchaseTable>[] = [
     accessorKey: "supplier_name",
     id: "supplier_name",
     header: "Nama Supplier",
-    filterFn: "includesString"
+    filterFn: "includesString",
   },
   {
     accessorKey: "product_id",
@@ -31,6 +31,11 @@ export const columns: ColumnDef<ReportPurchaseTable>[] = [
     accessorKey: "product_name",
     id: "product_name",
     header: "Nama Produk",
+    filterFn: (row, columnId, filterValue) => {
+      const cellValue = String(row.getValue(columnId) ?? "").toLowerCase();
+      const keywords = filterValue.toLowerCase().split(" ").filter(Boolean);
+      return keywords.every((kw: string) => cellValue.includes(kw));
+    },
   },
   {
     accessorKey: "quantity",
@@ -59,7 +64,14 @@ export const columns: ColumnDef<ReportPurchaseTable>[] = [
 ];
 
 export default function ReportPurchaseTable() {
-  const { purchase, products, sorting, setSorting, setColumnFilters, columnFilters } = useReportPurchaseData();
+  const {
+    purchase,
+    products,
+    sorting,
+    setSorting,
+    setColumnFilters,
+    columnFilters,
+  } = useReportPurchaseData();
 
   const purchaseItem = purchase.flatMap((tr) => tr.items ?? []);
 
