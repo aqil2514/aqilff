@@ -4,7 +4,6 @@ import { useReportSalesData } from "@/components/providers/ReportSalesProvider";
 import { formatToRupiah } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
 import { useMemo } from "react";
-import TableSortControl from "./TableSortControl";
 
 const columns: ColumnDef<TransactionItem>[] = [
   {
@@ -12,8 +11,17 @@ const columns: ColumnDef<TransactionItem>[] = [
     header: "ID Produk",
   },
   {
+    accessorKey: "category",
+    header: "Kategori",
+  },
+  {
     accessorKey: "product_name",
     header: "Nama Produk",
+    filterFn: (row, columnId, filterValue) => {
+      const cellValue = String(row.getValue(columnId) ?? "").toLowerCase();
+      const keywords = filterValue.toLowerCase().split(" ").filter(Boolean);
+      return keywords.every((kw: string) => cellValue.includes(kw));
+    },
   },
   {
     accessorKey: "quantity",
@@ -31,6 +39,7 @@ const columns: ColumnDef<TransactionItem>[] = [
   },
   {
     accessorKey: "margin_total",
+    accessorFn: (row) => row.margin ?? 0,
     header: "Total Margin",
     cell: ({ row }) => {
       return formatToRupiah(row.original.margin);
@@ -38,6 +47,11 @@ const columns: ColumnDef<TransactionItem>[] = [
   },
   {
     accessorKey: "margin_percentage",
+    accessorFn: (row) => {
+      const margin = row.margin ?? 0;
+      const subtotal = row.subtotal ?? 0;
+      return subtotal > 0 ? (margin / subtotal) * 100 : 0;
+    },
     header: "Margin (%)",
     cell: ({ row }) => {
       const margin = row.original.margin ?? 0;
@@ -50,7 +64,14 @@ const columns: ColumnDef<TransactionItem>[] = [
 ];
 
 export default function TransactionItemTable() {
-  const { transaction, products, sorting, setSorting } = useReportSalesData();
+  const {
+    transaction,
+    products,
+    sorting,
+    setSorting,
+    columnFilters,
+    setColumnFilters,
+  } = useReportSalesData();
 
   const transactionItem = transaction.flatMap((tr) => tr.items ?? []);
 
@@ -82,16 +103,15 @@ export default function TransactionItemTable() {
     return Array.from(map.values());
   }, [transactionItem, products]);
 
-  if (!transaction?.length) return null;
-
   return (
     <div className="bg-white shadow-md rounded-xl p-4 overflow-auto h-full">
-      <TableSortControl sorting={sorting} setSorting={setSorting} />
       <DataTable
         columns={columns}
         data={summarizedItems}
         sorting={sorting}
         setSorting={setSorting}
+        columnFilters={columnFilters}
+        setColumnFilters={setColumnFilters}
       />
     </div>
   );

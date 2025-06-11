@@ -3,8 +3,10 @@ import { Product } from "@/@types/products";
 import { Transaction, TransactionItem } from "@/@types/transaction";
 import { useReportSalesData } from "@/components/providers/ReportSalesProvider";
 import { ChartConfig, ChartContainer } from "@/components/ui/chart";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useMemo } from "react";
-import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import { Cell, Pie, PieChart, Tooltip } from "recharts";
 
 const chartConfig = {
   desktop: { label: "Desktop", color: "#2563eb" },
@@ -40,8 +42,46 @@ function getCategoryTotals(
   return Array.from(totals.entries()).map(([name, value]) => ({ name, value }));
 }
 
+// Hitung total margin per kategori
+function getCategoryMargins(
+  items: TransactionItem[],
+  products: Product[]
+): ChartPieData[] {
+  const totals = new Map<string, number>();
+
+  for (const item of items) {
+    const product = products.find((p) => p.id === item.product_id);
+    if (!product) continue;
+
+    const category = product.parent_category;
+    const margins = item.margin; // total uang per item
+    totals.set(category, (totals.get(category) ?? 0) + margins);
+  }
+
+  return Array.from(totals.entries()).map(([name, value]) => ({ name, value }));
+}
+
 // Komponen utama chart
 export default function Chart() {
+  return (
+    <ScrollArea className="bg-white shadow-md rounded-xl p-4 max-h-[450px]">
+      <Tabs defaultValue="omzet" className="w-[400px]">
+        <TabsList>
+          <TabsTrigger value="omzet">Omzet</TabsTrigger>
+          <TabsTrigger value="margin">Margin</TabsTrigger>
+        </TabsList>
+        <TabsContent value="omzet">
+          <OmzetChart />
+        </TabsContent>
+        <TabsContent value="margin">
+          <MarginChart />
+        </TabsContent>
+      </Tabs>{" "}
+    </ScrollArea>
+  );
+}
+
+const OmzetChart = () => {
   const { transaction, products } = useReportSalesData();
 
   const items = useMemo(() => {
@@ -58,8 +98,7 @@ export default function Chart() {
   );
 
   return (
-    <ChartContainer config={chartConfig} className="bg-white shadow-md rounded-xl p-4 flex-1 overflow-auto h-full w-full">
-      <ResponsiveContainer>
+      <ChartContainer config={chartConfig}>
         <PieChart>
           <Pie
             data={data}
@@ -83,7 +122,53 @@ export default function Chart() {
             labelFormatter={() => "Kategori"}
           />
         </PieChart>
-      </ResponsiveContainer>
-    </ChartContainer>
+      </ChartContainer>
   );
-}
+};
+
+const MarginChart = () => {
+  const { transaction, products } = useReportSalesData();
+
+  const items = useMemo(() => {
+    return transaction.flatMap((tr: Transaction) => tr.items);
+  }, [transaction]);
+
+  const data: ChartPieData[] = useMemo(() => {
+    return getCategoryMargins(items as TransactionItem[], products);
+  }, [items, products]);
+
+  console.log(data);
+
+  const total = useMemo(
+    () => data.reduce((sum, d) => sum + d.value, 0),
+    [data]
+  );
+
+  return (
+      <ChartContainer config={chartConfig}>
+        <PieChart>
+          <Pie
+            data={data}
+            cx="50%"
+            cy="50%"
+            outerRadius="80%"
+            dataKey="value"
+            label={({ name, value }) =>
+              `${name}: ${((value / total) * 100).toFixed(1)}%`
+            }
+          >
+            {data.map((entry, index) => (
+              <Cell
+                key={`cell-${entry.name}`}
+                fill={COLORS[index % COLORS.length]}
+              />
+            ))}
+          </Pie>
+          <Tooltip
+            formatter={(value: number) => formatRupiah(value)}
+            labelFormatter={() => "Kategori"}
+          />
+        </PieChart>
+      </ChartContainer>
+  );
+};

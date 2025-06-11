@@ -2,112 +2,20 @@ import { useReportSalesData } from "@/components/providers/ReportSalesProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import axios from "axios";
 import React, { useMemo, useState } from "react";
 
-// TODO : Ini tambahin supaya bisa filter dkk kayak di Report Purchases
 export default function Summary() {
   return (
-    <div className="bg-white shadow-md rounded-xl flex-1 overflow-auto p-4 space-y-6">
-      <FilterDate />
+    <ScrollArea className="bg-white max-h-[450px] shadow-md rounded-xl h-full flex-1 p-4 space-y-6">
+      <FilterControl />
 
       <SummaryStats />
-    </div>
+    </ScrollArea>
   );
 }
-
-const FilterDate = () => {
-  const {
-    endDate,
-    setEndDate,
-    startDate,
-    setStartDate,
-    isLoadingFetch,
-    setIsLoadingFetch,
-    setTransaction,
-    setProducts,
-  } = useReportSalesData();
-
-  const [error, setError] = useState<string | null>(null);
-
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
-    if (id === "startDate") setStartDate(value);
-    if (id === "endDate") setEndDate(value);
-  };
-
-  const handlerRetrieve = async () => {
-    if (!startDate || !endDate) {
-      setError("Tanggal tidak boleh kosong.");
-      return;
-    }
-
-    if (startDate > endDate) {
-      setError("Tanggal mulai tidak boleh lebih besar dari tanggal akhir.");
-      return;
-    }
-
-    setError(null);
-    setIsLoadingFetch(true);
-
-    try {
-      const { data } = await axios.get("/api/reports", {
-        params: {
-          source: "transactions",
-          startDate,
-          endDate,
-        },
-      });
-
-      setTransaction(data.transactions);
-      setProducts(data.products);
-    } catch (err) {
-      console.error("Gagal mengambil data:", err);
-      setError("Terjadi kesalahan saat mengambil data.");
-    } finally {
-      setIsLoadingFetch(false);
-    }
-  };
-
-  return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="startDate">Tanggal Mulai</Label>
-          <Input
-            type="date"
-            id="startDate"
-            value={startDate}
-            onChange={handleDateChange}
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="endDate">Tanggal Selesai</Label>
-          <Input
-            type="date"
-            id="endDate"
-            value={endDate}
-            onChange={handleDateChange}
-          />
-        </div>
-      </div>
-
-      {error && (
-        <div className="text-sm text-red-500 bg-red-50 p-2 rounded">
-          {error}
-        </div>
-      )}
-
-      <Button
-        className="cursor-pointer active:scale-95 w-full sm:w-auto"
-        onClick={handlerRetrieve}
-        disabled={isLoadingFetch}
-      >
-        {isLoadingFetch ? "Mengambil Data..." : "Ambil Data"}
-      </Button>
-    </div>
-  );
-};
 
 const SummaryStats = () => {
   const { transaction } = useReportSalesData();
@@ -275,6 +183,228 @@ const SummaryStats = () => {
           </p>
         </div>
       )}
+    </div>
+  );
+};
+
+const FilterControl = () => {
+  return (
+    <div className="space-y-4 mb-4">
+      <FilterDate />
+      <FilterText />
+      <SortingControl />
+    </div>
+  );
+};
+
+const FilterDate = () => {
+  const {
+    endDate,
+    setEndDate,
+    startDate,
+    setStartDate,
+    isLoadingFetch,
+    setIsLoadingFetch,
+    setTransaction,
+    setProducts,
+  } = useReportSalesData();
+
+  const [error, setError] = useState<string | null>(null);
+
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    if (id === "startDate") setStartDate(value);
+    if (id === "endDate") setEndDate(value);
+  };
+
+  const handlerRetrieve = async () => {
+    if (!startDate || !endDate) {
+      setError("Tanggal tidak boleh kosong.");
+      return;
+    }
+
+    if (startDate > endDate) {
+      setError("Tanggal mulai tidak boleh lebih besar dari tanggal akhir.");
+      return;
+    }
+
+    setError(null);
+    setIsLoadingFetch(true);
+
+    try {
+      const { data } = await axios.get("/api/reports", {
+        params: {
+          source: "transactions",
+          startDate,
+          endDate,
+        },
+      });
+
+      setTransaction(data.transactions);
+      setProducts(data.products);
+    } catch (err) {
+      console.error("Gagal mengambil data:", err);
+      setError("Terjadi kesalahan saat mengambil data.");
+    } finally {
+      setIsLoadingFetch(false);
+    }
+  };
+
+  return (
+    <>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="startDate">Tanggal Mulai</Label>
+          <Input
+            type="date"
+            id="startDate"
+            value={startDate}
+            onChange={handleDateChange}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="endDate">Tanggal Selesai</Label>
+          <Input
+            type="date"
+            id="endDate"
+            value={endDate}
+            onChange={handleDateChange}
+          />
+        </div>
+      </div>
+
+      {error && (
+        <div className="text-sm text-red-500 bg-red-50 p-2 rounded">
+          {error}
+        </div>
+      )}
+
+      <Button
+        className="cursor-pointer active:scale-95 w-full sm:w-auto"
+        onClick={handlerRetrieve}
+        disabled={isLoadingFetch}
+      >
+        {isLoadingFetch ? "Mengambil Data..." : "Ambil Data"}
+      </Button>
+    </>
+  );
+};
+
+const columns = [
+  { id: "product_name", header: "Nama Produk" },
+  { id: "subtotal", header: "Total Omzet" },
+  { id: "hpp", header: "Total HPP" },
+  { id: "margin_total", header: "Total Margin" },
+  { id: "margin_percentage", header: "Margin (%)" },
+];
+
+
+const FilterText = () => {
+  const { columnFilters, setColumnFilters } = useReportSalesData();
+  const [selectedId, setSelectedId] = useState<string>("");
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    if (!selectedId) return;
+
+    const existingFilterIndex = columnFilters.findIndex(
+      (f) => f.id === selectedId
+    );
+    const updatedFilters = [...columnFilters];
+
+    if (existingFilterIndex !== -1) {
+      updatedFilters[existingFilterIndex] = { id: selectedId, value: newValue };
+    } else {
+      updatedFilters.push({ id: selectedId, value: newValue });
+    }
+
+    setColumnFilters(updatedFilters);
+  };
+
+  return (
+    <div className="space-y-2">
+      <Label htmlFor="search-value">
+        <span className="text-xs mb-1 block">Cari Data Berdasarkan</span>
+        <Select onValueChange={setSelectedId}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Pilih Kolom" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Filter Kolom</SelectLabel>
+              {columns.map((col) => (
+                <SelectItem key={col.id} value={col.id}>
+                  {col.header}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </Label>
+
+      <Input
+        type="text"
+        id="search-value"
+        placeholder="Masukkan kata kunci"
+        onChange={handleInputChange}
+        disabled={!selectedId}
+      />
+    </div>
+  );
+};
+
+const SortingControl = () => {
+  const { setSorting } = useReportSalesData();
+  const [sortColumn, setSortColumn] = useState<string>("");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+
+  const handleSortChange = () => {
+    if (!sortColumn) return;
+    setSorting([
+      {
+        id: sortColumn,
+        desc: sortDirection === "desc",
+      },
+    ]);
+  };
+
+  return (
+    <div className="space-y-2">
+      <Label>Urutkan Berdasarkan</Label>
+      <div className="flex items-center flex-wrap gap-2">
+        <Select value={sortColumn} onValueChange={setSortColumn}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Pilih Kolom" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Kolom</SelectLabel>
+              {columns.map((col) => (
+                <SelectItem key={col.id} value={col.id}>
+                  {col.header}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+
+        <Select
+          value={sortDirection}
+          onValueChange={(val) => setSortDirection(val as "asc" | "desc")}
+        >
+          <SelectTrigger className="w-[120px]">
+            <SelectValue placeholder="Arah" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="asc">A-Z</SelectItem>
+            <SelectItem value="desc">Z-A</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <Button variant="outline" onClick={handleSortChange}>
+          Terapkan
+        </Button>
+      </div>
     </div>
   );
 };
