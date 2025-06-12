@@ -3,7 +3,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import axios from "axios";
 import React, { useMemo, useState } from "react";
 
@@ -96,100 +104,105 @@ const SummaryStats = () => {
   if (transaction.length <= 0) return null;
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 bg-gray-50 p-4 rounded-lg">
-      <div>
-        <p className="text-sm text-gray-600">Total Transaksi</p>
-        <p className="text-xl font-semibold">{summary.totalTransactions}</p>
-      </div>
-      <div>
-        <p className="text-sm text-gray-600">Total Omzet</p>
-        <p className="text-xl font-semibold">
-          Rp{" "}
-          {summary.totalRevenue.toLocaleString("id-ID", {
-            maximumFractionDigits: 0,
-          })}
-        </p>
-      </div>
-      <div>
-        <p className="text-sm text-gray-600">Total Unit Terjual</p>
-        <p className="text-xl font-semibold">{summary.totalUnitsSold} pcs</p>
-      </div>
-
-      <div>
-        <p className="text-sm text-gray-600">Total Modal (HPP)</p>
-        <p className="text-xl font-semibold">
-          Rp{" "}
-          {summary.totalHPP.toLocaleString("id-ID", {
-            maximumFractionDigits: 0,
-          })}
-        </p>
-      </div>
-      <div>
-        <p className="text-sm text-gray-600">Total Margin Kotor</p>
-        <p className="text-xl font-semibold">
-          Rp{" "}
-          {summary.totalMargin.toLocaleString("id-ID", {
-            maximumFractionDigits: 0,
-          })}
-        </p>
-      </div>
-      <div>
-        <p className="text-sm text-gray-600">Persentase Margin</p>
-        <p className="text-xl font-semibold">
-          {summary.marginPercentage.toLocaleString("id-ID", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
-          %
-        </p>
-      </div>
-
-      {summary.bestSellingProduct && (
-        <div className="sm:col-span-2">
-          <p className="text-sm text-gray-600">Produk Terlaris (Qty)</p>
-          <p className="text-lg font-semibold">
-            {summary.bestSellingProduct.name} (
-            {summary.bestSellingProduct.quantity} pcs)
+    <>
+      <h2>
+        Statistik Penjualan Keseluruhan
+        </h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 bg-gray-50 p-4 rounded-lg">
+        <div>
+          <p className="text-sm text-gray-600">Total Transaksi</p>
+          <p className="text-xl font-semibold">{summary.totalTransactions}</p>
+        </div>
+        <div>
+          <p className="text-sm text-gray-600">Total Omzet</p>
+          <p className="text-xl font-semibold">
+            Rp{" "}
+            {summary.totalRevenue.toLocaleString("id-ID", {
+              maximumFractionDigits: 0,
+            })}
           </p>
         </div>
-      )}
+        <div>
+          <p className="text-sm text-gray-600">Total Unit Terjual</p>
+          <p className="text-xl font-semibold">{summary.totalUnitsSold} pcs</p>
+        </div>
 
-      {summary.highestRevenueProduct && (
-        <div className="sm:col-span-2">
-          <p className="text-sm text-gray-600">
-            Produk Volume Terbesar (Omzet)
-          </p>
-          <p className="text-lg font-semibold">
-            {summary.highestRevenueProduct.name} (Rp{" "}
-            {Math.round(summary.highestRevenueProduct.amount).toLocaleString(
-              "id-ID"
-            )}
-            )
+        <div>
+          <p className="text-sm text-gray-600">Total Modal (HPP)</p>
+          <p className="text-xl font-semibold">
+            Rp{" "}
+            {summary.totalHPP.toLocaleString("id-ID", {
+              maximumFractionDigits: 0,
+            })}
           </p>
         </div>
-      )}
-
-      {summary.mostProfitableProduct && (
-        <div className="sm:col-span-2">
-          <p className="text-sm text-gray-600">
-            Produk Paling Menguntungkan (Margin)
-          </p>
-          <p className="text-lg font-semibold">
-            {summary.mostProfitableProduct.name} (Rp{" "}
-            {Math.round(summary.mostProfitableProduct.margin).toLocaleString(
-              "id-ID"
-            )}
-            )
+        <div>
+          <p className="text-sm text-gray-600">Total Margin Kotor</p>
+          <p className="text-xl font-semibold">
+            Rp{" "}
+            {summary.totalMargin.toLocaleString("id-ID", {
+              maximumFractionDigits: 0,
+            })}
           </p>
         </div>
-      )}
-    </div>
+        <div>
+          <p className="text-sm text-gray-600">Persentase Margin</p>
+          <p className="text-xl font-semibold">
+            {summary.marginPercentage.toLocaleString("id-ID", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
+            %
+          </p>
+        </div>
+
+        {summary.bestSellingProduct && (
+          <div className="sm:col-span-2">
+            <p className="text-sm text-gray-600">Produk Terlaris (Qty)</p>
+            <p className="text-lg font-semibold">
+              {summary.bestSellingProduct.name} (
+              {summary.bestSellingProduct.quantity} pcs)
+            </p>
+          </div>
+        )}
+
+        {summary.highestRevenueProduct && (
+          <div className="sm:col-span-2">
+            <p className="text-sm text-gray-600">
+              Produk Volume Terbesar (Omzet)
+            </p>
+            <p className="text-lg font-semibold">
+              {summary.highestRevenueProduct.name} (Rp{" "}
+              {Math.round(summary.highestRevenueProduct.amount).toLocaleString(
+                "id-ID"
+              )}
+              )
+            </p>
+          </div>
+        )}
+
+        {summary.mostProfitableProduct && (
+          <div className="sm:col-span-2">
+            <p className="text-sm text-gray-600">
+              Produk Paling Menguntungkan (Margin)
+            </p>
+            <p className="text-lg font-semibold">
+              {summary.mostProfitableProduct.name} (Rp{" "}
+              {Math.round(summary.mostProfitableProduct.margin).toLocaleString(
+                "id-ID"
+              )}
+              )
+            </p>
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 
 const FilterControl = () => {
   return (
-    <div className="space-y-4 mb-4">
+    <div className="space-y-4 mb-4 px-4">
       <FilterDate />
       <FilterText />
       <SortingControl />
@@ -291,13 +304,16 @@ const FilterDate = () => {
 };
 
 const columns = [
-  { id: "product_name", header: "Nama Produk" },
-  { id: "subtotal", header: "Total Omzet" },
-  { id: "hpp", header: "Total HPP" },
-  { id: "margin_total", header: "Total Margin" },
+  { id: "category", header: "Kategori" },
+  { id: "quantity", header: "Kuantiti" },
   { id: "margin_percentage", header: "Margin (%)" },
+  { id: "product_name", header: "Nama Produk" },
+  { id: "customer_name", header: "Nama Pembeli" },
+  { id: "transaction_at", header: "Tanggal Transaksi" },
+  { id: "hpp", header: "Total HPP" },
+  { id: "subtotal", header: "Total Omzet" },
+  { id: "margin_total", header: "Total Margin" },
 ];
-
 
 const FilterText = () => {
   const { columnFilters, setColumnFilters } = useReportSalesData();

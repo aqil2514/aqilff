@@ -171,7 +171,7 @@ const PurchaseItem: React.FC<PurchaseItemProps> = ({
           <div key={field.id} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor={`items.${index}.product_name`}>
-                Nama Produk :{" "}
+                Nama Produk #{index + 1} :{" "}
               </Label>
               <Input
                 list="product-name-list"

@@ -98,31 +98,31 @@ const OmzetChart = () => {
   );
 
   return (
-      <ChartContainer config={chartConfig}>
-        <PieChart>
-          <Pie
-            data={data}
-            cx="50%"
-            cy="50%"
-            outerRadius="80%"
-            dataKey="value"
-            label={({ name, value }) =>
-              `${name}: ${((value / total) * 100).toFixed(1)}%`
-            }
-          >
-            {data.map((entry, index) => (
-              <Cell
-                key={`cell-${entry.name}`}
-                fill={COLORS[index % COLORS.length]}
-              />
-            ))}
-          </Pie>
-          <Tooltip
-            formatter={(value: number) => formatRupiah(value)}
-            labelFormatter={() => "Kategori"}
-          />
-        </PieChart>
-      </ChartContainer>
+    <ChartContainer config={chartConfig}>
+      <PieChart>
+        <Pie
+          data={data}
+          cx="50%"
+          cy="50%"
+          outerRadius="80%"
+          dataKey="value"
+          label={({ name, value }) =>
+            `${name}: ${((value / total) * 100).toFixed(1)}%`
+          }
+        >
+          {data.map((entry, index) => (
+            <Cell
+              key={`cell-${entry.name}`}
+              fill={COLORS[index % COLORS.length]}
+            />
+          ))}
+        </Pie>
+        <Tooltip
+          formatter={(value: number) => formatRupiah(value)}
+          labelFormatter={() => "Kategori"}
+        />
+      </PieChart>
+    </ChartContainer>
   );
 };
 
@@ -137,38 +137,36 @@ const MarginChart = () => {
     return getCategoryMargins(items as TransactionItem[], products);
   }, [items, products]);
 
-  console.log(data);
-
   const total = useMemo(
     () => data.reduce((sum, d) => sum + d.value, 0),
     [data]
   );
 
   return (
-      <ChartContainer config={chartConfig}>
-        <PieChart>
-          <Pie
-            data={data}
-            cx="50%"
-            cy="50%"
-            outerRadius="80%"
-            dataKey="value"
-            label={({ name, value }) =>
-              `${name}: ${((value / total) * 100).toFixed(1)}%`
-            }
-          >
-            {data.map((entry, index) => (
-              <Cell
-                key={`cell-${entry.name}`}
-                fill={COLORS[index % COLORS.length]}
-              />
-            ))}
-          </Pie>
-          <Tooltip
-            formatter={(value: number) => formatRupiah(value)}
-            labelFormatter={() => "Kategori"}
-          />
-        </PieChart>
-      </ChartContainer>
+    <ChartContainer config={chartConfig}>
+      <PieChart>
+        <Pie
+          data={data}
+          cx="50%"
+          cy="50%"
+          outerRadius="80%"
+          dataKey="value"
+          label={({ name, value }) =>
+            `${name}: ${((value / total) * 100).toFixed(1)}%`
+          }
+        >
+          {data.map((entry, index) => (
+            <Cell
+              key={`cell-${entry.name}`}
+              fill={COLORS[index % COLORS.length]}
+            />
+          ))}
+        </Pie>
+        <Tooltip
+          formatter={(value: number) => formatRupiah(value)}
+          labelFormatter={() => "Kategori"}
+        />
+      </PieChart>
+    </ChartContainer>
   );
 };
