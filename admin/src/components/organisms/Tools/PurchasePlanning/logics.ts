@@ -20,8 +20,8 @@ export const usePurchasePlanningFormLogic = () => {
     } catch (error) {
       if (isAxiosError(error)) {
         const data = error.response?.data;
-        
-        toast(data.message, { type: "success" });
+
+        toast(data.message, { type: "error" });
       }
       console.error(error);
     } finally {

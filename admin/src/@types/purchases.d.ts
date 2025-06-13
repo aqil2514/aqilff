@@ -102,12 +102,12 @@ export interface PurchasePlanItem {
   /**
    * ID unik dari item rencana.
    */
-  id: string;
+  id?: string;
 
   /**
    * ID pengguna yang membuat data.
    */
-  userId: string;
+  userId?: string;
 
   /**
    * Nama barang.
@@ -188,15 +188,16 @@ export interface PurchasePlanItem {
   /**
    * Tanggal dibuat.
    */
-  createdAt: string;
+  createdAt?: string;
 
   /**
    * Tanggal diubah terakhir.
    */
-  updatedAt: string;
+  updatedAt?: string;
 }
 
 export interface PurchasePlanItemDb {
+  id?: string;
   item_name: string;
   quantity_per_pack: number;
   pack_count: number;
@@ -208,6 +209,9 @@ export interface PurchasePlanItemDb {
   total_selling_value: number;
   profit: number;
   status: string;
+  margin_per_item: number;
+  margin_from_cost: number;
+  margin_from_selling: number;
   source_item: string;
   created_at?: string;
   updated_at?: string;

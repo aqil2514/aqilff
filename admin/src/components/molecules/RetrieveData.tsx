@@ -18,7 +18,7 @@ import axios, { isAxiosError } from "axios";
 // ======================
 // Types
 // ======================
-type DataSrc = "transactions" | "purchases";
+type DataSrc = "transactions" | "purchases" | "purchasePlanning";
 
 export type RangeData = {
   start: string;
@@ -77,6 +77,7 @@ export const getDataFromServer = async <T extends any[]>(
     const apiRoute: Record<DataSrc, string> = {
       purchases: "/api/purchases",
       transactions: "/api/transaction",
+      purchasePlanning:"/api/tools/purchase-planning"
     };
 
     const { data } = await axios.get(apiRoute[data_src], {

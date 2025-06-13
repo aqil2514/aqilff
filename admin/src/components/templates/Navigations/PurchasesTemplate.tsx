@@ -16,8 +16,8 @@ export default function PurchaseTemplate() {
     error,
   } = useSWR("/api/purchases/get-resource", fetchPurchaseResources);
 
-  if (isLoading) return <MainWrapper>Loading produk...</MainWrapper>;
-  if (error) return <MainWrapper>Gagal memuat produk!</MainWrapper>;
+  if (isLoading) return <MainWrapper>Loading data...</MainWrapper>;
+  if (error) return <MainWrapper>Gagal memuat data!</MainWrapper>;
   if (!resource) return null;
 
   return (
