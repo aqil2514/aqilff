@@ -1,12 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { PurchasePlanItem } from "@/@types/purchases";
-import React, { createContext, useContext } from "react";
+import React, {
+  createContext,
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useState,
+} from "react";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { PurchasePlanningDialogType } from "./Dialog";
 
 interface PurchasePlanningFormContext {
   form: UseFormReturn<PurchasePlanItem, any, PurchasePlanItem>;
   type: PurchasePlanningDialogType;
+  isLoading: boolean;
+  setIsLoading: Dispatch<SetStateAction<boolean>>;
 }
 
 const FormContext = createContext<PurchasePlanningFormContext>(
@@ -51,8 +59,14 @@ export default function PurchasePlanningFormProvider({
   const form = useForm<PurchasePlanItem>({
     defaultValues: defaultValues(type),
   });
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const value: PurchasePlanningFormContext = { form, type };
+  const value: PurchasePlanningFormContext = {
+    form,
+    type,
+    isLoading,
+    setIsLoading,
+  };
 
   return <FormContext.Provider value={value}>{children}</FormContext.Provider>;
 }

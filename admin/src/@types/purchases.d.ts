@@ -176,10 +176,10 @@ export interface PurchasePlanItem {
   profit: number;
 
   /**
-   * Status rencana: Planned, Purchased, atau Cancelled.
+   * Status rencana
    */
-  status: 'Planned' | 'Purchased' | 'Cancelled' | string;
-  
+  status: "Collecting" | "Fixed" | "Planning" | "Delivery" | "Arrived" | string;
+
   /**
    * Sumber Itemnya.
    */
@@ -194,4 +194,21 @@ export interface PurchasePlanItem {
    * Tanggal diubah terakhir.
    */
   updatedAt: string;
+}
+
+export interface PurchasePlanItemDb {
+  item_name: string;
+  quantity_per_pack: number;
+  pack_count: number;
+  category: string;
+  purchase_price: number;
+  unit_cost: number;
+  selling_price: number;
+  total_purchase_value: number;
+  total_selling_value: number;
+  profit: number;
+  status: string;
+  source_item: string;
+  created_at?: string;
+  updated_at?: string;
 }
