@@ -293,6 +293,8 @@ export async function PUT(req: NextRequest) {
     // Data terlama harusnya ada di paling akhir.
     const oldestPurchase = selectedPurchase.at(-1);
 
+    // TODO : Nanti lanjut ini
+
     console.log(oldestPurchase);
   }
 

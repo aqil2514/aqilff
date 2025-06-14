@@ -2,6 +2,7 @@
 import MainWrapper from "@/components/atoms/main-wrapper";
 import { RetrieveDataPopover } from "@/components/molecules/RetrieveData";
 import PurchasePlanningDialog from "@/components/organisms/Tools/PurchasePlanning/Dialog";
+import PurchasePlanningTable from "@/components/organisms/Tools/PurchasePlanning/Table";
 import PurchasePlanItemProvider, {
   usePurchasePlanItemData,
 } from "@/components/providers/PurchasePlanItemProvider";
@@ -35,7 +36,7 @@ const InnerContext = () => {
     setIsLoadingPurchasePlanItem,
   } = usePurchasePlanItemData();
   return (
-    <MainWrapper className="!block pt-16 px-4">
+    <MainWrapper className="!block pt-16 px-4 space-y-2">
       <div className="space-x-2">
         {dateRange && <PurchasePlanningDialog type="addForm" />}
         <RetrieveDataPopover
@@ -46,7 +47,7 @@ const InnerContext = () => {
           setData={setData}
         />
       </div>
-      <div>Table</div>
+      <PurchasePlanningTable />
       <div>footer</div>
     </MainWrapper>
   );

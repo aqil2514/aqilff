@@ -9,6 +9,7 @@ import {
   getFilteredRowModel,
   InitialTableState,
   ColumnSort,
+  RowSelectionState,
 } from "@tanstack/react-table";
 
 import {
@@ -19,7 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import React, { SetStateAction } from "react";
+import React, { JSX, SetStateAction } from "react";
 
 interface ColumnFilter {
   id: string;
@@ -36,6 +37,10 @@ interface DataTableProps<TData, TValue> {
   initialState?: InitialTableState;
   sorting?: ColumnSort[];
   setSorting?: React.Dispatch<SetStateAction<ColumnSort[]>>;
+  enableRowSelection?: boolean;
+  rowSelection?: RowSelectionState;
+  setRowSelection?: React.Dispatch<SetStateAction<RowSelectionState>>;
+  SelectionRowMenu?: (table: ReturnType<typeof useReactTable<TData>>) => JSX.Element | null;
 }
 
 export function DataTable<TData, TValue>({
@@ -46,6 +51,10 @@ export function DataTable<TData, TValue>({
   setColumnFilters,
   sorting,
   setSorting,
+  enableRowSelection,
+  rowSelection,
+  SelectionRowMenu,
+  setRowSelection,
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
@@ -54,61 +63,109 @@ export function DataTable<TData, TValue>({
     state: {
       sorting,
       columnFilters,
+      rowSelection,
     },
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
+    enableRowSelection,
+    onRowSelectionChange: setRowSelection,
   });
 
   return (
-    <div className="rounded-md border max-h-[500px] overflow-y-auto">
-      <Table>
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id} className="bg-[#df1111] text-white">
-              {headerGroup.headers.map((header) => (
-                <TableHead
-                  key={header.id}
-                  className="sticky top-0 bg-[#df1111] text-white z-10 text-center"
-                >
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                </TableHead>
-              ))}
-            </TableRow>
-          ))}
-        </TableHeader>
-
-        <TableBody>
-          {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
+    <div className="space-y-2">
+      {enableRowSelection && SelectionRowMenu && SelectionRowMenu(table)}
+      <div className="rounded-md border max-h-[500px] overflow-y-auto">
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
               <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-                className="nth-[even]:bg-[#f9f9f9] nth-[odd]:bg-[#fff] text-center"
+                key={headerGroup.id}
+                className="bg-[#df1111] text-white"
               >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
+                {headerGroup.headers.map((header) => (
+                  <TableHead
+                    key={header.id}
+                    className="sticky top-0 bg-[#df1111] text-white z-10 text-center"
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
                 ))}
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                Tidak ada data.
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+            ))}
+          </TableHeader>
+
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => {
+                const isSelectionMode = enableRowSelection ?? false;
+                const isSelected = isSelectionMode && row.getIsSelected();
+
+                const selectionHandler = () => {
+                  if (!isSelectionMode) return;
+
+                  table.resetRowSelection();
+                  row.toggleSelected(true);
+                };
+
+                return (
+                  <TableRow
+                    key={row.id}
+                    data-state={isSelected ? "selected" : undefined}
+                    className={`nth-[even]:bg-[#f9f9f9] nth-[odd]:bg-[#fff] text-center cursor-default`}
+                    onClick={selectionHandler}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                );
+              })
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  Tidak ada data.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 }
+
+// const SelectionRowMenu = <TData,>({
+//   table,
+// }: {
+//   table: TanstackTable<TData>;
+// }) => {
+//   const { getRowCount, getSelectedRowModel } = table;
+
+//   const totalRowCount = getRowCount();
+//   const selectedRow = getSelectedRowModel().rows;
+
+//   return (
+//     <div className="flex justify-between">
+//       <div>
+//         <p>{}</p>
+//       </div>
+//       <div>{totalRowCount}</div>
+//     </div>
+//   );
+// };

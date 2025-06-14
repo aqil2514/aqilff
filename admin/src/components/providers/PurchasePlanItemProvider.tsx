@@ -1,5 +1,6 @@
 import { DataListOption } from "@/@types/general";
 import { PurchasePlanItem } from "@/@types/purchases";
+import { RowSelectionState } from "@tanstack/react-table";
 import React, {
   createContext,
   Dispatch,
@@ -25,6 +26,8 @@ interface PurchasePlanItemContextProps {
   setDateRange: React.Dispatch<SetStateAction<RangeData | null>>;
   isLoadingPurchasePlanItem: boolean;
   setIsLoadingPurchasePlanItem: React.Dispatch<SetStateAction<boolean>>;
+  rowSelection?: RowSelectionState;
+  setRowSelection?: React.Dispatch<SetStateAction<RowSelectionState>>;
 }
 
 const PurchasePlanItemContext = createContext<PurchasePlanItemContextProps>(
@@ -43,7 +46,8 @@ export default function PurchasePlanItemProvider({
   const [dateRange, setDateRange] = useState<RangeData | null>(null);
   const [isLoadingPurchasePlanItem, setIsLoadingPurchasePlanItem] =
     useState<boolean>(false);
-    const [data, setData] = useState<PurchasePlanItem[]>([])
+  const [data, setData] = useState<PurchasePlanItem[]>([]);
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
 
   return (
     <PurchasePlanItemContext.Provider
@@ -54,7 +58,9 @@ export default function PurchasePlanItemProvider({
         dateRange,
         setDateRange,
         data,
-        setData
+        setData,
+        rowSelection,
+        setRowSelection
       }}
     >
       {children}

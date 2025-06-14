@@ -84,8 +84,6 @@ export async function getPurchasePlanningItemDataByDateRange(
     .gte("created_at", `${start}T00:00:00.000Z`)
     .lte("created_at", `${end}T23:59:59.999Z`);
 
-    console.log(data)
-
   if (error || !data) {
     console.error("Supabase error (filter tanggal):", error?.message);
     throw new Error("Gagal mengambil data berdasarkan rentang tanggal.");

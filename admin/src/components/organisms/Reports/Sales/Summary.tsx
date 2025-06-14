@@ -105,9 +105,7 @@ const SummaryStats = () => {
 
   return (
     <>
-      <h2>
-        Statistik Penjualan Keseluruhan
-        </h2>
+      <h2>Statistik Penjualan Keseluruhan</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 bg-gray-50 p-4 rounded-lg">
         <div>
           <p className="text-sm text-gray-600">Total Transaksi</p>
@@ -220,6 +218,7 @@ const FilterDate = () => {
     setIsLoadingFetch,
     setTransaction,
     setProducts,
+    setColumnFilters,
   } = useReportSalesData();
 
   const [error, setError] = useState<string | null>(null);
@@ -243,6 +242,7 @@ const FilterDate = () => {
 
     setError(null);
     setIsLoadingFetch(true);
+    setColumnFilters([]);
 
     try {
       const { data } = await axios.get("/api/reports", {
