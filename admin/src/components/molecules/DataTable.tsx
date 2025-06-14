@@ -111,8 +111,7 @@ export function DataTable<TData, TValue>({
                 const selectionHandler = () => {
                   if (!isSelectionMode) return;
 
-                  table.resetRowSelection();
-                  row.toggleSelected(true);
+                  row.toggleSelected();
                 };
 
                 return (
@@ -149,23 +148,3 @@ export function DataTable<TData, TValue>({
     </div>
   );
 }
-
-// const SelectionRowMenu = <TData,>({
-//   table,
-// }: {
-//   table: TanstackTable<TData>;
-// }) => {
-//   const { getRowCount, getSelectedRowModel } = table;
-
-//   const totalRowCount = getRowCount();
-//   const selectedRow = getSelectedRowModel().rows;
-
-//   return (
-//     <div className="flex justify-between">
-//       <div>
-//         <p>{}</p>
-//       </div>
-//       <div>{totalRowCount}</div>
-//     </div>
-//   );
-// };
