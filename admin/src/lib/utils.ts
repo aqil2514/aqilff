@@ -84,6 +84,16 @@ export function formatToIndonesianDate(dateString: string): string {
   }).format(date);
 }
 
+export function formatToIndonesianDateUTC(dateString: string): string {
+  const date = new Date(dateString);
+  return new Intl.DateTimeFormat("id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(date);
+}
+
 export function formatToIndonesianDateTime(dateString: string): string {
   const date = new Date(dateString);
 
@@ -173,7 +183,7 @@ export function getLocalDateTimeValue(): string {
 export function isValidUrl(text: string) {
   try {
     new URL(text);
-    
+
     return true;
   } catch {
     return false;

@@ -17,7 +17,7 @@ import React, { useMemo, useState } from "react";
 
 export default function Summary() {
   return (
-    <ScrollArea className="bg-white max-h-[450px] shadow-md rounded-xl h-full flex-1 p-4 space-y-6">
+    <ScrollArea className="bg-white shadow-md overflow-auto rounded-xl h-full flex-1 p-4 space-y-6">
       <FilterControl />
 
       <SummaryStats />

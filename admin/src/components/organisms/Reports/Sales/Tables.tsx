@@ -228,7 +228,7 @@ export default function TransactionItemTable() {
     // viewMode === "summary" ? simpleColumns : columns;
 
   return (
-    <div className="bg-white shadow-md rounded-xl p-4 overflow-auto h-full">
+    <div>
       <div className="mb-4 flex items-center gap-2">
         <label className="text-sm font-medium">Mode Tampilan:</label>
         <select
