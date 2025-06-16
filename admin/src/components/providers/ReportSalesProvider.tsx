@@ -24,6 +24,8 @@ interface ReportSalesContextProps {
   setSorting: React.Dispatch<SetStateAction<ColumnSort[]>>;
   columnFilters: ColumnFiltersState;
   setColumnFilters: React.Dispatch<SetStateAction<ColumnFiltersState>>;
+  viewMode : "original" | "summary";
+  setViewMode: React.Dispatch<SetStateAction<"original" | "summary">>;
 }
 
 const ReportSalesContext = createContext<ReportSalesContextProps>(
@@ -42,6 +44,7 @@ export default function ReportSalesProvider({
   const [isLoadingFetch, setIsLoadingFetch] = useState<boolean>(false);
   const [sorting, setSorting] = useState<ColumnSort[]>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [viewMode, setViewMode] = useState<"original" | "summary">("summary");
 
   const value: ReportSalesContextProps = {
     endDate,
@@ -57,7 +60,9 @@ export default function ReportSalesProvider({
     setSorting,
     sorting,
     columnFilters,
-    setColumnFilters
+    setColumnFilters,
+    setViewMode,
+    viewMode
   };
 
   return (

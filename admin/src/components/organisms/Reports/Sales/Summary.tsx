@@ -13,7 +13,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import axios from "axios";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { columns, simpleColumns } from "./Columns";
 
 export default function Summary() {
   return (
@@ -303,21 +304,10 @@ const FilterDate = () => {
   );
 };
 
-const columns = [
-  { id: "category", header: "Kategori" },
-  { id: "quantity", header: "Kuantiti" },
-  { id: "margin_percentage", header: "Margin (%)" },
-  { id: "product_name", header: "Nama Produk" },
-  { id: "customer_name", header: "Nama Pembeli" },
-  { id: "transaction_at", header: "Tanggal Transaksi" },
-  { id: "hpp", header: "Total HPP" },
-  { id: "subtotal", header: "Total Omzet" },
-  { id: "margin_total", header: "Total Margin" },
-];
-
 const FilterText = () => {
-  const { columnFilters, setColumnFilters } = useReportSalesData();
+  const { columnFilters, setColumnFilters, viewMode } = useReportSalesData();
   const [selectedId, setSelectedId] = useState<string>("");
+  const inputValueRef = useRef<HTMLInputElement | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
@@ -337,20 +327,41 @@ const FilterText = () => {
     setColumnFilters(updatedFilters);
   };
 
+  const columnsToDisplay = viewMode === "summary" ? simpleColumns : columns;
+
+  const columnFilterList = useMemo(() => {
+    const result = columnsToDisplay.map((col) => {
+      return {
+        id: `accessorKey` in col ? col.accessorKey : "unknown",
+        header: col.header,
+      };
+    });
+
+    return result;
+  }, [columnsToDisplay]);
+
+  useEffect(() => {
+    if (!inputValueRef) return;
+
+    setColumnFilters([]);
+    setSelectedId("");
+    inputValueRef.current!.value = "";
+  }, [viewMode, setColumnFilters]);
+
   return (
     <div className="space-y-2">
       <Label htmlFor="search-value">
         <span className="text-xs mb-1 block">Cari Data Berdasarkan</span>
-        <Select onValueChange={setSelectedId}>
+        <Select value={selectedId} onValueChange={setSelectedId}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Pilih Kolom" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
               <SelectLabel>Filter Kolom</SelectLabel>
-              {columns.map((col) => (
+              {columnFilterList.map((col) => (
                 <SelectItem key={col.id} value={col.id}>
-                  {col.header}
+                  {col.header as string}
                 </SelectItem>
               ))}
             </SelectGroup>
@@ -360,6 +371,7 @@ const FilterText = () => {
 
       <Input
         type="text"
+        ref={inputValueRef}
         id="search-value"
         placeholder="Masukkan kata kunci"
         onChange={handleInputChange}
@@ -370,12 +382,13 @@ const FilterText = () => {
 };
 
 const SortingControl = () => {
-  const { setSorting } = useReportSalesData();
+  const { setSorting, viewMode } = useReportSalesData();
   const [sortColumn, setSortColumn] = useState<string>("");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
   const handleSortChange = () => {
     if (!sortColumn) return;
+
     setSorting([
       {
         id: sortColumn,
@@ -383,6 +396,25 @@ const SortingControl = () => {
       },
     ]);
   };
+
+  const columnsToDisplay = viewMode === "summary" ? simpleColumns : columns;
+
+  const columnFilterList = useMemo(() => {
+    const result = columnsToDisplay.map((col) => {
+      return {
+        id: `accessorKey` in col ? col.accessorKey : "unknown",
+        header: col.header,
+      };
+    });
+
+    return result;
+  }, [columnsToDisplay]);
+
+  useEffect(() => {
+    setSorting([]);
+    setSortColumn("");
+    setSortDirection("asc");
+  }, [viewMode, setSorting]);
 
   return (
     <div className="space-y-2">
@@ -395,9 +427,9 @@ const SortingControl = () => {
           <SelectContent>
             <SelectGroup>
               <SelectLabel>Kolom</SelectLabel>
-              {columns.map((col) => (
+              {columnFilterList.map((col) => (
                 <SelectItem key={col.id} value={col.id}>
-                  {col.header}
+                  {col.header as string}
                 </SelectItem>
               ))}
             </SelectGroup>
@@ -408,7 +440,7 @@ const SortingControl = () => {
           value={sortDirection}
           onValueChange={(val) => setSortDirection(val as "asc" | "desc")}
         >
-          <SelectTrigger className="w-[120px]">
+          <SelectTrigger className="w-[120px]" disabled={!sortColumn}>
             <SelectValue placeholder="Arah" />
           </SelectTrigger>
           <SelectContent>
