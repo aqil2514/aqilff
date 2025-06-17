@@ -85,7 +85,6 @@ export default function PurchasePlanningSelectionRowMenu(
           </Button>
         )}
 
-        {/* TODO: Tambahkan Detail Dialog di sini jika perlu */}
         {isSingle && (
           <Button variant="default" size="sm">
             <Edit2 className="w-4 h-4 mr-1" />
