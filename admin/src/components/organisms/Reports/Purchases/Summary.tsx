@@ -27,6 +27,8 @@ import { Cell, Pie, PieChart, Tooltip } from "recharts";
 import { chartConfig, COLORS } from "../Sales/Diagram";
 import { ChartContainer } from "@/components/ui/chart";
 import { ChartPieData } from "@/@types/general";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Circle } from "lucide-react";
 
 export default function ReportPurchaseSummary() {
   return (
@@ -334,38 +336,65 @@ const SummaryStockAmount = ({ version }: { version: StockPropsType }) => {
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      <ChartContainer config={chartConfig}>
-        <PieChart>
-          <Pie
-            data={data[version]}
-            cx="50%"
-            cy="50%"
-            outerRadius="80%"
-            dataKey="value"
-            label={({ name, value }) =>
-              `${name}: ${((value / total[version]) * 100).toFixed(1)}%`
-            }
-          >
-            {data[version].map((entry, index) => (
-              <Cell
-                key={`cell-${entry.name}`}
-                fill={COLORS[index % COLORS.length]}
-              />
-            ))}
-          </Pie>
-          <Tooltip
-            formatter={(value: number) => formatToRupiah(value)}
-            labelFormatter={() => "Kategori"}
-          />
-        </PieChart>
-      </ChartContainer>
-      <p>Jumlah Stok : {formatToRupiah(total[version])}</p>
-      {data[version].map((d) => (
-        <p key={d.name}>
-          {d.name} : {formatToRupiah(d.value)}
-        </p>
-      ))}
-    </div>
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-lg capitalize">
+          {version === "allocation" ? "Alokasi Stok" : "Stok Tersisa"}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <ChartContainer config={chartConfig}>
+          <PieChart>
+            <Pie
+              data={data[version]}
+              cx="50%"
+              cy="50%"
+              outerRadius="80%"
+              dataKey="value"
+              label={({ name, value }) =>
+                `${name}: ${((value / total[version]) * 100).toFixed(1)}%`
+              }
+            >
+              {data[version].map((entry, index) => (
+                <Cell
+                  key={`cell-${entry.name}`}
+                  fill={COLORS[index % COLORS.length]}
+                />
+              ))}
+            </Pie>
+            <Tooltip
+              formatter={(value: number) => formatToRupiah(value)}
+              labelFormatter={() => "Kategori"}
+            />
+          </PieChart>
+        </ChartContainer>
+
+        <div className="text-center">
+          <p className="text-sm text-muted-foreground">Total</p>
+          <p className="text-xl font-bold text-primary">
+            {formatToRupiah(total[version])}
+          </p>
+        </div>
+
+        <div className="flex flex-col gap-4 text-sm">
+          {data[version].map((d, index) => (
+            <div
+              key={d.name}
+              className="flex items-center justify-between px-3 py-2 rounded bg-muted/40"
+            >
+              <div className="flex items-center gap-2">
+                <Circle
+                  className="w-3 h-3"
+                  style={{ color: COLORS[index % COLORS.length] }}
+                  fill={COLORS[index % COLORS.length]}
+                />
+                <span>{d.name}</span>
+              </div>
+              <span className="font-medium">{formatToRupiah(d.value)}</span>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
   );
 };
