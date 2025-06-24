@@ -86,7 +86,7 @@ export const simpleColumns: ColumnDef<TransactionItem>[] = [
     accessorKey: "transaction_code",
     header: "Kode Transaksi",
   },
-    {
+  {
     accessorKey: "id",
     header: "ID Produk",
   },
@@ -102,5 +102,34 @@ export const simpleColumns: ColumnDef<TransactionItem>[] = [
     accessorKey: "subtotal",
     header: "Omzet",
     cell: ({ row }) => formatToRupiah(row.original.subtotal),
+  },
+  {
+    accessorKey: "hpp",
+    header: "Total HPP",
+    cell: ({ row }) => formatToRupiah(row.original.hpp ?? 0),
+  },
+  {
+    accessorKey: "margin_total",
+    accessorFn: (row) => row.margin ?? 0,
+    header: "Total Margin",
+    cell: ({ row }) => {
+      return formatToRupiah(row.original.margin);
+    },
+  },
+  {
+    accessorKey: "margin_percentage",
+    accessorFn: (row) => {
+      const margin = row.margin ?? 0;
+      const subtotal = row.subtotal ?? 0;
+      return subtotal > 0 ? (margin / subtotal) * 100 : 0;
+    },
+    header: "Margin (%)",
+    cell: ({ row }) => {
+      const margin = row.original.margin ?? 0;
+      const subtotal = row.original.subtotal ?? 0;
+      const percent = subtotal > 0 ? (margin / subtotal) * 100 : 0;
+
+      return `${percent.toFixed(1)}%`;
+    },
   },
 ];

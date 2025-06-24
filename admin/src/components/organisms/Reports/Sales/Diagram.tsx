@@ -19,12 +19,12 @@ import {
   YAxis,
 } from "recharts";
 
-const chartConfig = {
+export const chartConfig = {
   desktop: { label: "Desktop", color: "#2563eb" },
   mobile: { label: "Mobile", color: "#60a5fa" },
 } satisfies ChartConfig;
 
-const COLORS = ["#2563eb", "#60a5fa", "#93c5fd", "#bfdbfe"];
+export const COLORS = ["#2563eb", "#60a5fa", "#93c5fd", "#bfdbfe"];
 
 // Format angka ke rupiah
 const formatRupiah = (value: number) =>

@@ -14,12 +14,26 @@ import {
 import axios from "axios";
 import { useState } from "react";
 import { columns } from "./Tables";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { formatToRupiah } from "@/lib/utils";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  getAmountCurrentStock,
+  getAmountShoppingItem,
+  getCategoryAmountAllocationStock,
+  getCategoryAmountCurrentStock,
+} from "./utils";
+import { Cell, Pie, PieChart, Tooltip } from "recharts";
+import { chartConfig, COLORS } from "../Sales/Diagram";
+import { ChartContainer } from "@/components/ui/chart";
+import { ChartPieData } from "@/@types/general";
 
 export default function ReportPurchaseSummary() {
   return (
-    <div className="bg-white shadow-2xl h-full w-full rounded-2xl p-4">
+    <ScrollArea className="bg-white shadow-2xl h-full w-full rounded-2xl p-4 overflow-auto">
       <FilterDate />
-    </div>
+      <Summary />
+    </ScrollArea>
   );
 }
 
@@ -77,7 +91,7 @@ const FilterDate = () => {
 
   return (
     <>
-      <div className="flex gap-4 mb-4">
+      <div className="flex gap-4 my-4">
         <div className="space-y-2">
           <Label htmlFor="start-date">Tanggal Mulai</Label>
           <Input
@@ -243,6 +257,115 @@ const SortControls = () => {
           Terapkan
         </Button>
       </div>
+    </div>
+  );
+};
+
+const Summary = () => {
+  return (
+    <Tabs defaultValue="general" className="my-4">
+      <TabsList>
+        <TabsTrigger value="general">Umum</TabsTrigger>
+        <TabsTrigger value="allocation">Alokasi</TabsTrigger>
+        <TabsTrigger value="current">Real Time</TabsTrigger>
+      </TabsList>
+      <TabsContent value="general">
+        <SummaryGeneralTab />
+      </TabsContent>
+      <TabsContent value="allocation">
+        <SummaryStockAmount version="allocation" />
+      </TabsContent>
+      <TabsContent value="current">
+        <SummaryStockAmount version="current" />
+      </TabsContent>
+    </Tabs>
+  );
+};
+
+const SummaryGeneralTab = () => {
+  const { purchase } = useReportPurchaseData();
+  const items = purchase.flatMap((pur) => pur.items);
+
+  const amountShoppingItem = getAmountShoppingItem(items);
+
+  const amountCurrentStock = getAmountCurrentStock(items);
+
+  return (
+    <div className="flex flex-col gap-4 mt-4">
+      <div className="p-4 bg-muted/50 border rounded-xl shadow-sm">
+        <p className="text-sm text-muted-foreground mb-1">Total Belanja</p>
+        <p className="text-xl font-semibold text-primary">{purchase.length}</p>
+      </div>
+
+      <div className="p-4 bg-muted/50 border rounded-xl shadow-sm">
+        <p className="text-sm text-muted-foreground mb-1">
+          Total Nominal Belanja
+        </p>
+        <p className="text-xl font-semibold text-green-600">
+          {amountShoppingItem}
+        </p>
+      </div>
+
+      <div className="p-4 bg-muted/50 border rounded-xl shadow-sm">
+        <p className="text-sm text-muted-foreground mb-1">
+          Nilai Stok Saat Ini
+        </p>
+        <p className="text-xl font-semibold text-yellow-600">
+          {amountCurrentStock}
+        </p>
+      </div>
+    </div>
+  );
+};
+
+type StockPropsType = "allocation" | "current";
+const SummaryStockAmount = ({ version }: { version: StockPropsType }) => {
+  const { purchase, products } = useReportPurchaseData();
+  const items = purchase.flatMap((pur) => pur.items);
+
+  const total: Record<StockPropsType, number> = {
+    allocation: Number(getAmountShoppingItem(items, false)),
+    current: Number(getAmountCurrentStock(items, false)),
+  };
+
+  const data: Record<StockPropsType, ChartPieData[]> = {
+    allocation: getCategoryAmountAllocationStock(items, products),
+    current: getCategoryAmountCurrentStock(items, products),
+  };
+
+  return (
+    <div className="flex flex-col gap-4">
+      <ChartContainer config={chartConfig}>
+        <PieChart>
+          <Pie
+            data={data[version]}
+            cx="50%"
+            cy="50%"
+            outerRadius="80%"
+            dataKey="value"
+            label={({ name, value }) =>
+              `${name}: ${((value / total[version]) * 100).toFixed(1)}%`
+            }
+          >
+            {data[version].map((entry, index) => (
+              <Cell
+                key={`cell-${entry.name}`}
+                fill={COLORS[index % COLORS.length]}
+              />
+            ))}
+          </Pie>
+          <Tooltip
+            formatter={(value: number) => formatToRupiah(value)}
+            labelFormatter={() => "Kategori"}
+          />
+        </PieChart>
+      </ChartContainer>
+      <p>Jumlah Stok : {formatToRupiah(total[version])}</p>
+      {data[version].map((d) => (
+        <p key={d.name}>
+          {d.name} : {formatToRupiah(d.value)}
+        </p>
+      ))}
     </div>
   );
 };
