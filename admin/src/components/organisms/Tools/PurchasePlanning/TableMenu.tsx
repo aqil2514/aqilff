@@ -7,11 +7,19 @@ import { FaRegPaperPlane } from "react-icons/fa";
 import { Edit2, Trash2 } from "lucide-react";
 import { isValidUrl } from "@/lib/utils";
 import { formatToRupiah } from "@/lib/utils";
+import { useEffect } from "react";
 
 export default function PurchasePlanningSelectionRowMenu(
   table: Table<PurchasePlanItem>
 ) {
-  const { data } = usePurchasePlanItemData();
+  const { data, isMultipleSelectionRow } = usePurchasePlanItemData();
+
+  useEffect(() => {
+    table.resetRowSelection();
+  }, [isMultipleSelectionRow, table]);
+
+  if (!isMultipleSelectionRow) return null;
+
   const selectedRows = table.getSelectedRowModel().rows;
 
   if (data.length === 0 || selectedRows.length === 0) return null;

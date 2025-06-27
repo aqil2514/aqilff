@@ -28,6 +28,8 @@ interface PurchasePlanItemContextProps {
   setIsLoadingPurchasePlanItem: React.Dispatch<SetStateAction<boolean>>;
   rowSelection?: RowSelectionState;
   setRowSelection?: React.Dispatch<SetStateAction<RowSelectionState>>;
+  isMultipleSelectionRow: boolean;
+  setIsMultipleSelectionRow: React.Dispatch<SetStateAction<boolean>>;
 }
 
 const PurchasePlanItemContext = createContext<PurchasePlanItemContextProps>(
@@ -47,7 +49,9 @@ export default function PurchasePlanItemProvider({
   const [isLoadingPurchasePlanItem, setIsLoadingPurchasePlanItem] =
     useState<boolean>(false);
   const [data, setData] = useState<PurchasePlanItem[]>([]);
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+  const [isMultipleSelectionRow, setIsMultipleSelectionRow] =
+    useState<boolean>(false);
 
   return (
     <PurchasePlanItemContext.Provider
@@ -60,7 +64,9 @@ export default function PurchasePlanItemProvider({
         data,
         setData,
         rowSelection,
-        setRowSelection
+        setRowSelection,
+        isMultipleSelectionRow,
+        setIsMultipleSelectionRow,
       }}
     >
       {children}

@@ -15,6 +15,10 @@ import React, { JSX } from "react";
 import PurchasePlanningForm from "./Form";
 import PurchasePlanningFormProvider from "./FormProvider";
 import FormDataAutomate from "./FormDataAutomate";
+import { Eye } from "lucide-react";
+import { Row } from "@tanstack/react-table";
+import { PurchasePlanItem } from "@/@types/purchases";
+import { usePurchasePlanningItemDetailLogic } from "./logics";
 
 export type PurchasePlanningDialogType = "addForm" | "editForm" | "deleteForm";
 
@@ -73,6 +77,37 @@ export default function PurchasePlanningDialog({
             </DialogClose>
           </DialogFooter>
         </ScrollArea>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+export function PurchasePlanItemDetailDialog({
+  row,
+}: {
+  row: Row<PurchasePlanItem>;
+}) {
+  const { purchaseSummary } = usePurchasePlanningItemDetailLogic(row);
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-full justify-start cursor-pointer"
+        >
+          <Eye className="w-4 h-4 mr-2" />
+          Lihat Detail
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Identitas Barang</DialogTitle>
+          <DialogDescription>
+            Identitas barang {row.original.itemName}
+          </DialogDescription>
+          <FormDataAutomate data={purchaseSummary} />
+        </DialogHeader>
       </DialogContent>
     </Dialog>
   );

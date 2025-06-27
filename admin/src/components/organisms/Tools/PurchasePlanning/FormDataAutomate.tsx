@@ -8,8 +8,33 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-export default function FormDataAutomate() {
-  const { purchaseSummary } = usePurchasePlanningFormAutomateLogic();
+export interface PurchasePlanItemFormDataAutomateProps {
+  data?: {
+    itemName: string;
+    sourceItem: string;
+    packCount: number;
+    totalQty: number;
+    purchasePrice: number;
+    hpp: number;
+    sellingPrice: number;
+    margin: number;
+    marginFromBuy: number;
+    marginFromSelling: number;
+    totalPurchase: number;
+    totalSellingPrice: number;
+    profit: number;
+  };
+}
+
+export default function FormDataAutomate({
+  data,
+}: PurchasePlanItemFormDataAutomateProps) {
+  const logic = usePurchasePlanningFormAutomateLogic(); // tetap panggil di atas
+
+  const purchaseSummary = data ?? logic.purchaseSummary;
+
+  if(!purchaseSummary) throw new Error("Purchase Summary tidak ada")
+
   const {
     itemName,
     sourceItem,
@@ -106,9 +131,9 @@ export default function FormDataAutomate() {
 
   return (
     <div className="px-4 py-6 bg-white rounded-2xl shadow-md">
-      <h2 className="text-center text-xl font-bold mb-6 text-gray-800">
+      {!data && <h2 className="text-center text-xl font-bold mb-6 text-gray-800">
         Identitas Pembelian Barang
-      </h2>
+      </h2>}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
         {infoList.map(({ label, value, icon }, idx) => (

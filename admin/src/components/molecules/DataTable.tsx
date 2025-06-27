@@ -40,7 +40,10 @@ interface DataTableProps<TData, TValue> {
   enableRowSelection?: boolean;
   rowSelection?: RowSelectionState;
   setRowSelection?: React.Dispatch<SetStateAction<RowSelectionState>>;
-  SelectionRowMenu?: (table: ReturnType<typeof useReactTable<TData>>) => JSX.Element | null;
+  SelectionRowMenu?: (
+    table: ReturnType<typeof useReactTable<TData>>
+  ) => JSX.Element | null;
+  enableMultiRowSelection?: boolean;
 }
 
 export function DataTable<TData, TValue>({
@@ -55,6 +58,7 @@ export function DataTable<TData, TValue>({
   rowSelection,
   SelectionRowMenu,
   setRowSelection,
+  enableMultiRowSelection
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
@@ -72,6 +76,7 @@ export function DataTable<TData, TValue>({
     onColumnFiltersChange: setColumnFilters,
     enableRowSelection,
     onRowSelectionChange: setRowSelection,
+    enableMultiRowSelection,
   });
 
   return (
