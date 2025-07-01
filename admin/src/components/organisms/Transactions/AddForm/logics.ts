@@ -58,7 +58,15 @@ export function useTransactionFormLogics() {
   const productChangeHandler = (index: number, productName: string) => {
     const { setValue, getValues } = form;
     const found = products.find((p) => p.name === productName);
-    if (!found) return;
+    if (!found) {
+      if (productName) {
+        toast(`Product ${productName} tidak tersedia`, { type: "error" });
+        setValue(`items.${index}.product_name`, "");
+        setValue(`items.${index}.product_id`, "");
+        setValue(`items.${index}.price_per_unit`, 0);
+      }
+      return;
+    }
 
     setValue(`items.${index}.product_id`, found.id);
     setValue(`items.${index}.price_per_unit`, found.price);
