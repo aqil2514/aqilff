@@ -9,7 +9,7 @@ import ReportSalesProvider from "../../providers/ReportSalesProvider";
 export default function ReportSalesTemplate() {
   return (
     <ReportSalesProvider>
-      <MainWrapper className="grid grid-cols-[60%_auto] pt-20 px-4 pb-6 bg-gray-50 min-h-screen overflow-auto">
+      <MainWrapper className="grid grid-cols-1 md:grid-cols-[60%_auto] pt-20 px-4 pb-6 bg-gray-50 min-h-screen overflow-auto">
         <TransactionItemTabs />
 
         <div className="flex flex-col gap-4">

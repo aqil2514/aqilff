@@ -18,6 +18,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { useTabsContentOmzetPerDayLogics } from "./logics";
 
 export const chartConfig = {
   desktop: { label: "Desktop", color: "#2563eb" },
@@ -182,35 +183,17 @@ const MarginChart = () => {
   );
 };
 
-export const OmzetPerDay = () => {
-  const { transaction } = useReportSalesData();
+export const TabsContentOmzetPerDay = () => {
+  const { avgOmzet, bestDay, data, isLessData, isNoData, totalOmzet } =
+    useTabsContentOmzetPerDayLogics();
 
-  const data = useMemo(() => {
-    const grouped = new Map<string, number>();
-
-    for (const tr of transaction) {
-      const date = new Date(tr.transaction_at);
-      const day = new Intl.DateTimeFormat("id-ID", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-        timeZone: "UTC",
-      }).format(date);
-
-      grouped.set(day, (grouped.get(day) || 0) + tr.total_amount);
-    }
-
-    return Array.from(grouped, ([name, total]) => ({ name, total }));
-  }, [transaction]);
-
-  // Validasi
-  if (!transaction || transaction.length === 0) {
+  if (isNoData) {
     return (
       <p className="text-sm text-muted-foreground">Tidak ada data transaksi.</p>
     );
   }
 
-  if (data.length < 2) {
+  if (isLessData) {
     return (
       <div className="space-y-2 text-sm text-muted-foreground">
         <p>Data tidak cukup untuk ditampilkan.</p>
@@ -219,59 +202,59 @@ export const OmzetPerDay = () => {
     );
   }
 
-  // Hitung info tambahan
-  const totalOmzet = data.reduce((acc, curr) => acc + curr.total, 0);
-  const avgOmzet = totalOmzet / data.length;
-  const bestDay = data.reduce(
-    (prev, curr) => (curr.total > prev.total ? curr : prev),
-    data[0]
-  );
-
   return (
-    <div className="space-y-4">
-      <ChartContainer config={chartConfig}>
-        <LineChart
-          width={730}
-          height={250}
-          data={data}
-          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip
-            formatter={(value: number) => [
-              `Rp ${value.toLocaleString("id-ID")}`,
-              "Omzet",
-            ]}
-            labelFormatter={(label) => `Tanggal: ${label}`}
-          />
+    <TabsContent value="chart">
+      <div className="space-y-4">
+        <ChartContainer config={chartConfig}>
+          <LineChart
+            width={730}
+            height={250}
+            data={data}
+            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip
+              formatter={(value: number) => [
+                `Rp ${value.toLocaleString("id-ID")}`,
+                "Omzet",
+              ]}
+              labelFormatter={(label) => `Tanggal: ${label}`}
+            />
 
-          <Legend />
-          <Line type="monotone" dataKey="total" stroke="#8884d8" />
-        </LineChart>
-      </ChartContainer>
+            <Legend />
+            <Line type="monotone" dataKey="total" stroke="#8884d8" />
+          </LineChart>
+        </ChartContainer>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm text-muted-foreground">
-        <div className="p-3 border rounded-lg bg-muted/50">
-          <div className="text-xs font-medium">Total Omzet</div>
-          <div className="text-base font-semibold text-primary">
-            {formatRupiah(totalOmzet)}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm text-muted-foreground">
+          <div className="p-3 border rounded-lg bg-muted/50">
+            <div className="text-xs font-medium">Total Omzet</div>
+            <div className="text-base font-semibold text-primary">
+              {formatRupiah(totalOmzet)}
+            </div>
           </div>
-        </div>
-        <div className="p-3 border rounded-lg bg-muted/50">
-          <div className="text-xs font-medium">Rata-rata Per Hari</div>
-          <div className="text-base font-semibold text-primary">
-            {formatRupiah(avgOmzet)}
+          <div className="p-3 border rounded-lg bg-muted/50">
+            <div className="text-xs font-medium">Rata-rata Per Hari</div>
+            <div className="text-base font-semibold text-primary">
+              {formatRupiah(avgOmzet)}
+            </div>
           </div>
-        </div>
-        <div className="p-3 border rounded-lg bg-muted/50">
-          <div className="text-xs font-medium">Hari Tertinggi</div>
-          <div className="text-base font-semibold text-primary">
-            {bestDay.name} ({formatRupiah(bestDay.total)})
+          <div className="p-3 border rounded-lg bg-muted/50">
+            <div className="text-xs font-medium">Hari Tertinggi</div>
+            <div className="text-base font-semibold text-primary">
+              {bestDay ? (
+                <>
+                  {bestDay.name} ({formatRupiah(bestDay.total)})
+                </>
+              ) : (
+                "-"
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </TabsContent>
   );
 };

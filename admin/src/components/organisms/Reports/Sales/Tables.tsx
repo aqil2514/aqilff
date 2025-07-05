@@ -1,8 +1,5 @@
-import { TransactionItem } from "@/@types/transaction";
 import { DataTable } from "@/components/molecules/DataTable";
-import { useReportSalesData } from "@/components/providers/ReportSalesProvider";
-import { formatToIndonesianDateTimeUTC, formatToRupiah } from "@/lib/utils";
-import { ColumnFiltersState } from "@tanstack/react-table";
+import { formatToRupiah } from "@/lib/utils";
 import {
   LucideBoxes,
   LucidePackage,
@@ -10,145 +7,51 @@ import {
   LucideTrendingUp,
   LucideWallet,
 } from "lucide-react";
-import { useMemo } from "react";
-import { columns, simpleColumns } from "./Columns";
+import { TabsContent } from "@/components/ui/tabs";
+import { TableReportSales } from "./interface";
+import { useTabsContentTransactionItemTableLogics } from "./logics";
 
-function filterData(
-  data: TableReportSales[],
-  columnFilters: ColumnFiltersState
-): TableReportSales[] {
-  return data.filter((row) => {
-    return columnFilters.every(({ id, value }) => {
-      const key = id as keyof TableReportSales;
-
-      if (typeof value !== "string") return true;
-
-      const cellValue = String(row[key] ?? "").toLowerCase();
-      const keywords = value
-        .toLowerCase()
-        .split(" ")
-        .filter((kw: string) => Boolean(kw));
-
-      return keywords.every((kw: string) => cellValue.includes(kw));
-    });
-  });
-}
-
-type TableReportSales = TransactionItem & {
-  category: string;
-  transaction_at: string;
-  transaction_code: string;
-  customer_name: string;
-};
-export default function TransactionItemTable() {
+export default function TabsContentTransactionItemTable() {
   const {
-    transaction,
-    products,
-    sorting,
-    setSorting,
-    columnFilters,
+    columnsToDisplay,
+    dataToDisplay,
+    filteredItems,
     setColumnFilters,
+    setSorting,
+    setViewMode,
+    sorting,
     viewMode,
-    setViewMode
-  } = useReportSalesData();
-
-  const transactionItem = transaction.flatMap((tr) => tr.items ?? []);
-
-  const originalItems = useMemo(() => {
-    return transactionItem.map((item) => {
-      const matchedProduct = products.find((p) => p.id === item.product_id);
-      const matchedTransaction = transaction.find(
-        (t) => t.id === item.transaction_id
-      );
-
-      return {
-        ...item,
-        id: matchedProduct?.code ?? item.id,
-        margin: item.margin ?? 0,
-        hpp: item.hpp ?? 0,
-        category: matchedProduct?.parent_category ?? "No Category",
-        transaction_at: formatToIndonesianDateTimeUTC(
-          matchedTransaction?.transaction_at ?? ""
-        ),
-        transaction_code: matchedTransaction?.transaction_code ?? "-",
-        customer_name: String(matchedTransaction?.customer_name ?? "-"),
-      };
-    });
-  }, [transactionItem, products, transaction]);
-
-  const summarizedItems = useMemo(() => {
-    const map = new Map<string, TableReportSales>();
-
-    for (const item of transactionItem) {
-      const matchedProduct = products.find(
-        (prod) => prod.id === item.product_id
-      );
-      const matchedTransaction = transaction.find(
-        (tr) => tr.id === item.transaction_id
-      );
-      const key = matchedProduct?.code ?? item.product_name;
-
-      if (map.has(key)) {
-        const existing = map.get(key)!;
-        existing.quantity += item.quantity;
-        existing.subtotal += item.subtotal;
-        existing.margin = (existing.margin ?? 0) + (item.margin ?? 0);
-        existing.hpp = (existing.hpp ?? 0) + (item.hpp ?? 0); // ➕ HPP
-      } else {
-        map.set(key, {
-          ...item,
-          id: matchedProduct?.code ?? item.id,
-          margin: item.margin ?? 0,
-          hpp: item.hpp ?? 0, // ➕ HPP
-          category: matchedProduct?.parent_category ?? "No Category",
-          transaction_at: formatToIndonesianDateTimeUTC(
-            matchedTransaction!.transaction_at
-          ),
-          transaction_code: matchedTransaction!.transaction_code,
-          customer_name: String(matchedTransaction!.customer_name),
-        });
-      }
-    }
-
-    return Array.from(map.values());
-  }, [transactionItem, products, transaction]);
-
-  const filteredItems = useMemo(() => {
-    return filterData(summarizedItems, columnFilters);
-  }, [summarizedItems, columnFilters]);
-
-  const dataToDisplay =
-    viewMode === "summary" ? summarizedItems : originalItems;
-
-  const columnsToDisplay =
-  viewMode === "summary" ? simpleColumns : columns;
+    columnFilters,
+  } = useTabsContentTransactionItemTableLogics();
 
   return (
-    <div>
-      <div className="mb-4 flex items-center gap-2">
-        <label className="text-sm font-medium">Mode Tampilan:</label>
-        <select
-          className="border px-2 py-1 rounded text-sm"
-          value={viewMode}
-          onChange={(e) =>
-            setViewMode(e.target.value as "original" | "summary")
-          }
-        >
-          <option value="summary">Ringkasan Produk</option>
-          <option value="original">Data Asli (Per Transaksi)</option>
-        </select>
-      </div>
+    <TabsContent value="table">
+      <div>
+        <div className="mb-4 flex flex-col md:flex-row items-start md:items-center gap-2">
+          <label className="text-sm font-medium">Mode Tampilan:</label>
+          <select
+            className="border px-2 py-1 rounded text-sm"
+            value={viewMode}
+            onChange={(e) =>
+              setViewMode(e.target.value as "original" | "summary")
+            }
+          >
+            <option value="summary">Ringkasan Produk</option>
+            <option value="original">Data Asli (Per Transaksi)</option>
+          </select>
+        </div>
 
-      <DataTable
-        columns={columnsToDisplay}
-        data={dataToDisplay}
-        sorting={sorting}
-        setSorting={setSorting}
-        columnFilters={columnFilters}
-        setColumnFilters={setColumnFilters}
-      />
-      <TableFooter data={filteredItems} />
-    </div>
+        <DataTable
+          columns={columnsToDisplay}
+          data={dataToDisplay}
+          sorting={sorting}
+          setSorting={setSorting}
+          columnFilters={columnFilters}
+          setColumnFilters={setColumnFilters}
+        />
+        <TableFooter data={filteredItems} />
+      </div>
+    </TabsContent>
   );
 }
 
