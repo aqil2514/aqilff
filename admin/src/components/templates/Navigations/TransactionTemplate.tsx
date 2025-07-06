@@ -6,24 +6,24 @@ import AddTransactionFormDialog from "../../organisms/Transactions/AddForm";
 import TransactionProvider, {
   useTransactionData,
 } from "../../providers/TransactionProvider";
-import { fetchProducts } from "@/lib/fetchers";
+import { fetchTransactionsResources } from "@/lib/fetchers";
 import TransactionTable from "../../organisms/Transactions/TableTransactions/transactions-table";
 import { Loader2 } from "lucide-react";
 import { RetrieveDataPopover } from "../../molecules/RetrieveData";
 
 export default function TransactionTemplate() {
   const {
-    data: products,
+    data,
     isLoading,
     error,
-  } = useSWR("/api/products", fetchProducts);
+  } = useSWR("/api/transaction/get-resource", fetchTransactionsResources);
 
   if (isLoading) return <MainWrapper>Loading produk...</MainWrapper>;
   if (error) return <MainWrapper>Gagal memuat produk!</MainWrapper>;
-  if (!products) return null;
+  if (!data) return null;
 
   return (
-    <TransactionProvider products={products.data}>
+    <TransactionProvider products={data.products}>
       <InnerTemplate />
     </TransactionProvider>
   );

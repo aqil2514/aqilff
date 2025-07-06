@@ -3,20 +3,7 @@ import { useTransactionFormLogics } from "./logics";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import React from "react";
-import { Transaction } from "@/@types/transaction";
-import {
-  FieldArrayWithId,
-  UseFieldArrayAppend,
-  UseFieldArrayRemove,
-  UseFormGetValues,
-  UseFormRegister,
-  UseFormSetValue,
-} from "react-hook-form";
-
-import { IoMdAddCircle } from "react-icons/io";
 import { IoBarcode } from "react-icons/io5";
-import { FaTrashAlt } from "react-icons/fa";
-
 import {
   Select,
   SelectContent,
@@ -27,7 +14,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { defaultTransactionItem } from "../transaction-utils";
+import { useTransactionData } from "@/components/providers/TransactionProvider";
+import TransactionItem from "./TransactionItemForm";
 
 export default function TransactionAddForm() {
   const {
@@ -38,7 +26,6 @@ export default function TransactionAddForm() {
     getTransactionCode,
     reset,
     isGettingCode,
-    ...restProps
   } = useTransactionFormLogics();
 
   return (
@@ -79,11 +66,11 @@ export default function TransactionAddForm() {
         <Input id="customer_name" {...register("customer_name")} />
       </div>
 
-      <SelectPaymentMethod {...restProps} />
+      <SelectPaymentMethod />
 
       <div className="border rounded-2xl px-2 py-2 space-y-4">
         <p className="italic">Item yang dibeli</p>
-        <TransactionItem register={register} {...restProps} />
+        <TransactionItem />
       </div>
 
       <div className="space-y-2">
@@ -107,119 +94,9 @@ export default function TransactionAddForm() {
   );
 }
 
-interface TransactionItemProps {
-  fields: FieldArrayWithId<Transaction, "items", "id">[];
-  register: UseFormRegister<Transaction>;
-  productChangeHandler: (index: number, productName: string) => void;
-  subTotalChangeHandler: (
-    e: React.ChangeEvent<HTMLInputElement>,
-    index: number
-  ) => void;
-  subTotal: (index: number) => string;
-  totalPrice: string;
-  append: UseFieldArrayAppend<Transaction, "items">;
-  productsName: string[];
-  remove: UseFieldArrayRemove;
-}
-
-export const TransactionItem: React.FC<TransactionItemProps> = ({
-  fields,
-  register,
-  productChangeHandler,
-  subTotal,
-  subTotalChangeHandler,
-  append,
-  totalPrice,
-  productsName,
-  remove,
-}) => {
-  return (
-    <>
-      {fields.map((field, index) => (
-        <div key={field.id} className="space-y-2">
-          <div className="space-y-2">
-            <Label htmlFor="product-name">Nama Produk #{index + 1}:</Label>
-            <Input
-              list="product-name-list"
-              id="product-name"
-              {...register(`items.${index}.product_name`)}
-              onBlur={(e) => productChangeHandler(index, e.target.value)}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="price_per_unit">Harga Produk #{index + 1}:</Label>
-            <Input
-              id="price_per_unit"
-              type="number"
-              {...register(`items.${index}.price_per_unit`)}
-              disabled
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="quantity">Kuantitas Produk #{index + 1}:</Label>
-            <Input
-              type="number"
-              id="quantity"
-              {...register(`items.${index}.quantity`)}
-              onChange={(e) => subTotalChangeHandler(e, index)}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="discount">Diskon Produk #{index + 1}:</Label>
-            <Input
-              id="discount"
-              type="number"
-              {...register(`items.${index}.discount`)}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="tip">Tip Produk #{index + 1}:</Label>
-            <Input
-              id="tip"
-              type="number"
-              {...register(`items.${index}.tip`)}
-            />
-          </div>
-          <p className="text-xs font-bold italic">Subtotal #{index + 1} : </p>
-          <p>{subTotal(index)}</p>
-        </div>
-      ))}
-      <p>Total : {totalPrice}</p>
-
-      <div className="space-x-2">
-        <Button
-          type="button"
-          variant={"ghost"}
-          className="cursor-pointer text-blue-500 hover:text-blue-600"
-          onClick={() => append(defaultTransactionItem)}
-        >
-          <IoMdAddCircle />
-        </Button>
-        {fields.length > 1 && (
-          <Button
-            type="button"
-            variant={"ghost"}
-            className="cursor-pointer text-red-500 hover:text-red-600"
-            onClick={() => remove(0)}
-          >
-            <FaTrashAlt />
-          </Button>
-        )}
-      </div>
-
-      <datalist id="product-name-list">
-        {productsName.map((prod) => (
-          <option value={prod} key={prod} />
-        ))}
-      </datalist>
-    </>
-  );
-};
-
-export const SelectPaymentMethod: React.FC<{
-  setValue: UseFormSetValue<Transaction>;
-  getValues: UseFormGetValues<Transaction>;
-}> = ({ setValue, getValues }) => {
+export const SelectPaymentMethod = () => {
+  const { form } = useTransactionData();
+  const { setValue, getValues } = form;
   return (
     <div className="space-y-2">
       <Label>Metode Pembayaran</Label>

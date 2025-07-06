@@ -5,6 +5,13 @@ export const fetchProducts = async () => {
   if (!res.ok) throw new Error("Gagal memuat data produk");
   return res.json();
 };
+
+export const fetchTransactionsResources = async () => {
+  const res = await fetch("/api/transaction/get-resource");
+  if (!res.ok) throw new Error("Gagal memuat data");
+  return res.json();
+};
+
 export const fetchPurchaseResources = async () => {
   const res = await fetch("/api/purchases/get-resource");
   if (!res.ok) throw new Error("Gagal memuat data");

@@ -1,8 +1,10 @@
+import { Product } from "@/@types/products";
 import { Transaction } from "@/@types/transaction";
 import { formatToRupiah } from "@/lib/utils";
 import { UseFormReturn } from "react-hook-form";
+import { toast } from "react-toastify";
 
-type FormType = UseFormReturn<Transaction, unknown, Transaction>;
+type FormType = UseFormReturn<Transaction, undefined, Transaction>;
 
 export const defaultTransactionItem = {
   product_id: "",
@@ -24,7 +26,7 @@ export function calculateItemTotal(sub: number, tip: number, discount: number) {
 export function getTotalPrice(form: FormType) {
   const { watch, setValue } = form;
   const itemArray = watch(`items`);
-  if(!itemArray) return "";
+  if (!itemArray) return "";
 
   const total = itemArray.reduce((acc, item) => {
     const subTotal = Number(item.subtotal || 0);
@@ -47,4 +49,51 @@ export function getSubTotal(index: number, form: FormType) {
   const result = formatToRupiah(calculateItemTotal(sub, tip, discount));
 
   return result;
+}
+
+export function subTotal(index: number, form: FormType) {
+  const { watch } = form;
+  const sub = Number(watch(`items.${index}.subtotal`));
+  const discount = Number(watch(`items.${index}.discount`));
+  const tip = Number(watch(`items.${index}.tip`));
+  const result = formatToRupiah(calculateItemTotal(sub, tip, discount));
+
+  return result;
+}
+
+export function subTotalChangeHandler(
+  e: React.ChangeEvent<HTMLInputElement>,
+  index: number,
+  form: FormType
+) {
+  const { setValue, getValues } = form;
+  const qty = Number(e.target.value) || 0;
+
+  const price = getValues(`items.${index}.price_per_unit`) || 0;
+  setValue(`items.${index}.subtotal`, qty * price);
+}
+
+export function productChangeHandler(
+  index: number,
+  productName: string,
+  form: FormType,
+  products: Product[]
+) {
+  const { setValue, getValues } = form;
+  const found = products.find((p) => p.name === productName);
+  if (!found) {
+    if (productName) {
+      toast(`Product ${productName} tidak tersedia`, { type: "error" });
+      setValue(`items.${index}.product_name`, "");
+      setValue(`items.${index}.product_id`, "");
+      setValue(`items.${index}.price_per_unit`, 0);
+    }
+    return;
+  }
+
+  setValue(`items.${index}.product_id`, found.id);
+  setValue(`items.${index}.price_per_unit`, found.price);
+
+  const quantity = getValues(`items.${index}.quantity`) || 1;
+  setValue(`items.${index}.subtotal`, quantity * found.price);
 }

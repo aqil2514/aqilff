@@ -13,10 +13,10 @@ import { MdAdd } from "react-icons/md";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import React from "react";
 import TransactionAddForm from "./Form";
-import { useTransactionData } from "@/components/providers/TransactionProvider";
+import { useDialogLogics } from "./logics";
 
 export default function AddTransactionFormDialog() {
-  const { dateRange } = useTransactionData();
+  const { dateRange } = useDialogLogics();
 
   if (!dateRange) return null;
 
@@ -36,7 +36,9 @@ export default function AddTransactionFormDialog() {
               Isi data untuk membuat transaksi
             </DialogDescription>
           </DialogHeader>
+
           <TransactionAddForm />
+
           <DialogFooter className="sm:justify-start">
             <DialogClose asChild>
               <Button type="button" variant="secondary">
