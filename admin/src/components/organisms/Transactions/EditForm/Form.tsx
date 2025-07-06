@@ -20,7 +20,7 @@ export default function EditTransactionForm({
   const { isLoading, transactionSubmit, ...restProps } =
     useTransactionEditFormLogic(row);
 
-  const { reset, register, getValues, setValue, handleSubmit } = restProps.form;
+  const { reset, register, handleSubmit } = restProps.form;
 
   return (
     <form className="my-4 space-y-4" onSubmit={handleSubmit(transactionSubmit)}>
@@ -45,7 +45,7 @@ export default function EditTransactionForm({
         <Input id="customer_name" {...register("customer_name")} />
       </div>
 
-      <SelectPaymentMethod getValues={getValues} setValue={setValue} />
+      <SelectPaymentMethod />
 
       <div className="border rounded-2xl px-2 py-2 space-y-4">
         <p className="italic">Item yang dibeli</p>

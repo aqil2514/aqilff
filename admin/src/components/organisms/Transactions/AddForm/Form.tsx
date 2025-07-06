@@ -16,8 +16,15 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useTransactionData } from "@/components/providers/TransactionProvider";
 import TransactionItem from "./TransactionItemForm";
+import { Row } from "@tanstack/react-table";
+import { Transaction } from "@/@types/transaction";
 
-export default function TransactionAddForm() {
+interface Props {
+  mode: "edit" | "add";
+  row?: Row<Transaction>;
+}
+
+export default function TransactionAddForm({ mode, row }: Props) {
   const {
     register,
     handleSubmit,
@@ -26,7 +33,10 @@ export default function TransactionAddForm() {
     getTransactionCode,
     reset,
     isGettingCode,
-  } = useTransactionFormLogics();
+  } = useTransactionFormLogics(mode, row);
+
+  if (mode === "edit" && !row)
+    throw new Error("Form tipe edit harus meiliki row");
 
   return (
     <form onSubmit={handleSubmit(transactionSubmit)} className="my-4 space-y-4">

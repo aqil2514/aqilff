@@ -31,6 +31,8 @@ interface TransactionContextState {
   setIsLoadingTransactions: React.Dispatch<SetStateAction<boolean>>;
   form: UseFormReturn<Transaction, undefined, Transaction>;
   fieldArray: UseFieldArrayReturn<Transaction, "items", "id">;
+  defaultValues: Partial<Transaction>;
+  setDefaultValues: React.Dispatch<SetStateAction<Partial<Transaction>>>;
   productsName: string[];
 }
 
@@ -47,18 +49,19 @@ export default function TransactionProvider({
   products,
 }: TransactionProviderProps) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [defaultValues, setDefaultValues] = useState<Partial<Transaction>>({
+    customer_name: "",
+    payment_method: "cash",
+    items: [defaultTransactionItem],
+    transaction_at: getLocalDateTimeValue(),
+  });
 
   const [isLoadingTransactions, setIsLoadingTransactions] =
     useState<boolean>(false);
 
   const [dateRange, setDateRange] = useState<RangeData | null>(null);
   const form = useForm<Transaction, undefined>({
-    defaultValues: {
-      customer_name: "",
-      payment_method: "cash",
-      items: [defaultTransactionItem],
-      transaction_at: getLocalDateTimeValue(),
-    },
+    defaultValues,
   });
 
   const fieldArray = useFieldArray({
@@ -87,6 +90,8 @@ export default function TransactionProvider({
     form,
     fieldArray,
     productsName,
+    defaultValues,
+    setDefaultValues,
   };
 
   return (

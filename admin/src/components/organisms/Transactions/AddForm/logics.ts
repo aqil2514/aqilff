@@ -6,13 +6,20 @@ import { SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
 import { getDataCode } from "@/lib/utils/server";
 import { getTotalPrice } from "../transaction-utils";
+import { Row } from "@tanstack/react-table";
 
-export function useTransactionFormLogics() {
+// NEXT update logicsnya agar bisa digunakan pada mode edit juga
+export function useTransactionFormLogics(
+  mode: "add" | "edit",
+  row?: Row<Transaction>
+) {
   const { products, form } = useTransactionData();
 
   useEffect(() => {
+    if (mode !== "add" && row) return;
+
     form.reset();
-  }, [form]);
+  }, [form, mode, row]);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isGettingCode, setIsGettingCode] = useState<boolean>(false);
@@ -79,4 +86,3 @@ export function useDialogLogics() {
 
   return { dateRange };
 }
-

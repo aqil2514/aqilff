@@ -37,7 +37,7 @@ export default function AddTransactionFormDialog() {
             </DialogDescription>
           </DialogHeader>
 
-          <TransactionAddForm />
+          <TransactionAddForm mode="add" />
 
           <DialogFooter className="sm:justify-start">
             <DialogClose asChild>
