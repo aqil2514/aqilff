@@ -24,11 +24,11 @@ import {
   getCategoryAmountCurrentStock,
 } from "./utils";
 import { Cell, Pie, PieChart, Tooltip } from "recharts";
-import { chartConfig, COLORS } from "../Sales/Diagram";
 import { ChartContainer } from "@/components/ui/chart";
 import { ChartPieData } from "@/@types/general";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Circle } from "lucide-react";
+import { chartConfig, COLORS } from "../Sales/Chart/utils";
 
 export default function ReportPurchaseSummary() {
   return (

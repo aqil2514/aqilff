@@ -2,7 +2,7 @@
 
 import TransactionItemTabs from "@/components/organisms/Reports/Sales/Tab";
 import MainWrapper from "../../atoms/main-wrapper";
-import Chart from "../../organisms/Reports/Sales/Diagram";
+import Chart from "../../organisms/Reports/Sales/Chart";
 import Summary from "../../organisms/Reports/Sales/Summary";
 import ReportSalesProvider from "../../providers/ReportSalesProvider";
 import FilterControl from "@/components/organisms/Reports/Sales/FilterControl";

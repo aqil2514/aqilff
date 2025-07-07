@@ -1,9 +1,9 @@
 import { Tabs } from "@/components/ui/tabs";
-import { TabsContentOmzetPerDay } from "./Diagram";
 import TabsContentTransactionItemTable from "./Tables";
 import TabSwitcher, {
   TabOption,
 } from "@/components/molecules/Tabs/TabsSwitcher";
+import TabsContentOmzetPerDay from "./Chart/TabsContentOmzetPerDay";
 
 const tabs: TabOption[] = [
   {
