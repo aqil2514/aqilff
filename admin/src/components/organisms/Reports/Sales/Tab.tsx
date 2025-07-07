@@ -20,7 +20,7 @@ export default function TransactionItemTabs() {
   return (
     <Tabs
       defaultValue="table"
-      className="bg-white shadow-md rounded-xl p-4 h-full"
+      className="bg-white shadow-md rounded-xl p-4"
     >
       <TabSwitcher tabs={tabs} />
 
