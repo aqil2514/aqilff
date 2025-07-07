@@ -1,9 +1,7 @@
 import { useReportSalesData } from "@/components/providers/ReportSalesProvider";
-import { formatToIndonesianDateTimeUTC } from "@/lib/utils";
 import { useEffect, useMemo, useState } from "react";
-import { TableReportSales } from "./interface";
 import { columns, simpleColumns } from "./Columns";
-import { filterData } from "./utils";
+import { filterData, summarizeReportSales, transformOriginalReportItems } from "./utils";
 
 export function useTabsContentOmzetPerDayLogics() {
   const [isNoData, setIsNoData] = useState<boolean>(false);
@@ -67,63 +65,20 @@ export function useTabsContentTransactionItemTableLogics() {
   const transactionItem = transaction.flatMap((tr) => tr.items ?? []);
 
   const originalItems = useMemo(() => {
-    return transactionItem.map((item) => {
-      const matchedProduct = products.find((p) => p.id === item.product_id);
-      const matchedTransaction = transaction.find(
-        (t) => t.id === item.transaction_id
-      );
-
-      return {
-        ...item,
-        id: matchedProduct?.code ?? item.id,
-        margin: item.margin ?? 0,
-        hpp: item.hpp ?? 0,
-        category: matchedProduct?.parent_category ?? "No Category",
-        transaction_at: formatToIndonesianDateTimeUTC(
-          matchedTransaction?.transaction_at ?? ""
-        ),
-        transaction_code: matchedTransaction?.transaction_code ?? "-",
-        customer_name: String(matchedTransaction?.customer_name ?? "-"),
-      };
+    return transformOriginalReportItems({
+      items: transactionItem,
+      transactions: transaction,
+      products,
     });
-  }, [transactionItem, products, transaction]);
+  }, [transactionItem, transaction, products]);
 
   const summarizedItems = useMemo(() => {
-    const map = new Map<string, TableReportSales>();
-
-    for (const item of transactionItem) {
-      const matchedProduct = products.find(
-        (prod) => prod.id === item.product_id
-      );
-      const matchedTransaction = transaction.find(
-        (tr) => tr.id === item.transaction_id
-      );
-      const key = matchedProduct?.code ?? item.product_name;
-
-      if (map.has(key)) {
-        const existing = map.get(key)!;
-        existing.quantity += item.quantity;
-        existing.subtotal += item.subtotal;
-        existing.margin = (existing.margin ?? 0) + (item.margin ?? 0);
-        existing.hpp = (existing.hpp ?? 0) + (item.hpp ?? 0); // ➕ HPP
-      } else {
-        map.set(key, {
-          ...item,
-          id: matchedProduct?.code ?? item.id,
-          margin: item.margin ?? 0,
-          hpp: item.hpp ?? 0, // ➕ HPP
-          category: matchedProduct?.parent_category ?? "No Category",
-          transaction_at: formatToIndonesianDateTimeUTC(
-            matchedTransaction!.transaction_at
-          ),
-          transaction_code: matchedTransaction!.transaction_code,
-          customer_name: String(matchedTransaction!.customer_name),
-        });
-      }
-    }
-
-    return Array.from(map.values());
-  }, [transactionItem, products, transaction]);
+    return summarizeReportSales({
+      items: transactionItem,
+      transactions: transaction,
+      products,
+    });
+  }, [transactionItem, transaction, products]);
 
   const filteredItems = useMemo(() => {
     return filterData(summarizedItems, columnFilters);

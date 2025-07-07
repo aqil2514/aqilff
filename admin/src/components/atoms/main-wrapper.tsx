@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import { cn } from "@/lib/utils";
 import React from "react";
 
 interface MainWrapperProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -11,7 +11,7 @@ export default function MainWrapper({
 }: MainWrapperProps) {
   return (
     <div
-      className={clsx(
+      className={cn(
         "w-full h-screen bg-slate-100 flex flex-col items-center justify-center gap-4",
         className
       )}

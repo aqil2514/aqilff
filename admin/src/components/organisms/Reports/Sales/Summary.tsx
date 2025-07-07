@@ -52,8 +52,8 @@ const SummaryStats = () => {
 
       for (const item of trx.items ?? []) {
         totalUnitsSold += item.quantity;
-        totalMargin += item.margin ?? 0;
         totalHPP += item.hpp ?? 0;
+        totalMargin = totalRevenue - totalHPP;
 
         if (!productMap[item.product_id]) {
           productMap[item.product_id] = {

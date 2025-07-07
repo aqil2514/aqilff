@@ -2,6 +2,7 @@ import { DataTable } from "@/components/molecules/DataTable";
 import { formatToRupiah } from "@/lib/utils";
 import {
   LucideBoxes,
+  LucideIcon,
   LucidePackage,
   LucidePercent,
   LucideTrendingUp,
@@ -55,6 +56,11 @@ export default function TabsContentTransactionItemTable() {
   );
 }
 
+interface Stats {
+  label: string;
+  value: number | string;
+  icon: LucideIcon;
+}
 const TableFooter = ({ data }: { data: TableReportSales[] }) => {
   const totalQty = data.reduce((sum, d) => sum + d.quantity, 0);
   const totalOmzet = data.reduce((sum, d) => sum + (d.subtotal ?? 0), 0);
@@ -62,7 +68,7 @@ const TableFooter = ({ data }: { data: TableReportSales[] }) => {
   const totalMargin = data.reduce((sum, d) => sum + (d.margin ?? 0), 0);
   const marginPercent = totalOmzet > 0 ? (totalMargin / totalOmzet) * 100 : 0;
 
-  const stats = [
+  const stats: Stats[] = [
     {
       label: "Total Produk Ditampilkan",
       value: data.length,
