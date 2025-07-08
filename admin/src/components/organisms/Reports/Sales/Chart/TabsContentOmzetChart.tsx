@@ -15,7 +15,7 @@ export default function TabsContentOmzetChart(){
             data={data}
             cx="50%"
             cy="50%"
-            outerRadius="80%"
+            outerRadius="50%"
             dataKey="value"
             label={({ name, value }) =>
               `${name}: ${((value / total) * 100).toFixed(1)}%`

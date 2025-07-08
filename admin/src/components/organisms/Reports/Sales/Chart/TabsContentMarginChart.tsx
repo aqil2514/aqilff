@@ -4,6 +4,7 @@ import { ChartContainer } from "@/components/ui/chart";
 import { chartConfig, COLORS, formatRupiah } from "./utils";
 import { Cell, Pie, PieChart, Tooltip } from "recharts";
 
+
 export default function TabsContentMarginChart(){
  const { data, total } = useTabsMarginOmzetChartLogics()
 
@@ -15,7 +16,7 @@ export default function TabsContentMarginChart(){
             data={data}
             cx="50%"
             cy="50%"
-            outerRadius="80%"
+            outerRadius="50%"
             dataKey="value"
             label={({ name, value }) =>
               `${name}: ${((value / total) * 100).toFixed(1)}%`

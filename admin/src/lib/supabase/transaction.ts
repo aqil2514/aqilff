@@ -99,7 +99,7 @@ export async function getTransactionItemData(): Promise<TransactionItem[]> {
   const { data, error } = await supabaseAdmin
     .from("transaction_items")
     .select("*")
-    .is("deleted_at", null)
+    .is("deleted_at", null);
 
   if (error) {
     console.error("Gagal mengambil item transaksi:", error);
@@ -194,8 +194,14 @@ export async function getTransactionDataAndItemsByDateRange(
 
 // Simpan transaksi
 export async function saveTransaction(payload: Transaction) {
-  const { data: createdTransaction, error: transactionError } =
-    await supabaseAdmin.from("transactions").insert(payload).select().single();
+  const trx = await supabaseAdmin
+    .from("transactions")
+    .insert(payload)
+    .select()
+    .single();
+
+
+  const { error: transactionError, data: createdTransaction } = trx;
 
   if (transactionError) {
     console.error("Transaction insert error:", transactionError);

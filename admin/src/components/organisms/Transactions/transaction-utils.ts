@@ -79,7 +79,7 @@ export function productChangeHandler(
   form: FormType,
   products: Product[]
 ) {
-  const { setValue, getValues } = form;
+  const { setValue, getValues, setFocus } = form;
   const found = products.find((p) => p.name === productName);
   if (!found) {
     if (productName) {
@@ -87,6 +87,7 @@ export function productChangeHandler(
       setValue(`items.${index}.product_name`, "");
       setValue(`items.${index}.product_id`, "");
       setValue(`items.${index}.price_per_unit`, 0);
+      setFocus(`items.${index}.quantity`)
     }
     return;
   }

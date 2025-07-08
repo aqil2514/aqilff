@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { getDataCode } from "@/lib/utils/server";
 import { getTotalPrice } from "../transaction-utils";
 import { Row } from "@tanstack/react-table";
+import { getLocalDateTimeValue } from "@/lib/utils";
 
 // NEXT update logicsnya agar bisa digunakan pada mode edit juga
 export function useTransactionFormLogics(
@@ -20,6 +21,11 @@ export function useTransactionFormLogics(
 
     form.reset();
   }, [form, mode, row]);
+
+  useEffect(() => {
+    const { setValue } = form;
+    setValue("transaction_at", getLocalDateTimeValue());
+  }, [form]);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isGettingCode, setIsGettingCode] = useState<boolean>(false);
@@ -40,6 +46,7 @@ export function useTransactionFormLogics(
       const { data } = await axios.post("/api/transaction/add", formData);
 
       toast(data.message, { type: "success" });
+      form.reset();
     } catch (error) {
       if (isAxiosError(error)) {
         const data = error.response?.data;
@@ -48,7 +55,6 @@ export function useTransactionFormLogics(
       }
       console.error(error);
     } finally {
-      form.reset();
       setIsLoading(false);
     }
   };
