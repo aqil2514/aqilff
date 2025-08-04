@@ -63,9 +63,9 @@ export async function POST(req: NextRequest) {
     purchaseItemData
   );
 
-  await saveTransaction(transaction);
-  await saveTransactionItems(formattedItems, String(transaction.id));
-  await updateStock(formattedItems, productData, purchaseItemData);
+  // await saveTransaction(transaction);
+  // await saveTransactionItems(formattedItems, String(transaction.id));
+  // await updateStock(formattedItems, productData, purchaseItemData);
 
   return NextResponse.json({ message: "Data Berhasil Ditambah" }, { status: 200 });
 }
@@ -115,6 +115,7 @@ function checkData(
   // Cek apakah di produk yang diinput ada di database?
   const productName = productData.map((pr) => pr.name);
   for (const item of raw.items as TransactionItem[]) {
+    console.log(item)
     if (!productName.includes(item.product_name)) {
       return {
         checkPassed: false,
@@ -198,8 +199,6 @@ function formatData(raw: Transaction): Transaction {
       discount: Number(item.discount),
       hpp: Number(item.hpp),
       id: item.id,
-      product_sku: item.product_sku,
-      product_unit: item.product_unit,
       tip: Number(item.tip),
       transaction_id: transactionId,
     };

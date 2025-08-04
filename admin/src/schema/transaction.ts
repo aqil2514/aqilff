@@ -2,6 +2,7 @@
 import { Transaction } from "@/@types/transaction";
 import { z } from "zod";
 
+// TODO : Hapus semua ini nanti setelah transaction schema selesai & teraplikasi
 export function formatTransaction(raw: Transaction): Transaction {
   return {
     id: raw.id,

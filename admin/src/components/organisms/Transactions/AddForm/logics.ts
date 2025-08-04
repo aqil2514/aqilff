@@ -86,9 +86,3 @@ export function useTransactionItemFormLogics() {
     form,
   };
 }
-
-export function useDialogLogics() {
-  const { dateRange } = useTransactionData();
-
-  return { dateRange };
-}

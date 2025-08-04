@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+/**
+ * TODO :  DELETE SOON IF no Error in Transaction and purchase
+ */
+
 import React, { Dispatch, SetStateAction, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -77,7 +81,7 @@ export const getDataFromServer = async <T extends any[]>(
     const apiRoute: Record<DataSrc, string> = {
       purchases: "/api/purchases",
       transactions: "/api/transaction",
-      purchasePlanning:"/api/tools/purchase-planning"
+      purchasePlanning: "/api/tools/purchase-planning",
     };
 
     const { data } = await axios.get(apiRoute[data_src], {

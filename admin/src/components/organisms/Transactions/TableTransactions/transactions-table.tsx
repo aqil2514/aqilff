@@ -12,9 +12,7 @@ export default function TransactionTable() {
 
   if (!data) return <Skeleton className="w-full h-48" />;
 
-  const visibleData = data.filter((d) => !d.deleted_at);
-
-  if (visibleData.length === 0) {
+  if (data.length === 0) {
     return (
       <p className="text-muted-foreground text-sm">
         Belum ada transaksi hari ini.
@@ -23,7 +21,7 @@ export default function TransactionTable() {
   }
 
   const omzet = formatToRupiah(
-    visibleData.reduce((acc, curr) => acc + curr.total_amount, 0)
+    data.reduce((acc, curr) => acc + curr.total_amount, 0)
   );
 
   const initialState: InitialTableState = {
@@ -33,12 +31,12 @@ export default function TransactionTable() {
 
   return (
     <>
-      <DataTable columns={columns} data={visibleData} initialState={initialState} />
+      <DataTable columns={columns} data={data} initialState={initialState} />
       <Card className="mt-4">
         <CardContent className="text-sm text-muted-foreground">
           Total Omzet:{" "}
           <span className="font-semibold text-primary">{omzet}</span> dari{" "}
-          <span className="font-semibold">{visibleData.length}</span> transaksi
+          <span className="font-semibold">{data.length}</span> transaksi
         </CardContent>
       </Card>
     </>

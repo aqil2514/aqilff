@@ -12,7 +12,7 @@ export default function MainWrapper({
   return (
     <div
       className={cn(
-        "w-full h-screen bg-slate-100 flex flex-col items-center justify-center gap-4",
+        "w-full min-h-screen bg-slate-100 px-8 py-20",
         className
       )}
       {...props}

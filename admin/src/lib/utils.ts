@@ -180,6 +180,19 @@ export function getLocalDateTimeValue(): string {
   return `${year}-${month}-${date}T${hours}:${minutes}`;
 }
 
+export function getDefaultDateRange() {
+  const today = new Date();
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(today.getDate() - 7);
+
+  const toISOStringDate = (date: Date) => date.toISOString().split("T")[0];
+
+  return {
+    defaultStartDate: toISOStringDate(sevenDaysAgo),
+    defaultEndDate: toISOStringDate(today),
+  };
+}
+
 export function isValidUrl(text: string) {
   try {
     new URL(text);

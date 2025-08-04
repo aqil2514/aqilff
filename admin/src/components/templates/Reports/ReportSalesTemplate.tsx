@@ -2,7 +2,6 @@
 
 import TransactionItemTabs from "@/components/organisms/Reports/Sales/Tab";
 import MainWrapper from "../../atoms/main-wrapper";
-import Chart from "../../organisms/Reports/Sales/Chart";
 import Summary from "../../organisms/Reports/Sales/Summary";
 import ReportSalesProvider from "../../providers/ReportSalesProvider";
 import FilterControl from "@/components/organisms/Reports/Sales/FilterControl";
@@ -19,7 +18,7 @@ export default function ReportSalesTemplate() {
           <div className="flex flex-col gap-4">
             <Summary />
 
-            <Chart />
+            {/* <Chart /> */}
           </div>
         </div>
       </MainWrapper>

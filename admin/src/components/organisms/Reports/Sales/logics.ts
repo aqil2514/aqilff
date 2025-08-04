@@ -1,14 +1,15 @@
 import { useReportSalesData } from "@/components/providers/ReportSalesProvider";
 import { useMemo } from "react";
 import { columns, simpleColumns } from "./Columns";
-import { filterData, summarizeReportSales, transformOriginalReportItems } from "./utils";
-
-
+import {
+  filterData,
+  summarizeReportSales,
+  transformOriginalReportItems,
+} from "./utils";
 
 export function useTabsContentTransactionItemTableLogics() {
   const {
     transaction,
-    products,
     sorting,
     setSorting,
     columnFilters,
@@ -17,23 +18,13 @@ export function useTabsContentTransactionItemTableLogics() {
     setViewMode,
   } = useReportSalesData();
 
-  const transactionItem = transaction.flatMap((tr) => tr.items ?? []);
-
   const originalItems = useMemo(() => {
-    return transformOriginalReportItems({
-      items: transactionItem,
-      transactions: transaction,
-      products,
-    });
-  }, [transactionItem, transaction, products]);
+    return transformOriginalReportItems(transaction);
+  }, [transaction]);
 
   const summarizedItems = useMemo(() => {
-    return summarizeReportSales({
-      items: transactionItem,
-      transactions: transaction,
-      products,
-    });
-  }, [transactionItem, transaction, products]);
+    return summarizeReportSales(transaction);
+  }, [transaction]);
 
   const filteredItems = useMemo(() => {
     return filterData(summarizedItems, columnFilters);

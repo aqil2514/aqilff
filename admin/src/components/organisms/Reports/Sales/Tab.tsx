@@ -3,7 +3,6 @@ import TabsContentTransactionItemTable from "./Tables";
 import TabSwitcher, {
   TabOption,
 } from "@/components/molecules/Tabs/TabsSwitcher";
-import TabsContentOmzetPerDay from "./Chart/TabsContentOmzetPerDay";
 
 const tabs: TabOption[] = [
   {
@@ -26,7 +25,7 @@ export default function TransactionItemTabs() {
 
       <TabsContentTransactionItemTable />
 
-      <TabsContentOmzetPerDay />
+      {/* <TabsContentOmzetPerDay /> */}
     </Tabs>
   );
 }

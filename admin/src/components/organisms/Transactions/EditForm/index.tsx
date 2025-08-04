@@ -13,6 +13,7 @@ import {
 import { Row } from "@tanstack/react-table";
 import EditTransactionForm from "./Form";
 
+// TODO : DELETE SOON
 export function EditDialog({ row }: { row: Row<Transaction> }) {
   const { transaction_code } = row.original;
 

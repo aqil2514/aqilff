@@ -1,5 +1,5 @@
 import { Product } from "@/@types/products";
-import { Transaction } from "@/@types/transaction";
+import { SimpleTransaction, Transaction } from "@/@types/transaction";
 import React, {
   createContext,
   SetStateAction,
@@ -25,8 +25,8 @@ interface TransactionContextState {
   products: Product[];
   dateRange: RangeData | null;
   setDateRange: React.Dispatch<SetStateAction<RangeData | null>>;
-  transactions: Transaction[];
-  setTransactions: React.Dispatch<SetStateAction<Transaction[]>>;
+  transactions: SimpleTransaction[];
+  setTransactions: React.Dispatch<SetStateAction<SimpleTransaction[]>>;
   isLoadingTransactions: boolean;
   setIsLoadingTransactions: React.Dispatch<SetStateAction<boolean>>;
   form: UseFormReturn<Transaction, undefined, Transaction>;
@@ -48,7 +48,7 @@ export default function TransactionProvider({
   children,
   products,
 }: TransactionProviderProps) {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [transactions, setTransactions] = useState<SimpleTransaction[]>([]);
   const [defaultValues, setDefaultValues] = useState<Partial<Transaction>>({
     customer_name: "",
     payment_method: "cash",

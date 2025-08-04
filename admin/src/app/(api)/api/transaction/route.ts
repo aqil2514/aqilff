@@ -1,6 +1,7 @@
 import { getTransactionDataAndItemsByDateRange } from "@/lib/supabase/transaction";
 import { NextRequest, NextResponse } from "next/server";
 
+// TODO DELETE SOON
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);

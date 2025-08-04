@@ -40,9 +40,8 @@ export function useFilterDateLogics() {
     setColumnFilters([]);
 
     try {
-      const { data } = await axios.get("/api/reports", {
+      const { data } = await axios.get("/api/reports/sales", {
         params: {
-          source: "transactions",
           startDate,
           endDate,
         },

@@ -1,5 +1,5 @@
 import { Product } from "@/@types/products";
-import { Transaction } from "@/@types/transaction";
+import { TableReportSales } from "@/@types/transaction";
 import { today } from "@/lib/variables";
 import { ColumnFiltersState, ColumnSort } from "@tanstack/react-table";
 import React, {
@@ -14,8 +14,8 @@ interface ReportSalesContextProps {
   setStartDate: React.Dispatch<SetStateAction<string>>;
   endDate: string;
   setEndDate: React.Dispatch<SetStateAction<string>>;
-  transaction: Transaction[];
-  setTransaction: React.Dispatch<SetStateAction<Transaction[]>>;
+  transaction: TableReportSales[];
+  setTransaction: React.Dispatch<SetStateAction<TableReportSales[]>>;
   products: Product[];
   setProducts: React.Dispatch<SetStateAction<Product[]>>;
   isLoadingFetch: boolean;
@@ -39,7 +39,7 @@ export default function ReportSalesProvider({
 }) {
   const [startDate, setStartDate] = useState<string>(today);
   const [endDate, setEndDate] = useState<string>(today);
-  const [transaction, setTransaction] = useState<Transaction[]>([]);
+  const [transaction, setTransaction] = useState<TableReportSales[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoadingFetch, setIsLoadingFetch] = useState<boolean>(false);
   const [sorting, setSorting] = useState<ColumnSort[]>([]);

@@ -1,3 +1,5 @@
+// TODO : DELETE SOON
+
 import { Transaction } from "@/@types/transaction";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -23,7 +25,7 @@ export function DetailDialog({ row }: { row: Row<Transaction> }) {
     payment_method,
     notes,
     transaction_at,
-    items
+    items,
   } = row.original;
 
   return (
@@ -57,14 +59,14 @@ export function DetailDialog({ row }: { row: Row<Transaction> }) {
               items?.map((item, index) => (
                 <div key={index} className="p-2 border rounded-lg shadow-sm">
                   <div className="font-medium">{item.product_name}</div>
-                  <div className="text-sm text-muted-foreground">
+                  {/* <div className="text-sm text-muted-foreground">
                     Qty: {item.quantity} x Rp
                     {item.price_per_unit.toLocaleString()}
                   </div>
                   <div className="text-sm text-muted-foreground">
                     Subtotal: Rp
                     {(item.quantity * item.price_per_unit).toLocaleString()}
-                  </div>
+                  </div> */}
                 </div>
               ))
             )}
@@ -75,8 +77,8 @@ export function DetailDialog({ row }: { row: Row<Transaction> }) {
 
         <div className="text-sm space-y-1">
           <p>
-            <span className="font-medium">Total Bayar:</span>{" "}
-            Rp{total_amount.toLocaleString()}
+            <span className="font-medium">Total Bayar:</span> Rp
+            {total_amount.toLocaleString()}
           </p>
           <p>
             <span className="font-medium">Metode Pembayaran:</span>{" "}

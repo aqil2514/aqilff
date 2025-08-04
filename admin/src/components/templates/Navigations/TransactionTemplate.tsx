@@ -2,21 +2,23 @@
 
 import useSWR from "swr";
 import MainWrapper from "../../atoms/main-wrapper";
-import AddTransactionFormDialog from "../../organisms/Transactions/AddForm";
 import TransactionProvider, {
   useTransactionData,
 } from "../../providers/TransactionProvider";
 import { fetchTransactionsResources } from "@/lib/fetchers";
 import TransactionTable from "../../organisms/Transactions/TableTransactions/transactions-table";
-import { Loader2 } from "lucide-react";
-import { RetrieveDataPopover } from "../../molecules/RetrieveData";
+import RetrieveDataPopover from "@/components/molecules/Popover/RetrieveData";
+import { getTransactionHandler } from "@/lib/api/transaction";
+import { Button } from "@/components/ui/button";
+import { MdAdd } from "react-icons/md";
+import Link from "next/link";
+// import { RetrieveDataPopover } from "../../molecules/RetrieveData";
 
 export default function TransactionTemplate() {
-  const {
-    data,
-    isLoading,
-    error,
-  } = useSWR("/api/transaction/get-resource", fetchTransactionsResources);
+  const { data, isLoading, error } = useSWR(
+    "/api/transaction/get-resource",
+    fetchTransactionsResources
+  );
 
   if (isLoading) return <MainWrapper>Loading produk...</MainWrapper>;
   if (error) return <MainWrapper>Gagal memuat produk!</MainWrapper>;
@@ -29,53 +31,54 @@ export default function TransactionTemplate() {
   );
 }
 
+// const InnerTemplate = () => {
+//   const {
+//     isLoadingTransactions,
+//     setTransactions,
+//     setDateRange,
+//     setIsLoadingTransactions,
+//   } = useTransactionData();
+//   return (
+//     <MainWrapper className="!block pt-16 px-4">
+//       <h1 className="text-center">Daftar Transaksi</h1>
+//       <div className="flex gap-4 items-center">
+//         <AddTransactionFormDialog />
+//         <RetrieveDataPopover
+//           data_src="transactions"
+//           isLoading={isLoadingTransactions}
+//           setData={setTransactions}
+//           setDateRange={setDateRange}
+//           setIsLoading={setIsLoadingTransactions}
+//         />
+//       </div>
+//       <CoreData />
+//     </MainWrapper>
+//   );
+// };
+
 const InnerTemplate = () => {
-  const {
-    isLoadingTransactions,
-    setTransactions,
-    setDateRange,
-    setIsLoadingTransactions,
-  } = useTransactionData();
+  const { setTransactions } = useTransactionData();
+
+  const retrieveHandler = async (startDate: string, endDate: string) => {
+    const { data, success } = await getTransactionHandler(startDate, endDate);
+    if (!success) return;
+
+    setTransactions(data);
+  };
   return (
     <MainWrapper className="!block pt-16 px-4">
       <h1 className="text-center">Daftar Transaksi</h1>
       <div className="flex gap-4 items-center">
-        <AddTransactionFormDialog />
-        <RetrieveDataPopover
-          data_src="transactions"
-          isLoading={isLoadingTransactions}
-          setData={setTransactions}
-          setDateRange={setDateRange}
-          setIsLoading={setIsLoadingTransactions}
-        />
+        <Link href={"/transactions/add"}>
+          <Button className="bg-green-600 hover:bg-green-700 active:scale-95 duration-200 my-2 cursor-pointer">
+            <MdAdd />
+            Buat Transaksi
+          </Button>
+        </Link>
+
+        <RetrieveDataPopover retrieveHandler={retrieveHandler} />
       </div>
-      <CoreData />
+      <TransactionTable />
     </MainWrapper>
   );
-};
-
-const CoreData = () => {
-  const { dateRange, isLoadingTransactions } = useTransactionData();
-
-  if (!dateRange) {
-    return (
-      <div className="text-center mt-10 text-muted-foreground">
-        <p>Silakan pilih rentang tanggal untuk melihat data transaksi.</p>
-        <p className="text-sm mt-2">
-          Gunakan tombol &quot;Ambil Data&quot; di atas.
-        </p>
-      </div>
-    );
-  }
-
-  if (isLoadingTransactions) {
-    return (
-      <div className="flex flex-col items-center mt-10 text-muted-foreground">
-        <Loader2 className="animate-spin w-8 h-8 mb-2" />
-        <p>Memuat data transaksi...</p>
-      </div>
-    );
-  }
-
-  return <TransactionTable />;
 };

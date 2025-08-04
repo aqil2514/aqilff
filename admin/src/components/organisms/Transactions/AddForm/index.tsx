@@ -13,13 +13,10 @@ import { MdAdd } from "react-icons/md";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import React from "react";
 import TransactionAddForm from "./Form";
-import { useDialogLogics } from "./logics";
+
+// TODO : DELETE SOON
 
 export default function AddTransactionFormDialog() {
-  const { dateRange } = useDialogLogics();
-
-  if (!dateRange) return null;
-
   return (
     <Dialog>
       <DialogTrigger asChild>

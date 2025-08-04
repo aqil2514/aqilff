@@ -1,4 +1,8 @@
-import { Transaction, TransactionItem } from "@/@types/transaction";
+import {
+  SimpleTransaction,
+  Transaction,
+  TransactionItem,
+} from "@/@types/transaction";
 import { supabaseAdmin } from "../supabaseServer";
 import { PurchaseItem } from "@/@types/purchases";
 
@@ -6,6 +10,8 @@ interface HPPResult {
   totalHPP: number;
   usedItems: { id: string; quantity: number; price: number }[];
 }
+
+const tableName = "transactions";
 
 export async function calculateAndUpdateHPP(
   product_id: string,
@@ -78,35 +84,62 @@ export async function getAvailablePurchaseItemsFIFO(
   return data as PurchaseItem[];
 }
 
-// Ambil semua transaksi (tanpa item)
 export async function getTransactionData(): Promise<Transaction[]> {
   const { data, error } = await supabaseAdmin
-    .from("transactions")
+    .from(tableName)
     .select("*")
     .is("deleted_at", null)
     .order("transaction_at", { ascending: false });
 
   if (error) {
     console.error("Gagal mengambil data transaksi:", error);
-    throw new Error("Gagal mengambil data transaksi");
+    throw error;
   }
 
   return data as Transaction[];
 }
 
-// Ambil semua item transaksi
-export async function getTransactionItemData(): Promise<TransactionItem[]> {
+export async function getTransactionDataById(
+  transactionId: string
+): Promise<Transaction> {
   const { data, error } = await supabaseAdmin
-    .from("transaction_items")
+    .from(tableName)
     .select("*")
-    .is("deleted_at", null);
+    .is("deleted_at", null)
+    .order("transaction_at", { ascending: false })
+    .eq("id", transactionId)
+    .single();
 
-  if (error) {
-    console.error("Gagal mengambil item transaksi:", error);
-    throw new Error("Gagal mengambil item transaksi");
+  if (error || !data) {
+    console.error("Gagal mengambil data transaksi:", error);
+    throw error;
   }
 
-  return data as TransactionItem[];
+  return data as Transaction;
+}
+
+export async function getTransactionDataByDate(
+  startDate: string,
+  endDate: string
+) {
+  const fullStart = `${startDate}T00:00:00`;
+  const fullEnd = `${endDate}T23:59:59`;
+
+  const { data, error } = await supabaseAdmin
+    .from(tableName)
+    .select(
+      "transaction_code, customer_name, id, transaction_at, payment_method, total_amount"
+    )
+    .gte("transaction_at", fullStart)
+    .lte("transaction_at", fullEnd)
+    .is("deleted_at", null);
+
+  if (error || !data) {
+    console.error("Gagal mengambil transaksi:", error);
+    throw error;
+  }
+
+  return data as SimpleTransaction[];
 }
 
 // Gabungkan transaksi dengan item berdasarkan ID
@@ -179,7 +212,7 @@ export async function getTransactionDataAndItemsByDateRange(
 
       if (itemError) {
         console.error(`Gagal mengambil item transaksi ${trx.id}:`, itemError);
-        throw new Error("Gagal mengambil item transaksi");
+        throw itemError;
       }
 
       return {
@@ -199,7 +232,6 @@ export async function saveTransaction(payload: Transaction) {
     .insert(payload)
     .select()
     .single();
-
 
   const { error: transactionError, data: createdTransaction } = trx;
 

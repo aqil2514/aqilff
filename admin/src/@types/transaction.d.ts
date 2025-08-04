@@ -1,3 +1,11 @@
+export type TableReportSales = TransactionItem & {
+  category: string;
+  transaction_at: string;
+  transaction_code: string;
+  customer_name: string;
+  product_code: string;
+};
+
 /**
  * Item individual dalam suatu transaksi.
  * Menyimpan snapshot data produk saat transaksi dilakukan,
@@ -17,22 +25,13 @@ export interface TransactionItem {
   /**
    * ID unik dari produk.
    */
-  product_id: string;
-
-  /**
-   * Nama produk pada saat transaksi.
-   */
-  product_name: string;
-
-  /**
-   * Harga per satuan produk saat transaksi.
-   */
-  price_per_unit: number;
-
-  /**
-   * Satuan produk, seperti "pcs", "kg", "pak", dll (opsional).
-   */
-  product_unit?: string;
+  product_id: {
+    id: string;
+    code: string;
+    name: string;
+    price: number;
+    category: string;
+  };
 
   /**
    * Harga Per Produk
@@ -50,11 +49,6 @@ export interface TransactionItem {
    * Contoh: jika harga asli 10.000 dan tip 1.000, maka harga per unit efektif adalah 11.000.
    */
   tip?: number;
-
-  /**
-   * SKU unik dari produk (opsional), berguna untuk pelacakan logistik.
-   */
-  product_sku?: string;
 
   /**
    * Jumlah unit produk yang dibeli.
@@ -75,6 +69,25 @@ export interface TransactionItem {
    * Deleted At = Tanggal penghapusan Item Transaksi.
    */
   deleted_at?: string;
+}
+
+export interface TransactionItemDbReport {
+  id: number;
+  transaction_id: string;
+  product_id: {
+    code: string;
+    name: string;
+    price: number;
+    id: string;
+    category: string;
+  };
+  discount: number;
+  quantity: number;
+  subtotal: number;
+  tip: number;
+  deleted_at: null | string;
+  margin: number;
+  hpp: number;
 }
 
 /**
@@ -132,4 +145,13 @@ export interface Transaction {
    * Tanggal dan waktu transaksi terjadi.
    */
   transaction_at: string;
+}
+
+export interface SimpleTransaction {
+  transaction_code: string;
+  customer_name: string;
+  id: string;
+  transaction_at: string;
+  payment_method: string;
+  total_amount: number;
 }

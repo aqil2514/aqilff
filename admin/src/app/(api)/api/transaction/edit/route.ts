@@ -2,9 +2,9 @@ import { PurchaseItem } from "@/@types/purchases";
 import { Transaction, TransactionItem } from "@/@types/transaction";
 import { getPurchaseItemData } from "@/lib/supabase/purchase";
 import {
-  getTransactionItemData,
   updateTransaction,
 } from "@/lib/supabase/transaction";
+import { getTransactionItemData } from "@/lib/supabase/transactionItem";
 import { NextRequest, NextResponse } from "next/server";
 
 // export async function PUT(req: NextRequest) {

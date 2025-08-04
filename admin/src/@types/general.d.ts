@@ -5,8 +5,8 @@ export interface MenuItem {
 }
 
 export interface DataListOption {
-  value: string;
   key?: string;
+  value: string;
 }
 
 export interface ChartPieData {
