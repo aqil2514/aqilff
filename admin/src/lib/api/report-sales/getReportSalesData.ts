@@ -10,7 +10,6 @@ export async function getReportSalesData(startDate: string, endDate: string) {
       },
     });
 
-    toast.success("Data berhasil diambil");
     return data;
   } catch (error) {
     console.error(error);
