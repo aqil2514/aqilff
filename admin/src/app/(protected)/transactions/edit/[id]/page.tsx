@@ -16,19 +16,21 @@ export default async function TransactionEditPage({
     getTransactionItemDataByTransactionId(id),
   ]);
 
-  console.log(transactionItem)
+  const items: TransactionSchemaType["transaction_items"] = transactionItem
+    .map((tr) => {
+      if (typeof tr.product_id === "string") return;
 
-  const items: TransactionSchemaType["transaction_items"] = transactionItem.map(
-    (tr) => ({
-      discount: Number(tr.discount),
-      hpp: Number(tr.hpp),
-      margin: Number(tr.margin),
-      product_id: String(tr.product_id.id),
-      quantity: Number(tr.quantity),
-      subtotal: Number(tr.subtotal),
-      tip: Number(tr.tip),
+      return {
+        discount: Number(tr.discount),
+        hpp: Number(tr.hpp) / tr.quantity,
+        margin: Number(tr.margin),
+        product_id: String(tr.product_id.id),
+        quantity: Number(tr.quantity),
+        subtotal: Number(tr.product_id.price),
+        tip: Number(tr.tip),
+      };
     })
-  );
+    .filter((item): item is NonNullable<typeof item> => item !== undefined);
 
   const data: TransactionSchemaType = {
     ...transaction,

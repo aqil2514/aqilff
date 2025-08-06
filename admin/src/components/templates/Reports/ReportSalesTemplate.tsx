@@ -1,26 +1,36 @@
-"use client";
+// "use client";
 
-import TransactionItemTabs from "@/components/organisms/Reports/Sales/Tab";
-import MainWrapper from "../../atoms/main-wrapper";
-import Summary from "../../organisms/Reports/Sales/Summary";
-import ReportSalesProvider from "../../providers/ReportSalesProvider";
-import FilterControl from "@/components/organisms/Reports/Sales/FilterControl";
+import MainWrapper from "@/components/atoms/main-wrapper";
+import ReportSalesProvider from "@/components/featured/ReportSales/provider";
+import ReportSalesFooter from "@/components/featured/ReportSales/ReportSalesFooter";
+import ReportSalesHeader from "@/components/featured/ReportSales/ReportSalesHeader";
+import ReportSalesMain from "@/components/featured/ReportSales/ReportSalesMain";
+import ReportSalesSummary from "@/components/featured/ReportSales/ReportSalesSummary";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
 
 export default function ReportSalesTemplate() {
   return (
     <ReportSalesProvider>
-      <MainWrapper className="block py-16 px-2 md:px-8 bg-gray-50 space-y-2 overflow-y-auto">
-        <FilterControl />
+      <MainWrapper className="bg-gray-50 space-y-4">
+        <ReportSalesHeader />
 
-        <div className="grid grid-cols-1 md:grid-cols-[60%_auto] gap-4">
-          <TransactionItemTabs />
+        <ResizablePanelGroup direction="horizontal">
+          <ResizablePanel defaultSize={75}>
+            <ReportSalesMain />
+          </ResizablePanel>
 
-          <div className="flex flex-col gap-4">
-            <Summary />
+          <ResizableHandle withHandle />
 
-            {/* <Chart /> */}
-          </div>
-        </div>
+          <ResizablePanel defaultSize={25}>
+            <ReportSalesSummary />
+          </ResizablePanel>
+        </ResizablePanelGroup>
+
+        <ReportSalesFooter />
       </MainWrapper>
     </ReportSalesProvider>
   );

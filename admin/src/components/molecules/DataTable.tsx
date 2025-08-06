@@ -82,7 +82,7 @@ export function DataTable<TData, TValue>({
   return (
     <div className="space-y-2">
       {enableRowSelection && SelectionRowMenu && SelectionRowMenu(table)}
-      <div className="rounded-md border max-h-[500px] overflow-y-auto">
+      <div className="rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

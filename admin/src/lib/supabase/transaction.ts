@@ -1,8 +1,4 @@
-import {
-  SimpleTransaction,
-  Transaction,
-  TransactionItem,
-} from "@/@types/transaction";
+import { SimpleTransaction, Transaction } from "@/@types/transaction";
 import { supabaseAdmin } from "../supabaseServer";
 import { PurchaseItem } from "@/@types/purchases";
 
@@ -175,8 +171,8 @@ export async function getTransactionDataAndItemsByDateRange(
   endDate: string,
   options?: { showDeletedData: boolean }
 ): Promise<Transaction[]> {
-  const fullStart = `${startDate}T00:00:00`;
-  const fullEnd = `${endDate}T23:59:59`;
+  const fullStart = `${startDate.split("T")[0]}T00:00:00`;
+  const fullEnd = `${endDate.split("T")[0]}T23:59:59`;
   const showDeletedData = options?.showDeletedData ?? false;
 
   let trxQuery = supabaseAdmin
@@ -226,7 +222,12 @@ export async function getTransactionDataAndItemsByDateRange(
 }
 
 // Simpan transaksi
-export async function saveTransaction(payload: Transaction) {
+export async function saveTransaction(
+  payload: Transaction,
+  transactionId: string
+) {
+  payload.id = transactionId;
+
   const trx = await supabaseAdmin
     .from("transactions")
     .insert(payload)
@@ -263,21 +264,4 @@ export async function updateTransaction(payload: Transaction) {
   }
 
   return { message: "Update transaksi berhasil", success: true };
-}
-
-export async function saveTransactionItems(
-  payload: TransactionItem[],
-  transactionId: string
-) {
-  const insertItems = payload.map((item) => {
-    const itemPayload = { ...item, transaction_id: transactionId };
-    return supabaseAdmin
-      .from("transaction_items")
-      .insert<typeof itemPayload>(itemPayload)
-      .select();
-  });
-
-  const itemInsertResults = await Promise.all(insertItems);
-
-  return itemInsertResults;
 }

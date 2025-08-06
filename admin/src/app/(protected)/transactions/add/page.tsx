@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 };
 
 export default async function AddTransactionPage() {
-  const [products] = await Promise.all([getProductData()]);
-  
+  const products = await getProductData();
+
   return <AddTransactionTemplate products={products} />;
 }

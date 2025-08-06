@@ -31,6 +31,12 @@ export const columns: ColumnDef<TransactionItem>[] = [
   {
     accessorKey: "product_name",
     header: "Nama Produk",
+    cell: ({ row }) => {
+      const productId = row.original.product_id;
+      if (typeof productId === "string") return null;
+
+      return productId.name;
+    },
     filterFn: (row, columnId, filterValue) => {
       const cellValue = String(row.getValue(columnId) ?? "").toLowerCase();
       const keywords = filterValue.toLowerCase().split(" ").filter(Boolean);
@@ -93,6 +99,12 @@ export const simpleColumns: ColumnDef<TransactionItem>[] = [
   {
     accessorKey: "product_name",
     header: "Produk",
+    cell: ({ row }) => {
+      const productId = row.original.product_id;
+      if (typeof productId === "string") return null;
+
+      return productId.name;
+    },
   },
   {
     accessorKey: "quantity",

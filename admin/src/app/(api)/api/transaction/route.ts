@@ -1,7 +1,20 @@
-import { getTransactionDataAndItemsByDateRange } from "@/lib/supabase/transaction";
+import { getProductData } from "@/lib/supabase/products";
+import { getPurchaseItemData } from "@/lib/supabase/purchase";
+import {
+  getTransactionDataAndItemsByDateRange,
+  saveTransaction,
+} from "@/lib/supabase/transaction";
+import { saveTransactionItems } from "@/lib/supabase/transactionItem";
+import { updateStock } from "@/lib/supabase/utils";
+import { checkData } from "@/lib/api/transaction/checkData";
+import {
+  formatToTransactionData,
+  formatToTransactionItem,
+} from "@/lib/api/transaction/formatData";
+import { TransactionSchemaType } from "@/schema/transaction-schema";
 import { NextRequest, NextResponse } from "next/server";
 
-// TODO DELETE SOON
+// TODO DELETE SOON GET
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
@@ -35,4 +48,33 @@ export async function GET(req: NextRequest) {
       { status: 500 }
     );
   }
+}
+
+export async function POST(req: NextRequest) {
+  const formData: TransactionSchemaType = await req.json();
+  const transactionId = crypto.randomUUID();
+  const [products, purchaseItems] = await Promise.all([
+    getProductData(),
+    getPurchaseItemData(),
+  ]);
+
+  const transaction = formatToTransactionData(formData, transactionId);
+  const transactionItem = formatToTransactionItem(
+    formData.transaction_items,
+    transactionId
+  );
+
+  const isChecked = checkData(transactionItem, products, purchaseItems);
+  if (!isChecked.success)
+    return NextResponse.json(
+      { message: isChecked.message },
+      { status: isChecked.status }
+    );
+
+  // Promise All ga bisa. Karena transactionItems harus nunggu transaction disave dulu
+  await saveTransaction(transaction, transactionId);
+  await saveTransactionItems(transactionItem);
+  await updateStock(transactionItem, products, purchaseItems);
+
+  return NextResponse.json({ message: "Transaksi berhasil ditambah" });
 }

@@ -8,7 +8,7 @@ import TransactionProvider, {
 import { fetchTransactionsResources } from "@/lib/fetchers";
 import TransactionTable from "../../organisms/Transactions/TableTransactions/transactions-table";
 import RetrieveDataPopover from "@/components/molecules/Popover/RetrieveData";
-import { getTransactionHandler } from "@/lib/api/transaction";
+import { getTransactionHandler } from "@/lib/api/transaction/clientApiHelper";
 import { Button } from "@/components/ui/button";
 import { MdAdd } from "react-icons/md";
 import Link from "next/link";

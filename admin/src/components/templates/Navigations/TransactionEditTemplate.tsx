@@ -14,7 +14,6 @@ export default function EditTransactionTemplate({
   products,
   defaultValues
 }: EditTransactionTemplateProps) {
-  console.log(defaultValues)
   return (
     <AddTransactionProvider products={products}>
       <MainWrapper className="block space-y-4">

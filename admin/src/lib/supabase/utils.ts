@@ -12,7 +12,7 @@ export async function updateStock(
     // Update purchase_items
     const relatedBatches = purchaseItemData
       .filter(
-        (p) => p.product_name === item.product_name && p.remaining_quantity > 0
+        (p) => p.product_id === item.product_id && p.remaining_quantity > 0
       )
       .sort((a, b) => {
         const aDate = new Date(a.created_at as string).getTime();
@@ -45,10 +45,10 @@ export async function updateStock(
 
     // Update products
     const selectedProduct = productData.find(
-      (p) => p.name === item.product_name
+      (p) => p.id === item.product_id
     );
     if (!selectedProduct) {
-      console.warn(`Produk tidak ditemukan: ${item.product_name}`);
+      console.warn(`Produk tidak ditemukan: ${item.product_id}`);
       continue;
     }
 

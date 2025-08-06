@@ -25,7 +25,7 @@ export interface TransactionItem {
   /**
    * ID unik dari produk.
    */
-  product_id: {
+  product_id: string | {
     id: string;
     code: string;
     name: string;
@@ -69,6 +69,8 @@ export interface TransactionItem {
    * Deleted At = Tanggal penghapusan Item Transaksi.
    */
   deleted_at?: string;
+
+  transaction_at?: string;
 }
 
 export interface TransactionItemDbReport {

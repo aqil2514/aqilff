@@ -63,8 +63,8 @@ export async function getTransactionItemDataReport(
       (item) => item.transaction_id === trx.id
     );
 
-    return items.map(
-      (item): TableReportSales => ({
+    return items.map((item): TableReportSales => {
+      return {
         margin: item.margin ?? 0,
         product_id: item.product_id,
         quantity: item.quantity ?? 0,
@@ -81,9 +81,18 @@ export async function getTransactionItemDataReport(
         transaction_at: trx.transaction_at ?? "",
         transaction_code: trx.transaction_code,
         customer_name: trx.customer_name ?? "-",
-      })
-    );
+      };
+    });
   });
 
   return reports;
+}
+
+export async function saveTransactionItems(data: TransactionItem[]) {
+  const { error } = await supabaseAdmin.from(tableName).insert(data);
+
+  if (error) {
+    console.error("Gagal menyimpan transaction_items:", error);
+    throw error;
+  }
 }

@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-import { getHPPItem } from "@/lib/api/transaction";
+import { getHPPItem } from "@/lib/api/transaction/clientApiHelper";
 import { cn, formatToPercent, formatToRupiah } from "@/lib/utils";
 import {
   transactionSchema,
@@ -85,6 +85,17 @@ export default function TransactionForm({
     }
   };
 
+  const resetHandler = () => {
+    form.reset(defaultValuesForm ?? defaultForm);
+    form.setFocus("transaction_code");
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  const isSubmitting = form.formState.isSubmitting;
+
   return (
     <Form {...form}>
       <form
@@ -102,7 +113,7 @@ export default function TransactionForm({
                   <Button
                     type="button"
                     variant={"ghost"}
-                    disabled={isGettingCode}
+                    disabled={isGettingCode || isSubmitting}
                     onClick={getTransactionCode}
                     className={cn(
                       "cursor-pointer block my-auto",
@@ -132,7 +143,10 @@ export default function TransactionForm({
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <DatePicker onChange={field.onChange} value={field.value} />
+                <DatePicker
+                  onChange={field.onChange}
+                  value={field.value}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -146,7 +160,11 @@ export default function TransactionForm({
             <FormItem>
               <FormLabel>Nama Pembeli</FormLabel>
               <FormControl>
-                <Input placeholder="Contoh : Pembeli 1" {...field} />
+                <Input
+                  disabled={isSubmitting}
+                  placeholder="Contoh : Pembeli 1"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -160,7 +178,11 @@ export default function TransactionForm({
             <FormItem>
               <FormLabel>Metode Pembayaran</FormLabel>
               <FormControl>
-                <Input placeholder="Contoh : cash..." {...field} />
+                <Input
+                  disabled={isSubmitting}
+                  placeholder="Contoh : cash..."
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -176,7 +198,11 @@ export default function TransactionForm({
             <FormItem>
               <FormLabel>Catatan</FormLabel>
               <FormControl>
-                <Textarea placeholder="Contoh : cash..." {...field} />
+                <Textarea
+                  disabled={isSubmitting}
+                  placeholder="Contoh : cash..."
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -186,16 +212,18 @@ export default function TransactionForm({
         <div className="flex gap-4">
           <Button
             type="submit"
+            disabled={isSubmitting}
             className="bg-black hover:bg-gray-700 cursor-pointer"
           >
-            Simpan
+            {isSubmitting ? "Menyimpan..." : "Simpan"}
           </Button>
 
           <Button
             type="button"
             variant={"ghost"}
+            disabled={isSubmitting}
             className="cursor-pointer"
-            onClick={() => form.reset(defaultValuesForm ?? defaultForm)}
+            onClick={resetHandler}
           >
             Reset
           </Button>
@@ -270,6 +298,8 @@ const ItemForm: React.FC<{ form: UseFormReturn<TransactionSchemaType> }> = ({
     { subtotal: 0, hpp: 0, margin: 0 }
   );
 
+  const isSubmitting = form.formState.isSubmitting;
+
   return (
     <div className="border border-gray-300 rounded-2xl p-4 space-y-4">
       <ProductNameList />
@@ -295,6 +325,7 @@ const ItemForm: React.FC<{ form: UseFormReturn<TransactionSchemaType> }> = ({
               <div>
                 <Label htmlFor="product_name">Nama Produk</Label>
                 <Input
+                  disabled={isSubmitting}
                   id="product_name"
                   defaultValue={defaultForm ? productName : ""}
                   list="product-name-list"
@@ -349,6 +380,7 @@ const ItemForm: React.FC<{ form: UseFormReturn<TransactionSchemaType> }> = ({
                     <FormLabel>Kuantitas</FormLabel>
                     <FormControl>
                       <Input
+                        disabled={isSubmitting}
                         type="number"
                         placeholder="Contoh : cash..."
                         {...field}
@@ -368,6 +400,7 @@ const ItemForm: React.FC<{ form: UseFormReturn<TransactionSchemaType> }> = ({
                     <FormLabel>Diskon</FormLabel>
                     <FormControl>
                       <Input
+                        disabled={isSubmitting}
                         type="number"
                         placeholder="Contoh : cash..."
                         {...field}
@@ -387,6 +420,7 @@ const ItemForm: React.FC<{ form: UseFormReturn<TransactionSchemaType> }> = ({
                     <FormLabel>Tip</FormLabel>
                     <FormControl>
                       <Input
+                        disabled={isSubmitting}
                         type="number"
                         placeholder="Contoh : cash..."
                         {...field}
@@ -452,6 +486,7 @@ const ItemForm: React.FC<{ form: UseFormReturn<TransactionSchemaType> }> = ({
                   type="button"
                   variant="destructive"
                   size="icon"
+                  disabled={isSubmitting}
                   className="cursor-pointer"
                   onClick={() => remove(index)}
                 >
@@ -478,6 +513,7 @@ const ItemForm: React.FC<{ form: UseFormReturn<TransactionSchemaType> }> = ({
         <Button
           type="button"
           size={"icon"}
+          disabled={isSubmitting}
           onClick={() => append(defaultForm.transaction_items)}
           className="bg-green-500 cursor-pointer hover:bg-green-600 active:scale-95"
         >
