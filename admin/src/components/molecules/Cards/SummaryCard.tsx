@@ -4,16 +4,16 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { formatToPercent, formatToRupiah } from "@/lib/utils";
-import { IconType } from "react-icons/lib";
+} from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton"
+import { formatToPercent, formatToRupiah } from "@/lib/utils"
+import { IconType } from "react-icons/lib"
 
 interface SummaryCardProps {
-  title: string;
-  Icon: IconType;
-  data: number | undefined;
-  formatAs: "percent" | "rupiah";
+  title: string
+  Icon: IconType
+  data: number | undefined
+  formatAs: "percent" | "rupiah"
 }
 
 export default function SummaryCard({
@@ -24,25 +24,32 @@ export default function SummaryCard({
 }: SummaryCardProps) {
   const formatHandler = (raw: number) => {
     if (formatAs === "percent") {
-      return formatToPercent(raw);
-    } else if (formatAs === "rupiah") {
-      return formatToRupiah(raw);
+      return formatToPercent(raw)
+    } else {
+      return formatToRupiah(raw)
     }
-    return "";
-  };
+  }
+
   return (
-    <Card className="justify-between gap-0">
-      <CardHeader>
-        <CardTitle className="text-center font-bold text-2xl">
-          {title}
-        </CardTitle>
+    <Card className="p-4 shadow-sm hover:shadow-md transition-shadow duration-200">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        <Icon className="w-6 h-6 text-muted-foreground" />
       </CardHeader>
+
       <CardContent>
-        <Icon className="w-16 h-16 block mx-auto" />
+        {data !== undefined ? (
+          <div className="text-2xl font-bold tracking-tight">
+            {formatHandler(data)}
+          </div>
+        ) : (
+          <Skeleton className="w-full h-8 rounded" />
+        )}
       </CardContent>
-      <CardFooter className="justify-center">
-        {data ? formatHandler(data) : <Skeleton className="w-full" /> }
-        </CardFooter>
+
+      <CardFooter>
+        <p className="text-xs text-muted-foreground">Statistik hari ini</p>
+      </CardFooter>
     </Card>
-  );
+  )
 }
