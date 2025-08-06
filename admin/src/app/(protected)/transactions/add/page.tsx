@@ -6,6 +6,8 @@ export const metadata: Metadata = {
   title: "Tambah Transaksi",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function AddTransactionPage() {
   const products = await getProductData();
 
