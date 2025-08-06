@@ -1,4 +1,3 @@
-import { TableReportSales } from "@/@types/transaction";
 import axios, { isAxiosError } from "axios";
 import { toast } from "react-toastify";
 
@@ -12,7 +11,7 @@ export async function getReportSalesData(startDate: string, endDate: string) {
     });
 
     toast.success("Data berhasil diambil");
-    return data.transactions as TableReportSales[];
+    return data;
   } catch (error) {
     console.error(error);
     if (isAxiosError(error)) {

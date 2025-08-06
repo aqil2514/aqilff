@@ -45,23 +45,28 @@ export async function getTransactionItemDataReport(
   const transactions = await getTransactionDataByDate(startDate, endDate);
   const trxIds = transactions.map((trx) => trx.id);
 
-  const { data, error } = await supabaseAdmin
-    .from(tableName)
-    .select("*, product_id(code, name, price, id, category)")
-    .in("transaction_id", trxIds)
-    .is("deleted_at", null);
+  const batchSize = 100;
+  const allItems: TransactionItemDbReport[] = [];
 
-  if (error || !data) {
-    console.error("Gagal mengambil data item transaksi:", error);
-    throw error;
+  for (let i = 0; i < trxIds.length; i += batchSize) {
+    const batchIds = trxIds.slice(i, i + batchSize);
+
+    const { data: items, error } = await supabaseAdmin
+      .from(tableName)
+      .select("*, product_id(code, name, price, id, category)")
+      .in("transaction_id", batchIds)
+      .is("deleted_at", null);
+
+    if (error) {
+      console.error("Gagal mengambil data item transaksi (batch):", error);
+      throw error;
+    }
+
+    allItems.push(...(items ?? []));
   }
 
-  const transactionItems: TransactionItemDbReport[] = data;
-
   const reports: TableReportSales[] = transactions.flatMap((trx) => {
-    const items = transactionItems.filter(
-      (item) => item.transaction_id === trx.id
-    );
+    const items = allItems.filter((item) => item.transaction_id === trx.id);
 
     return items.map((item): TableReportSales => {
       return {
@@ -73,7 +78,7 @@ export async function getTransactionItemDataReport(
         discount: item.discount ?? 0,
         hpp: item.hpp ?? 0,
         id: item.id?.toString(),
-        product_code: item.product_id.code ?? "",
+        product_code: item.product_id?.code ?? "",
         tip: item.tip ?? 0,
         transaction_id: item.transaction_id,
 

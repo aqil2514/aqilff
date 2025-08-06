@@ -1,5 +1,6 @@
 "use client";
 
+import { TransactionStatisic } from "@/@types/rpc";
 import { TableReportSales } from "@/@types/transaction";
 import { ColumnFiltersState } from "@tanstack/react-table";
 import React, {
@@ -13,6 +14,8 @@ import React, {
 interface ReportSalesContextState {
   data: TableReportSales[];
   setData: Dispatch<SetStateAction<TableReportSales[]>>;
+  statistic: TransactionStatisic;
+  setStatistic: Dispatch<SetStateAction<TransactionStatisic>>;
   columnsFilter: ColumnFiltersState;
   setColumnsFilter: Dispatch<SetStateAction<ColumnFiltersState>>;
 }
@@ -29,6 +32,13 @@ export default function ReportSalesProvider({
   children,
 }: ReportSalesProviderProps) {
   const [data, setData] = useState<TableReportSales[]>([]);
+  const [statistic, setStatistic] = useState<TransactionStatisic>({
+    total_discount: 0,
+    total_hpp: 0,
+    total_margin: 0,
+    total_subtotal: 0,
+    total_tip: 0,
+  });
   const [columnsFilter, setColumnsFilter] = useState<ColumnFiltersState>([]);
 
   const value: ReportSalesContextState = {
@@ -36,6 +46,8 @@ export default function ReportSalesProvider({
     setData,
     columnsFilter,
     setColumnsFilter,
+    setStatistic,
+    statistic,
   };
 
   return (

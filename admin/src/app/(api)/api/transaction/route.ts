@@ -1,10 +1,17 @@
-import { getProductData } from "@/lib/supabase/products";
+import {
+  getProductData,
+  rollbackProductStockById,
+} from "@/lib/supabase/products";
 import { getPurchaseItemData } from "@/lib/supabase/purchase";
 import {
   getTransactionDataAndItemsByDateRange,
   saveTransaction,
+  softDeleteTransactionById,
 } from "@/lib/supabase/transaction";
-import { saveTransactionItems } from "@/lib/supabase/transactionItem";
+import {
+  getTransactionItemDataByTransactionId,
+  saveTransactionItems,
+} from "@/lib/supabase/transactionItem";
 import { updateStock } from "@/lib/supabase/utils";
 import { checkData } from "@/lib/api/transaction/checkData";
 import {
@@ -77,4 +84,45 @@ export async function POST(req: NextRequest) {
   await updateStock(transactionItem, products, purchaseItems);
 
   return NextResponse.json({ message: "Transaksi berhasil ditambah" });
+}
+
+export async function DELETE(req: NextRequest) {
+  const { searchParams } = req.nextUrl;
+  const transactionId = searchParams.get("transactionId");
+
+  if (!transactionId) {
+    return NextResponse.json(
+      { message: "Id transaksi tidak disertakan" },
+      { status: 400 }
+    );
+  }
+
+  const transactionItem = await getTransactionItemDataByTransactionId(
+    transactionId
+  );
+
+  const updateProductStockPromises = transactionItem.map(async (trx) => {
+    if (typeof trx.product_id === "string") return undefined;
+
+    return await rollbackProductStockById(trx.product_id.id, trx.quantity);
+  });
+
+  const stockUpdateResults = await Promise.allSettled(
+    updateProductStockPromises
+  );
+
+  const failedUpdates = stockUpdateResults.filter(
+    (upd) => upd.status === "rejected"
+  );
+
+  if (failedUpdates.length > 0) {
+    return NextResponse.json(
+      { message: "Gagal mengembalikan stok produk", errors: failedUpdates },
+      { status: 500 }
+    );
+  }
+
+  await softDeleteTransactionById(transactionId);
+
+  return NextResponse.json({ message: "Transaksi berhasil dihapus" });
 }

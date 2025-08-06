@@ -6,15 +6,15 @@ import { useReportSalesData } from "./provider";
 import { formatToPercent, formatToRupiah } from "@/lib/utils";
 
 export default function ReportSalesSummary() {
-  const { data } = useReportSalesData();
+  const { data, statistic } = useReportSalesData();
 
   const transactionSet = new Set<string>(
     data.map((trx) => trx.transaction_code)
   );
   const productSet = new Set<string>(data.map((trx) => trx.product_code));
 
-  const omzet = data.reduce((acc, curr) => acc + curr.subtotal, 0);
-  const hpp = data.reduce((acc, curr) => acc + Number(curr.hpp), 0);
+  const omzet = statistic.total_subtotal;
+  const hpp = statistic.total_hpp;
   const margin = omzet - hpp;
   const marginPercentage = (margin / omzet) * 100;
 

@@ -4,6 +4,7 @@ import { TransactionColumns } from "./Columns";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import TransactionDetailDialog from "./TransactionDetailDialog";
+import TransactionDeleteDialog from "./TransactionDeleteDialog";
 
 export default function TransactionMain() {
   const searchParams = useSearchParams();
@@ -11,6 +12,7 @@ export default function TransactionMain() {
   const dataId = searchParams.get("data-id");
 
   const [openDetailDialog, setOpenDetailDialog] = useState<boolean>(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
 
   const router = useRouter();
   const { transactions } = useTransactionData();
@@ -20,6 +22,8 @@ export default function TransactionMain() {
       router.push(`/transactions/edit/${dataId}`);
     } else if (action === "detail" && dataId) {
       setOpenDetailDialog(true);
+    } else if (action === "delete" && dataId) {
+      setOpenDeleteDialog(true);
     }
   }, [action, dataId, router]);
 
@@ -29,6 +33,10 @@ export default function TransactionMain() {
       <TransactionDetailDialog
         open={openDetailDialog && !!dataId}
         onOpenChange={setOpenDetailDialog}
+      />
+      <TransactionDeleteDialog
+        onOpenChange={setOpenDeleteDialog}
+        open={openDeleteDialog && !!dataId}
       />
     </>
   );

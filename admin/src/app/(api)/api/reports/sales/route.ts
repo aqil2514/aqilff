@@ -1,3 +1,4 @@
+import { getTransactionStatisic } from "@/lib/supabase/rpc";
 import { getTransactionItemDataReport } from "@/lib/supabase/transactionItem";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -28,5 +29,7 @@ export async function GET(req: NextRequest) {
 
   const trxItem = await getTransactionItemDataReport(startDate, endDate);
 
-  return NextResponse.json({ message: "Berhasil", transactions: trxItem });
+  const statistic = await getTransactionStatisic(startDate, endDate)
+
+  return NextResponse.json({ message: "Berhasil", transactions: trxItem, statistic });
 }

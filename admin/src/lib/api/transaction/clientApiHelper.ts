@@ -74,3 +74,16 @@ export async function getHPPItem(productId: string) {
     throw error;
   }
 }
+
+export async function deleteTransactionById(transactionId: string) {
+  try {
+    await axios.delete(`/api/transaction`, {
+      params: {
+        transactionId,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}

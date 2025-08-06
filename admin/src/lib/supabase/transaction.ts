@@ -62,6 +62,18 @@ export async function calculateAndUpdateHPP(
   };
 }
 
+export async function softDeleteTransactionById(transactionId: string) {
+  const { error } = await supabaseAdmin
+    .from(tableName)
+    .update({ deleted_at: new Date().toISOString() })
+    .eq("id", transactionId);
+
+  if (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
 export async function getAvailablePurchaseItemsFIFO(
   product_id: string
 ): Promise<PurchaseItem[]> {
