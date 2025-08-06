@@ -6,12 +6,7 @@ import { useReportSalesData } from "./provider";
 import { formatToPercent, formatToRupiah } from "@/lib/utils";
 
 export default function ReportSalesSummary() {
-  const { data, statistic } = useReportSalesData();
-
-  const transactionSet = new Set<string>(
-    data.map((trx) => trx.transaction_code)
-  );
-  const productSet = new Set<string>(data.map((trx) => trx.product_code));
+  const { statistic } = useReportSalesData();
 
   const omzet = statistic.total_subtotal;
   const hpp = statistic.total_hpp;
@@ -28,12 +23,12 @@ export default function ReportSalesSummary() {
         <SummaryItem
           icon={<GrTransaction size={20} />}
           label="Transaksi"
-          value={`${transactionSet.size} transaksi`}
+          value={`${statistic.total_transactions} transaksi`}
         />
         <SummaryItem
           icon={<FaProductHunt size={20} />}
           label="Produk"
-          value={`${productSet.size} produk`}
+          value={`${statistic.total_unique_products_sold} produk`}
         />
         <SummaryItem
           icon={<MdAttachMoney size={20} />}

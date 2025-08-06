@@ -6,7 +6,7 @@ export async function getTransactionStatisic(
   endDate: string
 ) {
   const { data, error } = await supabaseAdmin
-    .rpc("get_aggregate_sales_report", {
+    .rpc("get_sales_aggregate", {
       start_date: startDate,
       end_date: endDate,
     })
