@@ -38,6 +38,8 @@ export default function ReportSalesProvider({
     total_margin: 0,
     total_subtotal: 0,
     total_tip: 0,
+    total_transactions: 0,
+    total_unique_products_sold: 0,
   });
   const [columnsFilter, setColumnsFilter] = useState<ColumnFiltersState>([]);
 
