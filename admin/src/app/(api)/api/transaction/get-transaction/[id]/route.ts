@@ -1,6 +1,5 @@
-import { DetailDialogItem } from "@/@types/ui";
+import { getTransactionDataById } from "@/lib/supabase/transaction";
 import { getTransactionItemDataByTransactionId } from "@/lib/supabase/transactionItem";
-import { formatToRupiah } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
@@ -9,40 +8,24 @@ export async function GET(
 ) {
   const { id } = await params;
 
-  const raw = await getTransactionItemDataByTransactionId(id);
-
-  const data: DetailDialogItem[] = raw.flatMap((r, i) => [
-    {
-      label: `Data #${i + 1}`,
-      value: "",
-    },
-    {
-      label: "Kode Produk",
-      value: r.product_id.code,
-    },
-    {
-      label: "Nama Produk",
-      value: r.product_id.name,
-    },
-    {
-      label: "Diskon",
-      value: formatToRupiah(r.discount),
-    },
-    {
-      label: "Tip",
-      value: formatToRupiah(r.tip),
-    },
-    {
-      label: "Total Harga",
-      value: formatToRupiah(r.subtotal),
-    },
-    {
-      label: "Jumlah Barang",
-      value: `${r.quantity} pcs`,
-    },
+  const [transactionItemRes, transactionRes] = await Promise.allSettled([
+    getTransactionItemDataByTransactionId(id),
+    getTransactionDataById(id),
   ]);
 
-  console.log(raw);
+  if (
+    transactionItemRes.status === "rejected" ||
+    transactionRes.status === "rejected"
+  ) {
+    return NextResponse.json(
+      { message: "Failed to fetch data" },
+      { status: 500 }
+    );
+  }
 
-  return NextResponse.json({ message: "ok", data }, { status: 200 });
+  return NextResponse.json({
+    message: "ok",
+    transactionItem: transactionItemRes.value,
+    transaction: transactionRes.value,
+  });
 }

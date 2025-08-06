@@ -5,7 +5,6 @@ export const metadata: Metadata = {
   title: "Transaksi",
 };
 
-export const dynamic = "force-static";
 export default function TransactionPage() {
   return <TransactionTemplate />;
 }

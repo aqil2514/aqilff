@@ -48,6 +48,19 @@ export async function getTransactionHandler(
   }
 }
 
+export async function getTransactionByIdHandler(transactionId: string) {
+  try {
+    const { data } = await axios.get(
+      `/api/transaction/get-transaction/${transactionId}`
+    );
+    return data;
+  } catch (error) {
+    console.error(error);
+    toast.error("Terjadi kesalahan");
+    throw error;
+  }
+}
+
 export async function getHPPItem(productId: string) {
   try {
     const { data } = await axios.get(

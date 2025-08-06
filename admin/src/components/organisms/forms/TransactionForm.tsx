@@ -22,7 +22,8 @@ import {
 } from "@/schema/transaction-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios, { isAxiosError } from "axios";
-import { Plus, RefreshCcw, Trash } from "lucide-react";
+import { Plus, RefreshCcw, SkipBack, Trash } from "lucide-react";
+import Link from "next/link";
 import React, { useState } from "react";
 import { useFieldArray, useForm, UseFormReturn } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -102,6 +103,17 @@ export default function TransactionForm({
         onSubmit={form.handleSubmit(handler)}
         className="space-y-8 bg-white px-4 py-8 rounded-2xl shadow-2xl"
       >
+        <Link href={"/transactions"}>
+          <Button
+            type="button"
+            size={"icon"}
+            variant={"ghost"}
+            className="cursor-pointer"
+          >
+            <SkipBack />
+          </Button>
+        </Link>
+
         <FormField
           control={form.control}
           name="transaction_code"
@@ -143,10 +155,7 @@ export default function TransactionForm({
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <DatePicker
-                  onChange={field.onChange}
-                  value={field.value}
-                />
+                <DatePicker onChange={field.onChange} value={field.value} />
               </FormControl>
               <FormMessage />
             </FormItem>
