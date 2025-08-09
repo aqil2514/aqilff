@@ -330,7 +330,7 @@ const ItemForm: React.FC<{ form: UseFormReturn<TransactionSchemaType> }> = ({
             <p>Produk #{index + 1}</p>
 
             {/* Produk, Produk Id, harga */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <Label htmlFor="product_name">Nama Produk</Label>
                 <Input
@@ -380,7 +380,7 @@ const ItemForm: React.FC<{ form: UseFormReturn<TransactionSchemaType> }> = ({
             </div>
 
             {/* Kuantitas, diskon, tip */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <FormField
                 control={form.control}
                 name={`transaction_items.${index}.quantity`}
@@ -443,7 +443,7 @@ const ItemForm: React.FC<{ form: UseFormReturn<TransactionSchemaType> }> = ({
             </div>
 
             {/* Margin dan HPP */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <FormField
                 control={form.control}
                 name={`transaction_items.${index}.margin`}
