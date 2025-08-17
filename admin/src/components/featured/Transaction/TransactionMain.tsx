@@ -29,7 +29,16 @@ export default function TransactionMain() {
 
   return (
     <>
-      <DataTable data={transactions} columns={TransactionColumns} />
+      <DataTable
+        data={transactions}
+        columns={TransactionColumns}
+        sorting={[
+          {
+            id: "transaction_code",
+            desc: false,
+          },
+        ]}
+      />
       <TransactionDetailDialog
         open={openDetailDialog && !!dataId}
         onOpenChange={setOpenDetailDialog}
