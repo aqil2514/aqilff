@@ -9,7 +9,7 @@ import RegisterProvider from "../../providers/RegisterProvider";
 import {
   useKeyInputLogics,
   useRegisterFormLogics,
-} from "../../logics/registerLogics";
+} from "@/hooks/forms/use-register-form-logics";
 import {
   Dialog,
   DialogClose,

@@ -4,6 +4,7 @@ import { FaProductHunt } from "react-icons/fa";
 import { MdAttachMoney, MdOutlineInventory } from "react-icons/md";
 import { useReportSalesData } from "./provider";
 import { formatToPercent, formatToRupiah } from "@/lib/utils";
+import SummaryItem from "./SummaryItem";
 
 export default function ReportSalesSummary() {
   const { statistic } = useReportSalesData();
@@ -55,22 +56,3 @@ export default function ReportSalesSummary() {
   );
 }
 
-function SummaryItem({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-}) {
-  return (
-    <li className="flex items-center gap-3 p-3 rounded-md bg-gray-50 border">
-      <div className="text-gray-600">{icon}</div>
-      <div className="flex flex-col">
-        <span className="text-sm text-gray-500">{label}</span>
-        <span className="font-semibold text-gray-700">{value}</span>
-      </div>
-    </li>
-  );
-}

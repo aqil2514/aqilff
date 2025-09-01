@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Credentials, useRegisterData } from "../providers/RegisterProvider";
 import axios, { isAxiosError } from "axios";
 import { toast } from "react-toastify";
+import { Credentials, useRegisterData } from "@/components/providers/RegisterProvider";
 
 export function useKeyInputLogics() {
   const [isLoading, setIsLoading] = useState<boolean>(false);

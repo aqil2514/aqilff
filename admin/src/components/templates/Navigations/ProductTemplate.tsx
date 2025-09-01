@@ -10,7 +10,7 @@ import TableProducts from "../../organisms/Products/TableProducts";
 import AddProductFormDialog from "../../organisms/Products/AddForm";
 import { Input } from "../../ui/input";
 import { RefObject, useEffect, useRef, useState } from "react";
-import { useSearchProductLogic } from "../../logics/productLogics";
+import { useSearchProductLogic } from "@/hooks/forms/use-search-products";
 import { RefreshCcw } from "lucide-react";
 import { toast } from "react-toastify";
 import { fetchProducts } from "@/lib/fetchers";

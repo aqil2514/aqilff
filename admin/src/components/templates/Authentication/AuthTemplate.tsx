@@ -2,7 +2,7 @@
 import { Input } from "../../ui/input";
 import { Button } from "../../ui/button";
 import MainWrapper from "../../atoms/main-wrapper";
-import { useLoginFormLogics } from "../../logics/authLogics";
+import { useLoginFormLogics } from "../../../hooks/forms/use-login-form";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useSession } from "../../providers/SessionProvider";

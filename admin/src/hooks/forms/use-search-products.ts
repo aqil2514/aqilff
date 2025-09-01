@@ -1,5 +1,5 @@
+import { useProductsData } from "@/components/providers/ProductsProvider";
 import React, { useState, useEffect } from "react";
-import { useProductsData } from "../providers/ProductsProvider";
 
 export function useSearchProductLogic() {
   const [name, setName] = useState<string>("");
