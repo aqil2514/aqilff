@@ -13,6 +13,7 @@ export default function ReportSalesFooter() {
   const [filteredData, setFilteredData] = useState<TableReportSales[]>(data);
 
   useEffect(() => {
+    if(data.length === 0) return;
     if (columnsFilter.length === 0) return setFilteredData(data);
     const dataKeys = Object.keys(data[0]);
     const filterKey = columnsFilter[0].id;
