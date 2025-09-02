@@ -1,4 +1,8 @@
-export interface DetailDialogItem {
+export interface BasicItem {
   label: string;
-  value: React.ReactNode;
+  value: string;
+}
+
+export interface InventoryItem extends BasicItem {
+  stock: number;
 }

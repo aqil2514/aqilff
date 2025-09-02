@@ -27,22 +27,21 @@ export function formatToTransactionItem(
   raw: TransactionSchemaType["transaction_items"],
   transaction_id: string
 ): TransactionItem[] {
-  const data: TransactionItem[] = [];
-  for (const r of raw) {
+  return raw.map((r) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { product_name, ...rest } = r; // 🔥 product_name dibuang
+
     const subtotal = r.quantity * r.subtotal + r.tip - r.discount;
     const hppTotal = r.quantity * r.hpp;
     const margin = subtotal - hppTotal;
 
-    const transactionItem: TransactionItem = {
-      ...r,
+    return {
+      ...rest, // tanpa product_name
       margin,
       hpp: hppTotal,
       transaction_id,
       subtotal,
     };
-
-    data.push(transactionItem);
-  }
-
-  return data;
+  });
 }
+

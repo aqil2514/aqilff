@@ -1,7 +1,7 @@
 "use client";
 
 import { DataListOption } from "@/@types/general";
-import { LabeledInput } from "@/components/atoms/inputs/LabeledInput";
+import { LabeledInput } from "@/components/atoms/Input/LabeledInput";
 import {
   Card,
   CardContent,

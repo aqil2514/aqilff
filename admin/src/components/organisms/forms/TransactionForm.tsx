@@ -1,3 +1,4 @@
+import InventoryCombobox from "@/components/atoms/Combobox/InventoryCombobox";
 import { DatePicker } from "@/components/molecules/Date/DatePicker";
 import { useAddTransactionData } from "@/components/providers/AddTransactionProvider";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { getHPPItem } from "@/lib/api/transaction/clientApiHelper";
+import { productMapper } from "@/lib/mapper/products.mapper";
 import { cn, formatToPercent, formatToRupiah } from "@/lib/utils";
 import {
   transactionSchema,
@@ -28,6 +30,25 @@ import React, { useState } from "react";
 import { useFieldArray, useForm, UseFormReturn } from "react-hook-form";
 import { toast } from "react-toastify";
 
+// const defaultForm: TransactionSchemaType = {
+//   customer_name: "",
+//   payment_method: "cash",
+//   transaction_at: new Date(),
+//   transaction_code: "",
+//   transaction_items: [
+//     {
+//       discount: 0,
+//       hpp: 0,
+//       margin: 0,
+//       product_id: "",
+//       quantity: 1,
+//       subtotal: 0,
+//       tip: 0,
+//     },
+//   ],
+//   notes: "",
+// };
+
 const defaultForm: TransactionSchemaType = {
   customer_name: "",
   payment_method: "cash",
@@ -38,6 +59,7 @@ const defaultForm: TransactionSchemaType = {
       discount: 0,
       hpp: 0,
       margin: 0,
+      product_name: "",
       product_id: "",
       quantity: 1,
       subtotal: 0,
@@ -252,16 +274,48 @@ const ItemForm: React.FC<{ form: UseFormReturn<TransactionSchemaType> }> = ({
     name: "transaction_items",
   });
 
-  const blurHandler = async (
-    index: number,
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const target = e.target as HTMLInputElement;
-    const selectedProduct = products.find((prod) => prod.name === target.value);
-    if (!target.value) return;
+  // const blurHandler = async (
+  //   index: number,
+  //   e: React.ChangeEvent<HTMLInputElement>
+  // ) => {
+  //   const target = e.target as HTMLInputElement;
+  //   const selectedProduct = products.find((prod) => prod.name === target.value);
+  //   if (!target.value) return;
+
+  //   if (!selectedProduct) {
+  //     target.value = "";
+  //     toast.error("Nama produk tidak ditemukan");
+  //     return;
+  //   }
+
+  //   form.setValue(
+  //     `transaction_items.${index}.product_id`,
+  //     String(selectedProduct?.id)
+  //   );
+
+  //   form.setValue(
+  //     `transaction_items.${index}.subtotal`,
+  //     Number(selectedProduct?.price)
+  //   );
+
+  //   try {
+  //     const hpp = await getHPPItem(selectedProduct!.id);
+  //     form.setValue(`transaction_items.${index}.hpp`, hpp);
+  //   } catch (error) {
+  //     console.error(error);
+  //     target.value = "";
+  //     toast.info(
+  //       `Stok "${selectedProduct?.name}" di database tidak tersedia. Harap tindaklanjuti`
+  //     );
+  //   }
+  // };
+
+  const selectHandler = async (value: string, index: number) => {
+    const selectedProduct = products.find((prod) => prod.name === value);
+    if (!value) return;
 
     if (!selectedProduct) {
-      target.value = "";
+      value = "";
       toast.error("Nama produk tidak ditemukan");
       return;
     }
@@ -281,7 +335,7 @@ const ItemForm: React.FC<{ form: UseFormReturn<TransactionSchemaType> }> = ({
       form.setValue(`transaction_items.${index}.hpp`, hpp);
     } catch (error) {
       console.error(error);
-      target.value = "";
+      value = "";
       toast.info(
         `Stok "${selectedProduct?.name}" di database tidak tersedia. Harap tindaklanjuti`
       );
@@ -322,8 +376,8 @@ const ItemForm: React.FC<{ form: UseFormReturn<TransactionSchemaType> }> = ({
         const discount = form.watch(`transaction_items.${index}.discount`);
         const margin = price + tip - (hpp + discount);
         const subtotal = price + tip - discount;
-        const productId = form.watch(`transaction_items.${index}.product_id`);
-        const productName = products.find((pr) => pr.id === productId)?.name;
+        // const productId = form.watch(`transaction_items.${index}.product_id`);
+        // const productName = products.find((pr) => pr.id === productId)?.name;
 
         return (
           <div key={item.id} className="space-y-4">
@@ -331,7 +385,7 @@ const ItemForm: React.FC<{ form: UseFormReturn<TransactionSchemaType> }> = ({
 
             {/* Produk, Produk Id, harga */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
+              {/* <div>
                 <Label htmlFor="product_name">Nama Produk</Label>
                 <Input
                   disabled={isSubmitting}
@@ -340,7 +394,25 @@ const ItemForm: React.FC<{ form: UseFormReturn<TransactionSchemaType> }> = ({
                   list="product-name-list"
                   onBlur={(e) => blurHandler(index, e)}
                 />
-              </div>
+              </div> */}
+
+              <FormField
+                control={form.control}
+                name={`transaction_items.${index}.product_name`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nama Produk</FormLabel>
+                    <FormControl>
+                      <ProductName
+                        selectHandler={(value) => selectHandler(value, index)}
+                        setValue={field.onChange}
+                        value={field.value}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <FormField
                 control={form.control}
@@ -554,5 +626,29 @@ const ProductNameList = () => {
         <option key={prod.id} value={prod.name}></option>
       ))}
     </datalist>
+  );
+};
+
+const ProductName: React.FC<{
+  value: string;
+  setValue: React.Dispatch<React.SetStateAction<string>>;
+  selectHandler: (value: string) => Promise<void>;
+}> = ({ value, setValue, selectHandler }) => {
+  const { products } = useAddTransactionData();
+  const comboboxItems = products
+    .map(productMapper.mapProductsToInventoryItems)
+    .sort((a, b) => a.label.toLowerCase().localeCompare(b.label.toLowerCase()));
+  const [open, setOpen] = useState<boolean>(false);
+
+  return (
+    <InventoryCombobox
+      items={comboboxItems}
+      label="Produk"
+      open={open}
+      setOpen={setOpen}
+      setValue={setValue}
+      value={value}
+      selectHandler={(value) => selectHandler(value)}
+    />
   );
 };

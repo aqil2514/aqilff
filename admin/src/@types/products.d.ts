@@ -81,3 +81,7 @@ export interface Product {
    */
   updated_at: string;
 }
+
+export interface ProductMapperApi {
+  mapProductsToInventoryItems(raw: Product): InventoryItem;
+}

@@ -71,6 +71,7 @@ export async function POST(req: NextRequest) {
     transactionId
   );
 
+
   const isChecked = checkData(transactionItem, products, purchaseItems);
   if (!isChecked.success)
     return NextResponse.json(
