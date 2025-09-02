@@ -19,11 +19,13 @@ export default async function TransactionEditPage({
   const items: TransactionSchemaType["transaction_items"] = transactionItem
     .map((tr) => {
       if (typeof tr.product_id === "string") return;
+      const produtName = products.find((pro) => pro.id === tr.product_id);
 
       return {
         discount: Number(tr.discount),
         hpp: Number(tr.hpp) / tr.quantity,
         margin: Number(tr.margin),
+        product_name: String(produtName),
         product_id: String(tr.product_id.id),
         quantity: Number(tr.quantity),
         subtotal: Number(tr.product_id.price),
