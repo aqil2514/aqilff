@@ -11,7 +11,7 @@ interface SummarySectionProps {
   data: TransactionStatisic | undefined
 }
 
-export default function SummarySection({ data }: SummarySectionProps) {
+export function SalesSummarySection({ data }: SummarySectionProps) {
   const omzet = data?.total_subtotal
   const hpp = data?.total_hpp
   const margin = Number(omzet) - Number(hpp)

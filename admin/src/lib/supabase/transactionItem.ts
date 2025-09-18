@@ -90,8 +90,6 @@ export async function getTransactionItemDataReport(
     });
   });
 
-  console.log(allItems.length)
-
   return reports;
 }
 
