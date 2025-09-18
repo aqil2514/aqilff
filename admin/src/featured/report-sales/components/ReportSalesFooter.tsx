@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useReportSalesData } from "./provider";
+import { useReportSalesData } from "../provider";
 import { TableReportSales } from "@/@types/transaction";
 import SummaryItem from "./SummaryItem";
 import { GrTransaction } from "react-icons/gr";

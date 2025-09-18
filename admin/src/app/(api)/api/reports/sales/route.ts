@@ -2,6 +2,7 @@ import { getTransactionStatisic } from "@/lib/supabase/rpc";
 import { getTransactionItemDataReport } from "@/lib/supabase/transactionItem";
 import { NextRequest, NextResponse } from "next/server";
 
+// TODO : Delete Soon
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
   const startDate = searchParams.get("startDate");

@@ -1,21 +1,23 @@
 "use client";
 import RetrieveHandlerCard from "@/components/molecules/Cards/RetrieveHandlerCard";
-import { useReportSalesData } from "./provider";
-import { getReportSalesData } from "@/lib/api/report-sales/getReportSalesData";
+import { useReportSalesData } from "../provider";
+// import { getReportSalesData } from "@/lib/api/report-sales/getReportSalesData";
 import FilterHandlerCard from "@/components/molecules/Cards/FilterHandlerCard";
 import { DataListOption } from "@/@types/general";
 import { ColumnsDef } from "./Columns";
 import { TableReportSales } from "@/@types/transaction";
 import { TransactionStatisic } from "@/@types/rpc";
+import { getReportSalesData } from "../services/getReportSalesData";
 
 export default function ReportSalesHeader() {
   const { setData, setColumnsFilter, setStatistic } = useReportSalesData();
   const retireveHandler = async (startDate: string, endDate: string) => {
     const data = await getReportSalesData(startDate, endDate);
-    const reportSales: TableReportSales[] = data.transactions;
-    const statistic: TransactionStatisic = data.statistic;
+    console.log(data)
+    const reportSales: TableReportSales[] = data.data.transactions;
+    const statistic: TransactionStatisic = data.data.statistic;
 
-    setData(reportSales);
+    // setData(reportSales);
     setStatistic(statistic);
   };
 

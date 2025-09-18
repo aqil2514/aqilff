@@ -2,7 +2,7 @@
 import { GrTransaction } from "react-icons/gr";
 import { FaProductHunt } from "react-icons/fa";
 import { MdAttachMoney, MdOutlineInventory } from "react-icons/md";
-import { useReportSalesData } from "./provider";
+import { useReportSalesData } from "../provider";
 import { formatToPercent, formatToRupiah } from "@/lib/utils";
 import SummaryItem from "./SummaryItem";
 

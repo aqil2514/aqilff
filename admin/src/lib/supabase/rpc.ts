@@ -1,6 +1,7 @@
 import { TransactionStatisic } from "@/@types/rpc";
 import { supabaseAdmin } from "../supabaseServer";
 
+// TODO : Delete Soon
 export async function getTransactionStatisic(
   startDate: string,
   endDate: string

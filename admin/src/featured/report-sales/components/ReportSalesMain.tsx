@@ -1,6 +1,6 @@
 "use client";
 import { DataTable } from "@/components/molecules/DataTable";
-import { useReportSalesData } from "./provider";
+import { useReportSalesData } from "../provider";
 import { ColumnsDef } from "./Columns";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 

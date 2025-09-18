@@ -1,11 +1,11 @@
 // "use client";
 
 import MainWrapper from "@/components/atoms/main-wrapper";
-import ReportSalesProvider from "@/components/featured/ReportSales/provider";
-import ReportSalesFooter from "@/components/featured/ReportSales/ReportSalesFooter";
-import ReportSalesHeader from "@/components/featured/ReportSales/ReportSalesHeader";
-import ReportSalesMain from "@/components/featured/ReportSales/ReportSalesMain";
-import ReportSalesSummary from "@/components/featured/ReportSales/ReportSalesSummary";
+import ReportSalesProvider from "@/featured/report-sales/provider";
+import ReportSalesFooter from "@/featured/report-sales/components/ReportSalesFooter";
+import ReportSalesHeader from "@/featured/report-sales/components/ReportSalesHeader";
+import ReportSalesMain from "@/featured/report-sales/components/ReportSalesMain";
+import ReportSalesSummary from "@/featured/report-sales/components/ReportSalesSummary";
 import {
   ResizableHandle,
   ResizablePanel,

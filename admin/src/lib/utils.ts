@@ -84,7 +84,7 @@ export function formatToIndonesianDate(dateString: string): string {
   }).format(date);
 }
 
-export function formatToIndonesianDateUTC(dateString: string): string {
+export function formatToIndonesianDateUTC(dateString: string | Date): string {
   const date = new Date(dateString);
   return new Intl.DateTimeFormat("id-ID", {
     day: "numeric",
